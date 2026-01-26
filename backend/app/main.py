@@ -1,23 +1,28 @@
 from fastapi import FastAPI
-from app.core.database import Base, engine
-from app.middleware.logging import logging_middleware
-from app.middleware.rate_limit import rate_limit_middleware
-from app.routers import auth, products, reviews, admin
+from fastapi.middleware.cors import CORSMiddleware
 
-Base.metadata.create_all(bind=engine)
+from app.api.v1.routers import (
+    auth,
+    products,
+    orders,
+    reviews,
+    discounts,
+    analytics
+)
 
-app = FastAPI(title="Perfume & Jewellery Store")
+app = FastAPI(title="Perfume + Jewelry E-commerce")
 
-# Middleware (order is important)
-app.middleware("http")(logging_middleware)
-app.middleware("http")(rate_limit_middleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Routers
-app.include_router(auth.router, prefix="/auth", tags=["Auth"])
-app.include_router(products.router, prefix="/products", tags=["Products"])
-app.include_router(reviews.router, prefix="/reviews", tags=["Reviews"])
-app.include_router(admin.router, prefix="/admin", tags=["Admin"])
-
-@app.get("/")
-def health():
-    return {"status": "API running 🚀"}
+app.include_router(auth.router, prefix="/auth" , tags=["auth"])
+app.include_router(products.router, prefix="/products" , tags=["products"])
+app.include_router(orders.router, prefix="/orders" , tags=["orders"])
+app.include_router(reviews.router, prefix="/reviews" , tags=["reviews"])
+app.include_router(discounts.router, prefix="/discounts" , tags=["discounts"])
+app.include_router(analytics.router, prefix="/analytics" , tags=["analytics"])
