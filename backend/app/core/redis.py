@@ -1,7 +1,7 @@
-import aioredis
-from app.core.config import settings
+import redis
+import os
+from dotenv import load_dotenv
 
-redis = aioredis.from_url(
-    settings.REDIS_URL,
-    decode_responses=True
-)
+load_dotenv()
+
+redis_client = redis.Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True)
