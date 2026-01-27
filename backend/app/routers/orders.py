@@ -10,10 +10,7 @@ from app.models.order import Order
 from app.Tasks.email_tasks import send_order_receipt
 from app.Tasks.analytics_tasks import cache_analytics
 from backend.app.models import order, user
-
-
-
-
+from fastapi import HTTPException   
 
 router = APIRouter()
 
@@ -44,3 +41,13 @@ def create_order(
 
 send_order_receipt.delay(order.id, user.email)
 cache_analytics.delay()
+@router.get("/track/{order_id}")
+def track_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    order = db.query(Order).filter(Order.id == order_id, Order.user_id == user.id).first()
+    if not order:
+        raise HTTPException(404, "Order not found")
+    return {"status": order.status}
