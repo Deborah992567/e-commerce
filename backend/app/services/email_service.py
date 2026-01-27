@@ -1,13 +1,13 @@
-from fastapi import BackgroundTasks
-from app.core.logger import logger
+from fastapi_mail import FastMail, MessageSchema
+from app.core.config import settings
 
-def send_order_email(
-    background_tasks: BackgroundTasks,
-    email: str,
-    order_id: int
-):
-    background_tasks.add_task(_send_email, email, order_id)
+async def send_order_email(order_id: int, user_email: str):
+    message = MessageSchema(
+        subject="Order Receipt",
+        recipients=[user_email],
+        body=f"Your order {order_id} has been placed successfully!",
+        subtype="html"
+    )
 
-def _send_email(email: str, order_id: int):
-    # Replace with SMTP / SendGrid later
-    logger.info(f"Email sent to {email} for order #{order_id}")
+    fm = FastMail(settings.MAIL_CONFIG)
+    await fm.send_message(message)

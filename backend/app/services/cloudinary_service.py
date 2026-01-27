@@ -11,10 +11,13 @@ cloudinary.config(
     api_secret=os.getenv("CLOUDINARY_API_SECRET"),
 )
 
-def upload_image(file_path: str):
+
+def upload_image(file):
     result = cloudinary.uploader.upload(
-        file_path,
+        file,
         folder="ecommerce",
-        transformation=[{"width": 800, "height": 800, "crop": "fit"}]
+        transformation=[
+            {"width": 800, "height": 800, "crop": "fit"}
+        ]
     )
     return result["secure_url"]

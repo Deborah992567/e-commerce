@@ -1,9 +1,17 @@
 from pydantic import BaseModel
 from typing import List
+from pydantic import BaseModel
+from app.models.order import OrderStatus
 
 class OrderItemCreate(BaseModel):
     product_id: int
     quantity: int
+
+
+
+
+class OrderStatusUpdate(BaseModel):
+    status: OrderStatus
 
 class OrderCreate(BaseModel):
     items: List[OrderItemCreate]
