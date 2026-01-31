@@ -1,10 +1,20 @@
 from celery import Celery
+import celery
 from app.core.config import settings
 
-celery = Celery(
+celery_app = Celery(
     "worker",
     broker=settings.REDIS_URL,
     backend=settings.REDIS_URL,
+    include=[
+        "app.services.email_service",
+        "app.services.analytics_service"
+    ]
+)
+
+celery_app.conf.update(
+    task_track_started=True,
+    task_time_limit=30,
 )
 
 @celery.task
