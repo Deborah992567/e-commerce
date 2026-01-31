@@ -1,19 +1,17 @@
 from celery import Celery
-import os
-from dotenv import load_dotenv
+from app.core.config import settings
 
-load_dotenv()
-
-celery_app = Celery(
+celery = Celery(
     "worker",
-    broker=os.getenv("CELERY_BROKER_URL"),
-    backend=os.getenv("CELERY_RESULT_BACKEND"),
+    broker=settings.REDIS_URL,
+    backend=settings.REDIS_URL,
 )
 
-celery_app.conf.update(
-    task_serializer="json",
-    accept_content=["json"],
-    result_serializer="json",
-    timezone="UTC",
-    enable_utc=True,
-)
+@celery.task
+def refresh_order_stats():
+    from app.dependencies.database import get_db
+    from app.services.analytics_service import compute_order_stats
+
+    db = next(get_db())
+    import asyncio
+    asyncio.run(compute_order_stats(db))
