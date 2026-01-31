@@ -4,6 +4,10 @@ from app.services.discount_service import validate_discount
 from app.models.order import Order
 from fastapi import HTTPException
 
+
+from app.services.email_service import send_order_email
+from app.services.analytics_service import cache_order_stats
+
 def calculate_order_total(
     product_ids: list[int],
     quantities: list[int],
@@ -32,4 +36,14 @@ def update_order_status(db: Session, order_id: int, status: str):
     db.commit()
     db.refresh(order)
     return order
+
+
+async def process_order(order):
+    send_order_email.delay(
+        order.user.email,
+        "Order Confirmed",
+        f"Your order #{order.id} was placed!"
+    )
+
+    cache_order_stats.delay()
 
