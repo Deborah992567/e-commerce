@@ -1,6 +1,8 @@
 from fastapi_mail import FastMail, MessageSchema
 from app.core.config import settings
+from app.core.celery_app import celery_app
 
+@celery_app.task
 async def send_order_email(order_id: int, user_email: str):
     message = MessageSchema(
         subject="Order Receipt",
