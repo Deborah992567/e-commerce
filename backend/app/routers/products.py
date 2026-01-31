@@ -8,6 +8,7 @@ from fastapi import UploadFile, File
 from app.services.cloudinary_service import upload_image
 from app.core.database import async_session
 from app.models.product_image import ProductImage
+from backend.app.services.upload_service import upload_product_image
 
 router = APIRouter()
 
@@ -36,13 +37,19 @@ async def get_product(product_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/{product_id}/upload-image")
-async def upload_product_image(product_id: int, file: UploadFile = File(...)):
-    file_data = await file.read()
-    url = upload_image(file_data)
+async def upload_image(
+    product_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    image_url = await upload_product_image(file)
 
-    async with async_session() as session:
-        image = ProductImage(product_id=product_id, url=url)
-        session.add(image)
-        await session.commit()
+    image = ProductImage(
+        product_id=product_id,
+        image_url=image_url
+    )
 
-    return {"url": url}
+    db.add(image)
+    db.commit()
+
+    return {"image_url": image_url}
