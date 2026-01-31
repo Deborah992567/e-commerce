@@ -5,9 +5,9 @@ from app.core.database import async_session
 from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.product import Product
-
+from app.core.celery_app import celery_app
 CACHE_KEY = "analytics:order_stats"
-
+@celery_app.task
 async def compute_order_stats():
     async with async_session() as session:
         # total orders
