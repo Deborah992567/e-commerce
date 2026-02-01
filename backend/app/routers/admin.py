@@ -6,6 +6,9 @@ from app.services.analytics_service import get_order_stats
 from app.dependencies.auth import get_current_admin_user
 from sqlalchemy.orm import Session
 
+from app.services.analytics_service import revenue_stats
+
+
 from backend.app.models.order import Order
 from backend.app.models.product import Product
 from backend.app.models.user import User
@@ -52,3 +55,7 @@ async def list_orders(db: Session = Depends(get_db)):
 @router.get("/products")
 async def list_products(db: Session = Depends(get_db)):
     return db.query(Product).all()
+
+@router.get("/revenue")
+async def revenue(db: Session = Depends(get_db)):
+    return await revenue_stats(db)
