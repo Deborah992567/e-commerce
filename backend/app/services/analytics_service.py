@@ -6,6 +6,10 @@ from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.product import Product
 from app.core.celery_app import celery_app
+from sqlalchemy.orm import Session
+from app.models.order import Order
+from sqlalchemy import func
+
 CACHE_KEY = "analytics:order_stats"
 @celery_app.task
 async def compute_order_stats():
@@ -56,3 +60,9 @@ async def get_cached_stats():
 
     await cache_order_stats()
     return json.loads(redis_client.get(CACHE_KEY))
+
+
+
+async def revenue_stats(db: Session):
+    total = db.query(func.sum(Order.total_amount)).scalar() or 0
+    return {"total_revenue": float(total)}
