@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
 from app.models.user import User
+from fastapi import Depends, HTTPException, status
+from app.dependencies.auth import get_current_user
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -32,3 +34,14 @@ def get_current_user(
         raise credentials_exception
 
     return user
+
+
+
+async def admin_required(user = Depends(get_current_user)):
+    if not user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access only"
+        )
+    return user
+
