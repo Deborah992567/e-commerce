@@ -2,3 +2,11 @@
 2026-03-13 23:16:42.885 | INFO     | app.middleware.logging:logging_middleware:12 - GET /health | 200 | 0.0008s
 2026-03-13 23:16:42.890 | INFO     | app.middleware.logging:logging_middleware:12 - GET /nonexistent-endpoint | 404 | 0.0006s
 2026-03-13 23:16:42.966 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 422 | 0.0027s
+2026-03-13 23:17:37.497 | INFO     | app.middleware.logging:logging_middleware:12 - GET /health | 200 | 0.0009s
+2026-03-13 23:17:37.506 | INFO     | app.middleware.logging:logging_middleware:12 - GET /health | 200 | 0.0006s
+2026-03-13 23:17:37.511 | INFO     | app.middleware.logging:logging_middleware:12 - GET /nonexistent-endpoint | 404 | 0.0004s
+2026-03-13 23:17:37.517 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 422 | 0.0017s
+2026-03-13 23:18:04.928 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.311s
+2026-03-13 23:18:04.980 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0027s
+2026-03-13 23:18:05.662 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0048s
+2026-03-13 23:18:05.676 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0052s
