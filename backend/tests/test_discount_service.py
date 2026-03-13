@@ -63,4 +63,4 @@ class TestDiscountService:
 
         with pytest.raises(Exception) as exc_info:
             validate_discount("INACTIVE", 100.0, db_session)
-        assert "Invalid discount code" in str(exc_info.value)
+        assert exc_info.value.detail == "Invalid discount code"

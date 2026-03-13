@@ -14,6 +14,9 @@ def calculate_order_total(
     discount_code: str | None,
     db: Session
 ):
+    if len(product_ids) != len(quantities):
+        raise ValueError("product_ids and quantities must have the same length")
+
     total = 0
 
     for pid, qty in zip(product_ids, quantities):
