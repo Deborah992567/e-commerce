@@ -1,21 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
-from pydantic import BaseModel
 from app.models.order import OrderStatus
+
+class OrderCreate(BaseModel):
+    product_ids: List[int] = Field(..., min_items=1)
+    quantities: List[int] = Field(..., min_items=1)
+    discount_code: str | None = None
 
 class OrderItemCreate(BaseModel):
     product_id: int
     quantity: int
 
-
-
-
 class OrderStatusUpdate(BaseModel):
     status: OrderStatus
-
-class OrderCreate(BaseModel):
-    items: List[OrderItemCreate]
-    discount_code: str | None = None
 
 class OrderItemOut(BaseModel):
     id: int

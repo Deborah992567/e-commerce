@@ -20,6 +20,12 @@ def create_order(
     user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    if len(data.product_ids) != len(data.quantities):
+        raise HTTPException(status_code=400, detail="product_ids and quantities must have same length")
+    
+    if any(q <= 0 for q in data.quantities):
+        raise HTTPException(status_code=400, detail="Quantities must be positive")
+
     total = calculate_order_total(
         data.product_ids,
         data.quantities,
