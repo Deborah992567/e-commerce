@@ -9,7 +9,6 @@ from app.services.email_service import send_order_email
 from app.models.order import Order
 from app.Tasks.email_tasks import send_order_receipt
 from app.Tasks.analytics_tasks import cache_analytics
-from backend.app.models import order, user
 from fastapi import HTTPException   
 
 router = APIRouter()
@@ -36,11 +35,6 @@ def create_order(
 
     return {"order_id": order.id, "total": total}
 
-
-
-
-send_order_receipt.delay(order.id, user.email)
-cache_analytics.delay()
 @router.get("/track/{order_id}")
 def track_order(
     order_id: int,
