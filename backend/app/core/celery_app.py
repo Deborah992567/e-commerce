@@ -17,7 +17,7 @@ celery_app.conf.update(
     task_time_limit=30,
 )
 
-@celery.task
+@celery_app.task
 def refresh_order_stats():
     from app.dependencies.database import get_db
     from app.services.analytics_service import compute_order_stats
