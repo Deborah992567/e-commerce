@@ -31,8 +31,8 @@ def list_products(
     return query.all()
 
 @router.get("/{product_id}")
-async def get_product(product_id: int, db: Session = Depends(get_db)):
-    await cache_product_view(product_id)
+def get_product(product_id: int, db: Session = Depends(get_db)):
+    cache_product_view(product_id)
     return db.query(Product).filter(Product.id == product_id).first()
 
 
