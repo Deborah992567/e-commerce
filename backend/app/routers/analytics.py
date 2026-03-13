@@ -7,14 +7,14 @@ from app.services.analytics_service import get_cached_stats, get_product_views, 
 router = APIRouter()
 
 @router.get("/orders", dependencies=[Depends(admin_required)])
-async def order_stats():
-    return await get_cached_stats()
+def order_stats():
+    return get_cached_stats()
 
 @router.get("/product/{product_id}/views", dependencies=[Depends(admin_required)])
-async def product_views(product_id: int):
-    views = await get_product_views(product_id)
+def product_views(product_id: int):
+    views = get_product_views(product_id)
     return {"views": views}
 
 @router.get("/revenue", dependencies=[Depends(admin_required)])
-async def revenue_analytics(db: Session = Depends(get_db)):
-    return await revenue_stats(db)
+def revenue_analytics(db: Session = Depends(get_db)):
+    return revenue_stats(db)
