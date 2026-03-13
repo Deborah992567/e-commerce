@@ -12,11 +12,15 @@ router = APIRouter()
 
 @router.post("/register")
 def register(data: UserCreate, db: Session = Depends(get_db)):
-    hashed = pwd_context.hash(data.password)
-    user = User(email=data.email, password=hashed)
-    db.add(user)
-    db.commit()
-    return {"message": "User created"}
+    try:
+        hashed = pwd_context.hash(data.password)
+        user = User(email=data.email, password=hashed)
+        db.add(user)
+        db.commit()
+        return {"message": "User created"}
+    except Exception as e:
+        print(f"Registration error: {e}")
+        raise
 
 @router.post("/login")
 def login(data: UserLogin, db: Session = Depends(get_db)):
