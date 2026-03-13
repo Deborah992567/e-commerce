@@ -32,7 +32,7 @@ def db_session(engine):
     finally:
         session.rollback()
         # Clear all tables
-        from app.models import Base
+        from app.core.database import Base
         for table in reversed(Base.metadata.sorted_tables):
             session.execute(table.delete())
         session.commit()

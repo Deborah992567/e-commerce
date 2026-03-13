@@ -17,3 +17,9 @@
 2026-03-13 23:19:51.732 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/999 | 200 | 0.0017s
 2026-03-13 23:19:51.807 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0021s
 2026-03-13 23:19:51.817 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0032s
+2026-03-13 23:20:42.428 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0151s
+2026-03-13 23:20:42.440 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0014s
+2026-03-13 23:20:42.518 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/3 | 200 | 0.0026s
+2026-03-13 23:20:42.528 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/999 | 404 | 0.0018s
+2026-03-13 23:20:42.537 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0022s
+2026-03-13 23:20:42.549 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0025s
