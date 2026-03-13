@@ -3,7 +3,7 @@ from app.core.config import settings
 from app.core.celery_app import celery_app
 
 @celery_app.task
-async def send_order_email(order_id: int, user_email: str):
+def send_order_email(user_email: str, order_id: int):
     message = MessageSchema(
         subject="Order Receipt",
         recipients=[user_email],
@@ -12,4 +12,7 @@ async def send_order_email(order_id: int, user_email: str):
     )
 
     fm = FastMail(settings.MAIL_CONFIG)
-    await fm.send_message(message)
+    # Note: In a real implementation, this would be async, but for simplicity we're making it sync
+    # For production, you'd want to use async email sending
+    import asyncio
+    asyncio.run(fm.send_message(message))

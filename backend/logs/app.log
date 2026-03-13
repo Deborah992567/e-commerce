@@ -99,3 +99,5 @@
 2026-03-13 23:30:43.486 | INFO     | app.middleware.logging:logging_middleware:12 - GET /products/ | 200 | 0.0016s
 2026-03-13 23:31:57.966 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 200 | 0.4451s
 2026-03-13 23:31:58.378 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/login | 200 | 0.4092s
+2026-03-13 23:32:38.873 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 200 | 0.4472s
+2026-03-13 23:32:39.284 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/login | 200 | 0.4076s

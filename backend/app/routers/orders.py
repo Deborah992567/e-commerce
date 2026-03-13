@@ -37,7 +37,12 @@ def create_order(
     db.add(order)
     db.commit()
 
-    send_order_email(background_tasks, user.email, order.id)
+    # Send order confirmation email (async)
+    try:
+        send_order_email.delay(user.email, order.id)
+    except Exception:
+        # Email sending failed, but order was created successfully
+        pass
 
     return {"order_id": order.id, "total": total}
 
