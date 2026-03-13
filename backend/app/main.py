@@ -31,3 +31,7 @@ app.include_router(orders.router, prefix="/orders" , tags=["orders"])
 app.include_router(reviews.router, prefix="/reviews" , tags=["reviews"])
 app.include_router(discounts.router, prefix="/discounts" , tags=["discounts"])
 app.include_router(analytics.router, prefix="/analytics" , tags=["analytics"])
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
