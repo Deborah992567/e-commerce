@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from jose import jwt
+from datetime import timedelta
 
 from app.core.config import settings
 from app.dependencies.database import get_db
