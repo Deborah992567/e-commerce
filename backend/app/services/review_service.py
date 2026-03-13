@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from backend.app.models.review import Review
+from app.models.review import Review
 
 def get_product_rating(product_id: int, db: Session):
     avg_rating = (
