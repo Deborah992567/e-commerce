@@ -1,7 +1,6 @@
 import json
 from sqlalchemy import select, func
 from app.core.redis import redis_client
-from app.core.database import async_session
 from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.product import Product
