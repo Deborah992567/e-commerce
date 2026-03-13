@@ -28,7 +28,7 @@ class TestDiscountService:
         """Test validating non-existent discount code"""
         with pytest.raises(Exception) as exc_info:
             validate_discount("INVALID", 100.0, db_session)
-        assert "Invalid discount code" in str(exc_info.value)
+        assert exc_info.value.detail == "Invalid discount code"
 
     def test_validate_expired_discount(self, db_session):
         """Test validating expired discount"""
@@ -46,7 +46,7 @@ class TestDiscountService:
 
         with pytest.raises(Exception) as exc_info:
             validate_discount("EXPIRED", 100.0, db_session)
-        assert "expired" in str(exc_info.value).lower()
+        assert exc_info.value.detail == "Discount code expired"
 
     def test_validate_inactive_discount(self, db_session):
         """Test validating inactive discount"""
