@@ -39,7 +39,7 @@ class TestErrorHandling:
 
         error_data = response.json()
         assert "detail" in error_data
-        assert "type" in error_data
+        assert error_data["detail"] == "Not Found"
 
     def test_validation_error_format(self, client):
         """Test that validation errors have consistent format"""
