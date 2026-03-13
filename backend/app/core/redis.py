@@ -1,4 +1,4 @@
-import aioredis
+import redis
 from app.core.config import settings
 
-redis_client = aioredis.from_url(settings.REDIS_URL, encoding="utf-8", decode_responses=True)
+redis_client = redis.Redis.from_url(settings.REDIS_URL, decode_responses=True)
