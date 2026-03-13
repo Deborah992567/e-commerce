@@ -41,12 +41,26 @@ async def upload_image(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    image_url = await upload_product_image(file)
+    # Validate file type
+    allowed_types = ["image/jpeg", "image/png", "image/webp"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Invalid file type. Only JPEG, PNG, WebP allowed.")
+    
+    # Validate file size (5MB max)
+    max_size = 5 * 1024 * 1024
+    file_content = await file.read()
+    if len(file_content) > max_size:
+        raise HTTPException(status_code=400, detail="File too large. Max 5MB.")
+    
+    image_url = await upload_product_image(file_content, file.filename)
 
     image = ProductImage(
         product_id=product_id,
         image_url=image_url
     )
+    db.add(image)
+    db.commit()
+    return {"message": "Image uploaded", "url": image_url}
 
     db.add(image)
     db.commit()
