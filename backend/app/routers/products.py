@@ -32,7 +32,10 @@ def list_products(
 @router.get("/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):
     cache_product_view(product_id)
-    return db.query(Product).filter(Product.id == product_id).first()
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product
 
 
 @router.post("/{product_id}/upload-image")

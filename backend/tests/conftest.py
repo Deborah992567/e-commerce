@@ -31,6 +31,11 @@ def db_session(engine):
         yield session
     finally:
         session.rollback()
+        # Clear all tables
+        from app.models import Base
+        for table in reversed(Base.metadata.sorted_tables):
+            session.execute(table.delete())
+        session.commit()
         session.close()
 
 @pytest.fixture(scope="session")
