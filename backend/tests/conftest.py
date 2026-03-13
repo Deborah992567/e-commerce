@@ -53,12 +53,16 @@ def client(redis_client, engine):
     from app.middleware import rate_limit
     from app.core import database
     from sqlalchemy.orm import sessionmaker
+    from app.core.database import Base
 
     # Override settings for testing
     settings.DATABASE_URL = TEST_DATABASE_URL
     
     # Create test session maker
     TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    # Ensure tables are created
+    Base.metadata.create_all(bind=engine)
     
     # Override database functions
     original_get_db = database.get_db

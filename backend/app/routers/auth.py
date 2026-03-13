@@ -19,10 +19,10 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
         db.commit()
         return {"message": "User created"}
     except Exception as e:
-        print(f"Registration error: {e}")
-        import traceback
-        traceback.print_exc()
-        raise
+        db.rollback()
+        if "UNIQUE constraint failed" in str(e) or "unique constraint" in str(e).lower():
+            raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=500, detail="Registration failed")
 
 @router.post("/login")
 def login(data: UserLogin, db: Session = Depends(get_db)):
