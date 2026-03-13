@@ -9,6 +9,8 @@ from app.routers import (
     discounts,
     analytics
 )
+from app.middleware.logging import logging_middleware
+from app.middleware.rate_limit import rate_limit_middleware
 
 app = FastAPI(title="Perfume + Jewelry E-commerce")
 
@@ -19,6 +21,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.middleware("http")(logging_middleware)
+app.middleware("http")(rate_limit_middleware)
 
 app.include_router(auth.router, prefix="/auth" , tags=["auth"])
 app.include_router(products.router, prefix="/products" , tags=["products"])

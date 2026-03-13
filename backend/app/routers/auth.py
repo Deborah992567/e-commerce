@@ -1,15 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
 from jose import jwt
 
 from app.core.config import settings
 from app.dependencies.database import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin
+from app.core.security import pwd_context, create_access_token
 
 router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @router.post("/register")
 def register(data: UserCreate, db: Session = Depends(get_db)):
@@ -25,9 +24,5 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
     if not user or not pwd_context.verify(data.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = jwt.encode(
-        {"sub": user.id},
-        settings.JWT_SECRET,
-        algorithm="HS256"
-    )
-    return {"access_token": token, "token_type": "bearer"}
+    access_token = create_access_token(data={"sub": str(user.id)})
+    return {"access_token": access_token, "token_type": "bearer"}

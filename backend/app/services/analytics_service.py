@@ -66,3 +66,12 @@ async def get_cached_stats():
 async def revenue_stats(db: Session):
     total = db.query(func.sum(Order.total_amount)).scalar() or 0
     return {"total_revenue": float(total)}
+
+async def cache_product_view(product_id: int):
+    key = f"product:{product_id}:views"
+    redis_client.incr(key)
+
+async def get_product_views(product_id: int):
+    key = f"product:{product_id}:views"
+    views = redis_client.get(key)
+    return int(views) if views else 0
