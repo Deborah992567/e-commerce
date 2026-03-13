@@ -10,4 +10,4 @@ class OrderDiscount(Base):
     discount_id = Column(Integer, ForeignKey("discounts.id"), nullable=False)
     amount = Column(Float, nullable=False)
 
-    order = relationship("Order", back_populates="discount")
+    order = relationship("Order", back_populates="discounts")
