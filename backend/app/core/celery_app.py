@@ -1,11 +1,10 @@
 from celery import Celery
-import celery
 from app.core.config import settings
 
 celery_app = Celery(
     "worker",
-    broker=settings.REDIS_URL,
-    backend=settings.REDIS_URL,
+    broker=settings.CELERY_BROKER_URL,
+    backend=settings.CELERY_RESULT_BACKEND,
     include=[
         "app.services.email_service",
         "app.services.analytics_service"
@@ -17,7 +16,7 @@ celery_app.conf.update(
     task_time_limit=30,
 )
 
-@celery.task
+@celery_app.task
 def refresh_order_stats():
     from app.dependencies.database import get_db
     from app.services.analytics_service import compute_order_stats
