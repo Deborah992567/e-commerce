@@ -11,12 +11,13 @@ from app.routers import (
 )
 from app.middleware.logging import logging_middleware
 from app.middleware.rate_limit import rate_limit_middleware
+from app.core.config import settings
 
 app = FastAPI(title="Perfume + Jewelry E-commerce")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.ALLOWED_ORIGINS.split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

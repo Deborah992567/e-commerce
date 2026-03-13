@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     CLOUDINARY_API_SECRET: str
     CELERY_BROKER_URL: str
     CELERY_RESULT_BACKEND: str
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8081"  # Default for dev
 
     class Config:
         env_file = ".env"
