@@ -3,8 +3,9 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.core.database import Base
 from sqlalchemy import Enum
+from enum import Enum as PyEnum
 
-class OrderStatus(str, Enum):
+class OrderStatus(PyEnum):
     PENDING = "PENDING"
     CONFIRMED = "CONFIRMED"
     SHIPPED = "SHIPPED"
