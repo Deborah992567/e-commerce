@@ -20,6 +20,8 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
         return {"message": "User created"}
     except Exception as e:
         print(f"Registration error: {e}")
+        import traceback
+        traceback.print_exc()
         raise
 
 @router.post("/login")

@@ -39,3 +39,10 @@
 2026-03-13 23:23:20.649 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/login | 500 | 0.0021s
 2026-03-13 23:23:20.657 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 422 | 0.002s
 2026-03-13 23:25:12.095 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 200 | 0.4516s
+2026-03-13 23:26:17.010 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 200 | 0.4527s
+2026-03-13 23:26:46.203 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 500 | 0.4602s
+2026-03-13 23:26:46.678 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 500 | 0.4019s
+2026-03-13 23:26:47.090 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 500 | 0.4057s
+2026-03-13 23:26:47.098 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/login | 500 | 0.0042s
+2026-03-13 23:26:47.114 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/login | 500 | 0.0031s
+2026-03-13 23:26:47.124 | INFO     | app.middleware.logging:logging_middleware:12 - POST /auth/register | 422 | 0.0017s
