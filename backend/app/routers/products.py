@@ -6,9 +6,8 @@ from app.models.product import Product
 from app.services.analytics_service import cache_product_view
 from fastapi import UploadFile, File
 from app.services.cloudinary_service import upload_image
-from app.core.database import async_session
 from app.models.product_image import ProductImage
-from backend.app.services.upload_service import upload_product_image
+from app.services.upload_service import upload_product_image
 
 router = APIRouter()
 
