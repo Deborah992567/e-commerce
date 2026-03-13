@@ -41,13 +41,21 @@ def redis_client():
     fake_redis.flushall()
 
 @pytest.fixture
-def client():
+def client(redis_client):
     """Create test client"""
     from fastapi.testclient import TestClient
     from app.main import app
+    from app.middleware import rate_limit
 
     # Override settings for testing
     settings.DATABASE_URL = TEST_DATABASE_URL
-
+    
+    # Override redis_client in middleware
+    original_redis_client = rate_limit.redis_client
+    rate_limit.redis_client = redis_client
+    
     with TestClient(app) as test_client:
         yield test_client
+    
+    # Restore original redis_client
+    rate_limit.redis_client = original_redis_client
