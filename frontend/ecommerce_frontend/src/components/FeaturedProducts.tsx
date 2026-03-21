@@ -1,405 +1,280 @@
-import React, { useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Pressable,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
-import { Product } from '../types';
 
-const { width } = Dimensions.get('window');
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import CTAButton from './CTAButton';
 
-const mockProducts: Product[] = [
-  { id: '1', name: 'Velvet Noir', price: 10.99, image: 'image1', description: 'Description 1' },
-  { id: '2', name: 'Obsidian Edge', price: 20.99, image: 'image2', description: 'Description 2' },
-  { id: '3', name: 'Amber Luxe', price: 30.99, image: 'image3', description: 'Description 3' },
-  { id: '4', name: 'Pearl Mist', price: 40.99, image: 'image4', description: 'Description 4' },
+const PRODUCTS = [
+  {
+    id: 1,
+    name: 'Phantom Runner',
+    category: 'Footwear',
+    price: 219,
+    oldPrice: 279,
+    badge: 'Best Seller',
+    img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',
+    color: '#FF6B35',
+  },
+  {
+    id: 2,
+    name: 'Void Jacket',
+    category: 'Outerwear',
+    price: 389,
+    badge: 'New',
+    img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80',
+    color: '#4ECDC4',
+  },
+  {
+    id: 3,
+    name: 'Eclipse Watch',
+    category: 'Accessories',
+    price: 549,
+    badge: 'Limited',
+    img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80',
+    color: '#C9B8FF',
+  },
+  {
+    id: 4,
+    name: 'Core Tee',
+    category: 'Apparel',
+    price: 79,
+    img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80',
+    color: '#FFE66D',
+  },
 ];
 
-const ACCENT_COLORS = ['#E8C97A', '#C4A4F0', '#7AC8E8', '#F0A4C4'];
-const CARD_HEIGHT = 200;
+const FILTERS = ['All', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
 
-// ── Animated Product Card ──────────────────────────────────────────────────
-interface ProductCardProps {
-  product: Product;
-  index: number;
-  accent: string;
+interface FeaturedProductsProps {
+  onAddToCart: (id: number) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, index, accent }) => {
-  const slideY = useRef(new Animated.Value(60)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(1)).current;
-  const shimmer = useRef(new Animated.Value(0)).current;
+const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
+  const [active, setActive] = useState('All');
+  const [added, setAdded] = useState<number[]>([]);
 
-  useEffect(() => {
-    // Staggered entrance
-    Animated.parallel([
-      Animated.timing(slideY, {
-        toValue: 0,
-        duration: 600,
-        delay: index * 120,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 600,
-        delay: index * 120,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  const filtered =
+    active === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === active);
 
-    // Looping shimmer on the accent line
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmer, {
-          toValue: 1,
-          duration: 1800,
-          delay: index * 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(shimmer, {
-          toValue: 0,
-          duration: 1800,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
-
-  const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.96,
-      useNativeDriver: true,
-      speed: 30,
-      bounciness: 6,
-    }).start();
+  const handleAdd = (id: number) => {
+    setAdded((prev) => [...prev, id]);
+    onAddToCart(id);
+    setTimeout(() => setAdded((prev) => prev.filter((x) => x !== id)), 1200);
   };
 
-  const handlePressOut = () => {
-    Animated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 10,
-    }).start();
-  };
-
-  const shimmerOpacity = shimmer.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: [0.3, 1, 0.3],
-  });
-
   return (
-    <Animated.View
-      style={[
-        styles.cardWrapper,
-        {
-          opacity,
-          transform: [{ translateY: slideY }, { scale }],
-        },
-      ]}
-    >
-      <Pressable
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={styles.card}
-      >
-        {/* Animated accent bar */}
-        <Animated.View
-          style={[
-            styles.accentBar,
-            { backgroundColor: accent, opacity: shimmerOpacity },
-          ]}
-        />
-
-        {/* Decorative circle */}
-        <View style={[styles.decorCircle, { borderColor: accent + '30' }]} />
-
-        {/* Index badge */}
-        <View style={[styles.badge, { backgroundColor: accent + '20', borderColor: accent + '50' }]}>
-          <Text style={[styles.badgeText, { color: accent }]}>
-            {String(index + 1).padStart(2, '0')}
-          </Text>
+    <View style={styles.fp}>
+      <View style={styles.fpHeader}>
+        <View style={styles.fpTitleWrap}>
+          <Text style={styles.fpEyebrow}>— Featured</Text>
+          <Text style={styles.fpTitle}>This Season's <Text style={styles.fpTitleEm}>Icons</Text></Text>
         </View>
-
-        {/* Content */}
-        <View style={styles.cardContent}>
-          <Text style={styles.productName} numberOfLines={1}>
-            {product.name}
-          </Text>
-          <Text style={styles.productDescription} numberOfLines={1}>
-            {product.description}
-          </Text>
-        </View>
-
-        {/* Price row */}
-        <View style={styles.priceRow}>
-          <Text style={[styles.productPrice, { color: accent }]}>
-            ${product.price.toFixed(2)}
-          </Text>
-          <View style={[styles.ctaButton, { backgroundColor: accent }]}>
-            <Text style={styles.ctaText}>Add →</Text>
-          </View>
-        </View>
-      </Pressable>
-    </Animated.View>
-  );
-};
-
-// ── Header with animated underline ────────────────────────────────────────
-const AnimatedHeader: React.FC = () => {
-  const underlineWidth = useRef(new Animated.Value(0)).current;
-  const titleOpacity = useRef(new Animated.Value(0)).current;
-  const titleY = useRef(new Animated.Value(-20)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(titleOpacity, { toValue: 1, duration: 700, useNativeDriver: true }),
-      Animated.timing(titleY, { toValue: 0, duration: 700, useNativeDriver: true }),
-      Animated.timing(underlineWidth, {
-        toValue: 1,
-        duration: 900,
-        delay: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
-
-  return (
-    <Animated.View
-      style={[
-        styles.headerContainer,
-        { opacity: titleOpacity, transform: [{ translateY: titleY }] },
-      ]}
-    >
-      <Text style={styles.eyebrow}>CURATED COLLECTION</Text>
-      <Text style={styles.title}>Featured{'\n'}Products</Text>
-      <Animated.View
-        style={[
-          styles.titleUnderline,
-          { transform: [{ scaleX: underlineWidth }] },
-        ]}
-      />
-    </Animated.View>
-  );
-};
-
-// ── Main Component ─────────────────────────────────────────────────────────
-const FeaturedProducts: React.FC = () => {
-  return (
-    <View style={styles.screen}>
-      {/* Background texture dots */}
-      {[...Array(6)].map((_, i) => (
-        <View
-          key={i}
-          style={[
-            styles.bgDot,
-            {
-              top: `${15 + i * 15}%`,
-              right: i % 2 === 0 ? -20 : undefined,
-              left: i % 2 !== 0 ? -20 : undefined,
-              width: 80 + i * 20,
-              height: 80 + i * 20,
-            },
-          ]}
-        />
-      ))}
-
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
-        <AnimatedHeader />
-
-        <View style={styles.grid}>
-          {mockProducts.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              index={index}
-              accent={ACCENT_COLORS[index % ACCENT_COLORS.length]}
-            />
+        <View style={styles.fpFilters}>
+          {FILTERS.map((f) => (
+            <TouchableOpacity
+              key={f}
+              style={[styles.fpFilter, active === f && styles.fpFilterActive]}
+              onPress={() => setActive(f)}
+            >
+              <Text style={[styles.fpFilterText, active === f && styles.fpFilterTextActive]}>{f}</Text>
+            </TouchableOpacity>
           ))}
         </View>
+      </View>
 
-        {/* Footer tag */}
-        <View style={styles.footer}>
-          <View style={styles.footerDot} />
-          <Text style={styles.footerText}>4 items available</Text>
-          <View style={styles.footerDot} />
-        </View>
-      </ScrollView>
+      <View style={styles.fpGrid}>
+        {filtered.map((p, i) => (
+          <View
+            style={[styles.fpCard, { borderColor: p.color }]}
+            key={p.id}
+          >
+            <View style={styles.fpImgWrap}>
+              <Image source={{ uri: p.img }} style={styles.fpImg} />
+              {p.badge && <View style={styles.fpBadge}><Text style={styles.fpBadgeText}>{p.badge}</Text></View>}
+              <View style={styles.fpHoverActions}>
+                <TouchableOpacity style={styles.fpQuick}><Text style={styles.fpQuickText}>♡ Wishlist</Text></TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.fpInfo}>
+              <View>
+                <Text style={styles.fpCat}>{p.category}</Text>
+                <Text style={styles.fpName}>{p.name}</Text>
+              </View>
+              <View style={styles.fpBottom}>
+                <View style={styles.fpPrices}>
+                  <Text style={styles.fpPrice}>${p.price}</Text>
+                  {p.oldPrice && <Text style={styles.fpOld}>${p.oldPrice}</Text>}
+                </View>
+                <TouchableOpacity
+                  style={[styles.fpAdd, added.includes(p.id) && styles.fpAddDone]}
+                  onPress={() => handleAdd(p.id)}
+                >
+                  <Text style={styles.fpAddText}>{added.includes(p.id) ? '✓' : '+'}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.fpCta}>
+        <CTAButton label="View All Products" variant="ghost" icon="→" />
+      </View>
     </View>
   );
 };
 
-// ── Styles ─────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#0D0D12',
-    position: 'relative',
-    overflow: 'hidden',
+  fp: {
+    padding: 20,
   },
-  bgDot: {
-    position: 'absolute',
-    borderRadius: 999,
-    backgroundColor: '#ffffff04',
-    borderWidth: 1,
-    borderColor: '#ffffff06',
+  fpHeader: {
+    marginBottom: 20,
   },
-  scroll: {
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 40,
+  fpTitleWrap: {
+    marginBottom: 8,
   },
-
-  // Header
-  headerContainer: {
-    marginBottom: 36,
-  },
-  eyebrow: {
-    fontSize: 10,
-    letterSpacing: 4,
+  fpEyebrow: {
     color: '#E8C97A',
-    fontWeight: '700',
-    marginBottom: 10,
-    fontFamily: 'Courier',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
   },
-  title: {
-    fontSize: 42,
-    fontWeight: '900',
-    color: '#F0EDE6',
-    lineHeight: 48,
-    letterSpacing: -1,
+  fpTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
   },
-  titleUnderline: {
-    marginTop: 14,
-    height: 2,
-    width: 60,
+  fpTitleEm: {
+    color: '#E8C97A',
+    fontStyle: 'italic',
+  },
+  fpFilters: {
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+  fpFilter: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#23232B',
+    marginRight: 8,
+  },
+  fpFilterActive: {
     backgroundColor: '#E8C97A',
-    transformOrigin: 'left',
   },
-
-  // Grid
-  grid: {
+  fpFilterText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+  fpFilterTextActive: {
+    color: '#23232B',
+  },
+  fpGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 14,
-  },
-  cardWrapper: {
-    width: (width - 54) / 2,
-  },
-  card: {
-    backgroundColor: '#16161F',
-    borderRadius: 16,
-    padding: 16,
-    height: CARD_HEIGHT,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#ffffff0A',
     justifyContent: 'space-between',
+  },
+  fpCard: {
+    width: '48%',
+    backgroundColor: '#18181F',
+    borderRadius: 16,
+    borderWidth: 2,
+    marginBottom: 16,
+    padding: 12,
+  },
+  fpImgWrap: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 8,
     position: 'relative',
   },
-
-  // Decorative
-  accentBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 2,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+  fpImg: {
+    width: '100%',
+    height: 120,
+    borderRadius: 12,
   },
-  decorCircle: {
+  fpBadge: {
     position: 'absolute',
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    borderWidth: 1,
-    top: -30,
-    right: -30,
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderRadius: 6,
-    paddingHorizontal: 6,
+    top: 8,
+    left: 8,
+    backgroundColor: '#E8C97A',
+    borderRadius: 8,
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    marginTop: 6,
   },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    fontFamily: 'Courier',
+  fpBadgeText: {
+    color: '#23232B',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
-
-  // Content
-  cardContent: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: 8,
+  fpHoverActions: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
   },
-  productName: {
+  fpQuick: {
+    backgroundColor: '#23232B',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  fpQuickText: {
+    color: '#E8C97A',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  fpInfo: {
+    marginTop: 8,
+  },
+  fpCat: {
+    color: '#A0A0A0',
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  fpName: {
+    color: 'white',
     fontSize: 16,
-    fontWeight: '800',
-    color: '#F0EDE6',
-    letterSpacing: -0.3,
-    marginBottom: 3,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
-  productDescription: {
-    fontSize: 11,
-    color: '#6B6B7B',
-    letterSpacing: 0.2,
-  },
-
-  // Price row
-  priceRow: {
+  fpBottom: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 8,
   },
-  productPrice: {
-    fontSize: 18,
-    fontWeight: '900',
-    letterSpacing: -0.5,
-  },
-  ctaButton: {
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  ctaText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#0D0D12',
-  },
-
-  // Footer
-  footer: {
+  fpPrices: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    marginTop: 32,
   },
-  footerDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#3A3A48',
+  fpPrice: {
+    color: '#E8C97A',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginRight: 8,
   },
-  footerText: {
-    fontSize: 11,
-    color: '#3A3A48',
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    fontFamily: 'Courier',
+  fpOld: {
+    color: '#A0A0A0',
+    fontSize: 14,
+    textDecorationLine: 'line-through',
+  },
+  fpAdd: {
+    backgroundColor: '#E8C97A',
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  fpAddDone: {
+    backgroundColor: '#4ECDC4',
+  },
+  fpAddText: {
+    color: '#23232B',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  fpCta: {
+    marginTop: 24,
+    alignItems: 'center',
   },
 });
 

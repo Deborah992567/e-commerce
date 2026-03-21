@@ -1,385 +1,238 @@
-import React, { useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Easing,
-  Dimensions,
-} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import CTAButton from './CTAButton';
 
-const { width } = Dimensions.get('window');
+interface HeroProps {
+  onShop: () => void;
+}
 
-// ── Orbiting ring decoration ───────────────────────────────────────────────
-const OrbitRing: React.FC<{ size: number; color: string; duration: number; delay: number }> = ({
-  size, color, duration, delay,
-}) => {
-  const rotate = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.timing(opacity, { toValue: 1, duration: 800, delay, useNativeDriver: true }).start();
-    Animated.loop(
-      Animated.timing(rotate, {
-        toValue: 1,
-        duration,
-        delay,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, []);
-
-  const spin = rotate.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
-
+const Hero: React.FC<HeroProps> = ({ onShop }) => {
   return (
-    <Animated.View
-      style={{
-        position: 'absolute',
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-        borderWidth: 1,
-        borderColor: color,
-        borderStyle: 'dashed',
-        opacity,
-        transform: [{ rotate: spin }],
-      }}
-    />
-  );
-};
+    <View style={styles.hero}>
+      <View style={styles.heroContent}>
+        <View style={styles.heroEyebrow}>
+          <View style={styles.heroDot} />
+          <Text style={styles.heroEyebrowText}>New Season 2026</Text>
+        </View>
 
-// ── Scanning line ──────────────────────────────────────────────────────────
-const ScanLine: React.FC = () => {
-  const translateY = useRef(new Animated.Value(-60)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+        <Text style={styles.heroTitle}>
+          <Text style={styles.heroTitleLine}>Wear the </Text>
+          <Text style={styles.heroTitleAccent}>Future</Text>
+          <Text style={[styles.heroTitleLine, styles.heroTitleLineSm]}> Today.</Text>
+        </Text>
 
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, { toValue: 0.6, duration: 300, useNativeDriver: true }),
-        Animated.timing(translateY, {
-          toValue: 60,
-          duration: 2000,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, { toValue: 0, duration: 300, useNativeDriver: true }),
-        Animated.delay(1200),
-        Animated.timing(translateY, { toValue: -60, duration: 0, useNativeDriver: true }),
-      ])
-    ).start();
-  }, []);
+        <Text style={styles.heroSub}>
+          Curated drops. Unmatched quality.{"\n"}
+          Pieces built for those who move differently.
+        </Text>
 
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={[styles.scanLine, { opacity, transform: [{ translateY }] }]}
-    />
-  );
-};
+        <View style={styles.heroActions}>
+          <CTAButton label="Shop Collection" onClick={onShop} variant="primary" icon="→" />
+          <CTAButton label="Explore Lookbook" variant="ghost" />
+        </View>
 
-// ── Typewriter subtitle ────────────────────────────────────────────────────
-const SUBTITLE = 'Shop the latest trends and deals.';
-
-const TypewriterText: React.FC<{ delay: number }> = ({ delay }) => {
-  const [displayed, setDisplayed] = React.useState('');
-  const [started, setStarted] = React.useState(false);
-
-  useEffect(() => {
-    const startTimer = setTimeout(() => setStarted(true), delay);
-    return () => clearTimeout(startTimer);
-  }, []);
-
-  useEffect(() => {
-    if (!started) return;
-    if (displayed.length >= SUBTITLE.length) return;
-    const t = setTimeout(() => {
-      setDisplayed(SUBTITLE.slice(0, displayed.length + 1));
-    }, 38);
-    return () => clearTimeout(t);
-  }, [started, displayed]);
-
-  return (
-    <Text style={styles.subtitle}>
-      {displayed}
-      {displayed.length < SUBTITLE.length && (
-        <Text style={styles.cursor}>|</Text>
-      )}
-    </Text>
-  );
-};
-
-// ── Main Hero ──────────────────────────────────────────────────────────────
-const Hero: React.FC = () => {
-  const containerOpacity = useRef(new Animated.Value(0)).current;
-  const eyebrowY = useRef(new Animated.Value(-16)).current;
-  const eyebrowOpacity = useRef(new Animated.Value(0)).current;
-  const titleY = useRef(new Animated.Value(30)).current;
-  const titleOpacity = useRef(new Animated.Value(0)).current;
-  const underlineScale = useRef(new Animated.Value(0)).current;
-  const tagOpacity = useRef(new Animated.Value(0)).current;
-  const orbitScale = useRef(new Animated.Value(0.4)).current;
-  const orbitOpacity = useRef(new Animated.Value(0)).current;
-  const shimmer = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.sequence([
-      // Background + orbits
-      Animated.parallel([
-        Animated.timing(containerOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
-        Animated.spring(orbitScale, { toValue: 1, useNativeDriver: true, speed: 3, bounciness: 8 }),
-        Animated.timing(orbitOpacity, { toValue: 1, duration: 800, useNativeDriver: true }),
-      ]),
-      // Eyebrow
-      Animated.parallel([
-        Animated.timing(eyebrowY, { toValue: 0, duration: 400, easing: Easing.out(Easing.back(2)), useNativeDriver: true }),
-        Animated.timing(eyebrowOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-      ]),
-      // Title
-      Animated.parallel([
-        Animated.timing(titleY, { toValue: 0, duration: 600, easing: Easing.out(Easing.back(1.4)), useNativeDriver: true }),
-        Animated.timing(titleOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
-      ]),
-      // Underline sweep
-      Animated.timing(underlineScale, {
-        toValue: 1,
-        duration: 500,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      // Tag
-      Animated.timing(tagOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-    ]).start();
-
-    // Shimmer on name
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmer, { toValue: 1, duration: 2200, delay: 2000, useNativeDriver: true }),
-        Animated.timing(shimmer, { toValue: 0, duration: 0, useNativeDriver: true }),
-      ])
-    ).start();
-  }, []);
-
-  const shimmerX = shimmer.interpolate({ inputRange: [0, 1], outputRange: [-180, 240] });
-
-  return (
-    <Animated.View style={[styles.container, { opacity: containerOpacity }]}>
-
-      {/* Background mesh circles */}
-      <View style={styles.meshCenter} pointerEvents="none">
-        <Animated.View style={{ transform: [{ scale: orbitScale }], opacity: orbitOpacity }}>
-          <OrbitRing size={220} color="#E8C97A18" duration={18000} delay={0} />
-          <OrbitRing size={160} color="#C4A4F030" duration={12000} delay={600} />
-          <OrbitRing size={100} color="#7AC8E828" duration={8000} delay={1200} />
-        </Animated.View>
-        {/* Central glow */}
-        <View style={styles.centralGlow} />
-        <ScanLine />
-      </View>
-
-      {/* Content */}
-      <View style={styles.content}>
-
-        {/* Eyebrow */}
-        <Animated.View style={[styles.eyebrowRow, { opacity: eyebrowOpacity, transform: [{ translateY: eyebrowY }] }]}>
-          <View style={styles.eyebrowDot} />
-          <Text style={styles.eyebrow}>DEBBIE'S E-COMMERCE</Text>
-          <View style={styles.eyebrowDot} />
-        </Animated.View>
-
-        {/* Title block */}
-        <Animated.View style={{ opacity: titleOpacity, transform: [{ translateY: titleY }], overflow: 'hidden' }}>
-          <Text style={styles.titleSmall}>Welcome to</Text>
-          <View style={styles.titleNameWrapper}>
-            {/* Shimmer overlay */}
-            <Animated.View
-              pointerEvents="none"
-              style={[styles.nameShimmer, { transform: [{ translateX: shimmerX }, { rotate: '15deg' }] }]}
-            />
-            <Text style={styles.titleName}>Debbie's</Text>
-          </View>
-        </Animated.View>
-
-        {/* Underline */}
-        <Animated.View style={[styles.underline, { transform: [{ scaleX: underlineScale }] }]} />
-
-        {/* Typewriter subtitle */}
-        <Animated.View style={{ opacity: tagOpacity, marginTop: 14 }}>
-          <TypewriterText delay={1600} />
-        </Animated.View>
-
-        {/* Tag pills */}
-        <Animated.View style={[styles.tagRow, { opacity: tagOpacity }]}>
-          {['Luxury', 'Curated', 'Exclusive'].map((tag, i) => (
-            <View key={i} style={[styles.tag, { borderColor: TAG_COLORS[i] + '50' }]}>
-              <View style={[styles.tagDot, { backgroundColor: TAG_COLORS[i] }]} />
-              <Text style={[styles.tagText, { color: TAG_COLORS[i] }]}>{tag}</Text>
+        <View style={styles.heroStats}>
+          {[
+            { n: "12K+", label: "Customers" },
+            { n: "4.9★", label: "Rating" },
+            { n: "200+", label: "Products" },
+          ].map((s) => (
+            <View style={styles.heroStat} key={s.label}>
+              <Text style={styles.heroStatN}>{s.n}</Text>
+              <Text style={styles.heroStatL}>{s.label}</Text>
             </View>
           ))}
-        </Animated.View>
-
+        </View>
       </View>
-    </Animated.View>
+
+      <View style={styles.heroVisual}>
+        <View style={styles.heroCardMain}>
+          <View style={styles.heroImgWrap}>
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80' }}
+              style={styles.heroImg}
+              resizeMode="cover"
+            />
+          </View>
+          <View style={styles.heroCardTag}><Text style={styles.heroCardTagText}>Limited Drop</Text></View>
+          <View style={styles.heroCardLabel}>
+            <Text style={styles.heroCardLabelText}>Obsidian Series</Text>
+            <Text style={styles.heroCardPrice}>$249</Text>
+          </View>
+        </View>
+
+        <View style={[styles.heroCardFloat, styles.heroCardA]}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=80' }}
+            style={styles.heroCardFloatImg}
+            resizeMode="cover"
+          />
+          <Text style={styles.heroCardFloatText}>Air Drift</Text>
+          <Text style={styles.heroCardFloatPrice}>$129</Text>
+        </View>
+        <View style={[styles.heroCardFloat, styles.heroCardB]}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=300&q=80' }}
+            style={styles.heroCardFloatImg}
+            resizeMode="cover"
+          />
+          <Text style={styles.heroCardFloatText}>Urban Core</Text>
+          <Text style={styles.heroCardFloatPrice}>$189</Text>
+        </View>
+      </View>
+    </View>
   );
 };
 
-const TAG_COLORS = ['#E8C97A', '#C4A4F0', '#7AC8E8'];
-
-// ── Styles ─────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#0D0D12',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ffffff08',
-    paddingBottom: 32,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-
-  // Mesh / orbit
-  meshCenter: {
-    position: 'absolute',
-    top: -30,
-    alignSelf: 'center',
-    left: width / 2 - 110,
-    width: 220,
-    height: 220,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  centralGlow: {
-    position: 'absolute',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#E8C97A12',
-    shadowColor: '#E8C97A',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 20,
-  },
-  scanLine: {
-    position: 'absolute',
-    width: 220,
-    height: 1.5,
-    backgroundColor: '#E8C97A',
-    shadowColor: '#E8C97A',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 6,
-  },
-
-  // Content
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 110,
+  hero: {
+    padding: 20,
     alignItems: 'center',
   },
-
-  // Eyebrow
-  eyebrowRow: {
+  heroContent: {
+    alignItems: 'center',
+  },
+  heroEyebrow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 10,
+  },
+  heroDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#E8C97A',
+    marginRight: 8,
+  },
+  heroEyebrowText: {
+    color: '#E8C97A',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  heroTitle: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
     marginBottom: 16,
   },
-  eyebrow: {
-    fontSize: 9,
-    letterSpacing: 4,
+  heroTitleLine: {
+    // no-op for RN, just for structure
+  },
+  heroTitleAccent: {
     color: '#E8C97A',
-    fontWeight: '700',
-    fontFamily: 'Courier',
   },
-  eyebrowDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: '#E8C97A60',
+  heroTitleLineSm: {
+    fontSize: 24,
   },
-
-  // Title
-  titleSmall: {
-    fontSize: 15,
-    color: '#6B6B7B',
-    fontWeight: '500',
+  heroSub: {
+    color: '#A0A0A0',
+    fontSize: 16,
     textAlign: 'center',
-    letterSpacing: 1,
-    marginBottom: 2,
-    fontFamily: 'Courier',
+    lineHeight: 24,
+    marginBottom: 32,
   },
-  titleNameWrapper: {
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  titleName: {
-    fontSize: 54,
-    fontWeight: '900',
-    color: '#F0EDE6',
-    letterSpacing: -2,
-    textAlign: 'center',
-  },
-  nameShimmer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    width: 50,
-    backgroundColor: 'rgba(232,201,122,0.15)',
-    zIndex: 10,
-  },
-
-  // Underline
-  underline: {
-    width: 48,
-    height: 2,
-    backgroundColor: '#E8C97A',
-    borderRadius: 1,
-    marginTop: 4,
-    transformOrigin: 'left',
-    alignSelf: 'center',
-  },
-
-  // Subtitle typewriter
-  subtitle: {
-    fontSize: 14,
-    color: '#6B6B7B',
-    letterSpacing: 0.3,
-    textAlign: 'center',
-    minHeight: 20,
-  },
-  cursor: {
-    color: '#E8C97A',
-    fontWeight: '300',
-  },
-
-  // Tags
-  tagRow: {
+  heroActions: {
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 18,
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    marginBottom: 40,
   },
-  tag: {
+  heroStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  heroStat: {
+    alignItems: 'center',
+    marginHorizontal: 8,
+  },
+  heroStatN: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  heroStatL: {
+    color: '#A0A0A0',
+    fontSize: 12,
+  },
+  heroVisual: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  heroCardMain: {
+    backgroundColor: '#23232B',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  heroImgWrap: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  heroImg: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+  },
+  heroCardTag: {
+    backgroundColor: '#E8C97A',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  heroCardTagText: {
+    color: '#23232B',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  heroCardLabel: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    backgroundColor: '#ffffff04',
+    marginTop: 4,
   },
-  tagDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
+  heroCardLabelText: {
+    color: 'white',
+    fontSize: 14,
+    marginRight: 8,
   },
-  tagText: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1.5,
-    fontFamily: 'Courier',
+  heroCardPrice: {
+    color: '#E8C97A',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  heroCardFloat: {
+    backgroundColor: '#23232B',
+    borderRadius: 16,
+    padding: 12,
+    alignItems: 'center',
+    marginHorizontal: 8,
+    width: 90,
+  },
+  heroCardA: {
+    marginTop: 24,
+  },
+  heroCardB: {
+    marginTop: 48,
+  },
+  heroCardFloatImg: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginBottom: 4,
+  },
+  heroCardFloatText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  heroCardFloatPrice: {
+    color: '#E8C97A',
+    fontSize: 12,
+    marginTop: 2,
   },
 });
 

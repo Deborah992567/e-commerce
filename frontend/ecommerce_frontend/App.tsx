@@ -104,6 +104,7 @@ function App(): React.JSX.Element {
 
   const handleShopNow = () => console.log('Shop now pressed!');
   const handleViewCart = () => console.log('View cart pressed!');
+  const handleAddToCart = (id: number) => console.log(`Add to cart: ${id}`);
 
   return (
     <View style={styles.root}>
@@ -119,7 +120,7 @@ function App(): React.JSX.Element {
       >
         {/* ── Hero ── */}
         <Section delay={0}>
-          <Hero />
+          <Hero onShop={handleShopNow} />
         </Section>
 
         <Divider delay={400} />
@@ -133,14 +134,13 @@ function App(): React.JSX.Element {
 
         {/* ── Cart ── */}
         <Section delay={800} style={styles.sectionPad}>
-          <AnimatedCart />
+          <AnimatedCart count={0} />
         </Section>
 
         <Divider delay={1000} />
-
         {/* ── Featured Products ── */}
         <Section delay={1100} style={styles.sectionPad}>
-          <FeaturedProducts />
+          <FeaturedProducts onAddToCart={handleAddToCart} />
         </Section>
       </ScrollView>
     </View>
