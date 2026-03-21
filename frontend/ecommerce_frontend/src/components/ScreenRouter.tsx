@@ -21,10 +21,13 @@ export default function ScreenRouter() {
     return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} />;
   }
   if (screen === 'login') {
-    return <LoginScreen onBack={handleBack} onGoToSignup={handleGoToSignup} onGoToForgot={handleGoToForgot} />;
+    return <LoginScreen onBack={handleBack} onGoToSignup={handleGoToSignup} onGoToForgot={handleGoToForgot} onGoToDashboard={handleGoToDashboard} />;
   }
   if (screen === 'forgot') {
     return <ForgotPasswordScreen onBack={handleBackToLogin} />;
+  }
+  if (screen === 'dashboard') {
+    return <DashboardScreen onBack={handleBack} />;
   }
   return <AppMain onShopNow={handleShopNow} />;
 }

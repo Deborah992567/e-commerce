@@ -6,9 +6,10 @@ interface LoginScreenProps {
   onBack?: () => void;
   onGoToSignup?: () => void;
   onGoToForgot?: () => void;
+  onGoToDashboard?: () => void;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToForgot }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToForgot, onGoToDashboard }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayedTitle, setDisplayedTitle] = useState('');
@@ -62,6 +63,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
       />
       <CTAButton title="Login" onPress={handleLogin} color="#7B1FA2" size="lg" />
       <Text style={styles.or}>or</Text>
+      <TouchableOpacity style={styles.adminBtn} onPress={onGoToDashboard}>
+        <Text style={styles.adminBtnText}>Admin Dashboard</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleSignIn}>
         <Text style={styles.googleBtnText}>Sign in with Google</Text>
       </TouchableOpacity>
@@ -150,6 +154,18 @@ const styles = StyleSheet.create({
   forgot: {
     color: '#E8C97A',
     marginTop: 12,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  adminBtn: {
+    backgroundColor: '#333',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  adminBtnText: {
+    color: '#A0A0A0',
     fontSize: 14,
     textAlign: 'center',
   },
