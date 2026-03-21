@@ -1,18 +1,13 @@
 from fastapi import APIRouter, Depends
 from app.dependencies.auth import admin_required, get_current_user
-from app.services.analytics_service import get_product_views
 from app.dependencies.database import get_db
-from app.services.analytics_service import get_order_stats
-from app.dependencies.auth import get_current_admin_user
 from sqlalchemy.orm import Session
 
+from app.models.order import Order
+from app.models.product import Product
+from app.models.user import User
+from app.services.admin_service import get_admin_stats
 from app.services.analytics_service import revenue_stats
-
-
-from backend.app.models.order import Order
-from backend.app.models.product import Product
-from backend.app.models.user import User
-from backend.app.services.admin_service import get_admin_stats
 router = APIRouter(
     prefix="/admin",
     tags=["Admin"],
@@ -27,19 +22,28 @@ async def product_views(
     if user.role != "admin":
         return {"error": "Unauthorized"}
 
-    views = await get_product_views(product_id)
+    from app.services.analytics_service import get_product_views
+    views = get_product_views(product_id)
     return {"views": views}
 
 @router.get("/analytics/orders")
 async def order_stats(
     db=Depends(get_db),
-    admin=Depends(get_current_admin_user)
+    user=Depends(get_current_user)
 ):
-    return await get_order_stats(db)
+    if user.role != "admin":
+        return {"error": "Unauthorized"}
+    
+    # Simple order stats
+    total_orders = db.query(Order).count()
+    return {"total_orders": total_orders}
 
 @router.get("/dashboard")
-async def dashboard(db: Session = Depends(get_db)):
-    return await get_admin_stats(db)
+async def dashboard(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    if user.role != "admin":
+        return {"error": "Unauthorized"}
+    
+    return get_admin_stats(db)
 
 
 @router.get("/users")

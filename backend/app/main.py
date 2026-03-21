@@ -9,7 +9,8 @@ from app.routers import (
     orders,
     reviews,
     discounts,
-    analytics
+    analytics,
+    admin
 )
 from app.middleware.logging import logging_middleware
 from app.middleware.rate_limit import rate_limit_middleware
@@ -58,6 +59,7 @@ app.include_router(orders.router, prefix="/orders" , tags=["orders"])
 app.include_router(reviews.router, prefix="/reviews" , tags=["reviews"])
 app.include_router(discounts.router, prefix="/discounts" , tags=["discounts"])
 app.include_router(analytics.router, prefix="/analytics" , tags=["analytics"])
+app.include_router(admin.router, prefix="/admin" , tags=["admin"])
 
 @app.get("/health")
 def health_check():
