@@ -99,10 +99,17 @@ const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void }> = 
 );
 
 // ── Main App ──────────────────────────────────────────────────────────────
-function App(): React.JSX.Element {
+interface AppProps {
+  onShopNow?: () => void;
+}
+
+function App({ onShopNow }: AppProps): React.JSX.Element {
   const insets = useSafeAreaInsets();
 
-  const handleShopNow = () => console.log('Shop now pressed!');
+  const handleShopNow = () => {
+    if (onShopNow) return onShopNow();
+    console.log('Shop now pressed!');
+  };
   const handleViewCart = () => console.log('View cart pressed!');
   const handleAddToCart = (id: number) => console.log(`Add to cart: ${id}`);
 

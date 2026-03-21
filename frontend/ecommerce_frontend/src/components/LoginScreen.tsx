@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import CTAButton from './CTAButton';
 
-const LoginScreen: React.FC = () => {
+interface LoginScreenProps {
+  onBack?: () => void;
+}
+
+const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -42,8 +46,8 @@ const LoginScreen: React.FC = () => {
       <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleSignIn}>
         <Text style={styles.googleBtnText}>Sign in with Google</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
-        <Text style={styles.forgot}>Forgot password?</Text>
+      <TouchableOpacity onPress={onBack}>
+        <Text style={styles.forgot}>{onBack ? '← Back' : 'Forgot password?'}</Text>
       </TouchableOpacity>
     </View>
   );
