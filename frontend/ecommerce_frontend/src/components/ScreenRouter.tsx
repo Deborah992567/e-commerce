@@ -3,9 +3,10 @@ import AppMain from '../../App';
 import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
 import ForgotPasswordScreen from './ForgotPasswordScreen';
+import DashboardScreen from './DashboardScreen';
 
 export default function ScreenRouter() {
-  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot'>('main');
+  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard'>('main');
 
   // Handler to pass to AppMain for navigation
   const handleShopNow = () => setScreen('login');
@@ -13,6 +14,7 @@ export default function ScreenRouter() {
   const handleGoToSignup = () => setScreen('signup');
   const handleGoToLogin = () => setScreen('login');
   const handleGoToForgot = () => setScreen('forgot');
+  const handleGoToDashboard = () => setScreen('dashboard');
   const handleBackToLogin = () => setScreen('login');
 
   if (screen === 'signup') {

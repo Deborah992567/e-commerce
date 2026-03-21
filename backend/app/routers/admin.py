@@ -61,5 +61,8 @@ async def list_products(db: Session = Depends(get_db)):
     return db.query(Product).all()
 
 @router.get("/revenue")
-async def revenue(db: Session = Depends(get_db)):
-    return await revenue_stats(db)
+async def revenue(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    if user.role != "admin":
+        return {"error": "Unauthorized"}
+    
+    return revenue_stats(db)
