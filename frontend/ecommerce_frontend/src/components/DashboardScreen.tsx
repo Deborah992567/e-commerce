@@ -61,6 +61,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
       <View style={styles.header}>
         <Text style={styles.title}>Admin Dashboard</Text>
         <Text style={styles.subtitle}>Welcome back! Here's your business overview</Text>
+        <Text style={styles.demoNote}>⚠️ Demo Mode - Login with admin email to access</Text>
       </View>
       
       <View style={styles.statsContainer}>
@@ -160,6 +161,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#A0A0A0',
     textAlign: 'center',
+    marginBottom: 8,
+  },
+  demoNote: {
+    fontSize: 14,
+    color: '#FFC107',
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   loadingCard: {
     flex: 1,

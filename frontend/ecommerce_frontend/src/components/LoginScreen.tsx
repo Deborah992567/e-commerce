@@ -32,7 +32,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
 
   const handleLogin = () => {
     // Replace with real authentication logic
-    Alert.alert('Login', `Email: ${email}\nPassword: ${password}`);
+    // For now, simulate admin login if email contains 'admin'
+    if (email.toLowerCase().includes('admin')) {
+      Alert.alert('Admin Login', `Welcome Admin!\nEmail: ${email}\nPassword: ${password}`);
+      // In real app, this would set admin token and navigate to dashboard
+      if (onGoToDashboard) onGoToDashboard();
+    } else {
+      Alert.alert('Login', `Email: ${email}\nPassword: ${password}`);
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -72,11 +79,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
       <TouchableOpacity style={styles.forgotBtn} onPress={onGoToForgot}>
         <Text style={styles.forgotBtnText}>Forgot password?</Text>
       </TouchableOpacity>
-      <View style={styles.adminContainer}>
-        <TouchableOpacity style={styles.adminBtn} onPress={onGoToDashboard}>
-          <Text style={styles.adminBtnText}>Admin Access</Text>
-        </TouchableOpacity>
-      </View>
       <TouchableOpacity onPress={onBack}>
         <Text style={styles.forgot}>{onBack ? '← Back' : ''}</Text>
       </TouchableOpacity>
