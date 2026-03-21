@@ -9,14 +9,30 @@ interface LoginScreenProps {
 const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [displayedTitle, setDisplayedTitle] = useState('');
+  const slideAnim = useRef(new Animated.Value(300)).current; // Start off-screen to the right
+  const fullTitle = 'Welcome Back';
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 700,
+    // Slide-in animation
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 600,
       useNativeDriver: true,
     }).start();
+
+    // Typewriter animation
+    let index = 0;
+    const typewriterInterval = setInterval(() => {
+      if (index < fullTitle.length) {
+        setDisplayedTitle(fullTitle.substring(0, index + 1));
+        index++;
+      } else {
+        clearInterval(typewriterInterval);
+      }
+    }, 100); // 100ms per character
+
+    return () => clearInterval(typewriterInterval);
   }, []);
 
   const handleLogin = () => {
@@ -30,8 +46,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
   };
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <Text style={styles.title}>Welcome Back</Text>
+    <Animated.View style={[styles.container, { transform: [{ translateX: slideAnim }] }]}>
+      <Text style={styles.title}>{displayedTitle}</Text>
       <Text style={styles.subtitle}>Sign in to your account</Text>
       <TextInput
         style={styles.input}
