@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface User {
   id: number;
@@ -34,13 +35,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check for stored token on app start
   useEffect(() => {
-    const storedToken = localStorage.getItem('auth_token');
-    const storedUser = localStorage.getItem('user_data');
+    const loadStoredAuth = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('auth_token');
+        const storedUser = await AsyncStorage.getItem('user_data');
+        
+        if (storedToken && storedUser) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error('Error loading stored auth:', error);
+      }
+    };
     
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
+    loadStoredAuth();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -65,9 +74,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(mockUser);
         setToken(mockToken);
         
-        // Store in localStorage (in real app, use secure storage)
-        localStorage.setItem('auth_token', mockToken);
-        localStorage.setItem('user_data', JSON.stringify(mockUser));
+        // Store in AsyncStorage
+        await AsyncStorage.setItem('auth_token', mockToken);
+        await AsyncStorage.setItem('user_data', JSON.stringify(mockUser));
         
         return true;
       } else {
@@ -82,8 +91,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(mockUser);
         setToken(mockToken);
         
-        localStorage.setItem('auth_token', mockToken);
-        localStorage.setItem('user_data', JSON.stringify(mockUser));
+        await AsyncStorage.setItem('auth_token', mockToken);
+        await AsyncStorage.setItem('user_data', JSON.stringify(mockUser));
         
         return true;
       }
@@ -93,11 +102,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
+    await AsyncStorage.removeItem('auth_token');
+    await AsyncStorage.removeItem('user_data');
   };
 
   const value: AuthContextType = {

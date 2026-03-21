@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import CTAButton from './CTAButton';
+import { useAuth } from '../contexts/AuthContext';
 
 interface LoginScreenProps {
   onBack?: () => void;
@@ -14,6 +15,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   const [password, setPassword] = useState('');
   const [displayedTitle, setDisplayedTitle] = useState('');
   const fullTitle = 'Welcome Back';
+  const { login, isAdmin } = useAuth();
 
   useEffect(() => {
     // Typewriter animation
@@ -30,15 +32,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
     return () => clearInterval(typewriterInterval);
   }, []);
 
-  const handleLogin = () => {
-    // Replace with real authentication logic
-    // For now, simulate admin login if email contains 'admin'
-    if (email.toLowerCase().includes('admin')) {
-      Alert.alert('Admin Login', `Welcome Admin!\nEmail: ${email}\nPassword: ${password}`);
-      // In real app, this would set admin token and navigate to dashboard
-      if (onGoToDashboard) onGoToDashboard();
+  const handleLogin = async () => {
+    const success = await login(email, password);
+    if (success) {
+      if (isAdmin && onGoToDashboard) {
+        Alert.alert('Admin Login', 'Welcome to the admin dashboard!');
+        onGoToDashboard();
+      } else {
+        Alert.alert('Login Success', `Welcome back, ${email}!`);
+        // For regular users, you might want to navigate to user dashboard or main app
+        if (onBack) onBack(); // Go back to main for now
+      }
     } else {
-      Alert.alert('Login', `Email: ${email}\nPassword: ${password}`);
+      Alert.alert('Login Failed', 'Invalid credentials');
     }
   };
 

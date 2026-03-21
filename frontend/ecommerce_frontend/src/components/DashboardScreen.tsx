@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Alert, TouchableOpacity, Dimensions } from 'react-native';
 import CTAButton from './CTAButton';
+import { useAuth } from '../contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -17,32 +18,24 @@ interface DashboardScreenProps {
 const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     fetchDashboardStats();
   }, []);
 
-  const fetchDashboardStats = async () => {
-    try {
-      // Replace with actual API call
-      // const response = await fetch('http://localhost:8000/admin/dashboard', {
-      //   headers: { 'Authorization': `Bearer ${token}` }
-      // });
-      // const data = await response.json();
-      
-      // Mock data for now
-      setTimeout(() => {
-        setStats({
-          total_users: 1250,
-          total_orders: 456,
-          total_products: 89
-        });
-        setLoading(false);
-      }, 1000);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to load dashboard stats');
-      setLoading(false);
-    }
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Logout', onPress: () => {
+          logout();
+          if (onBack) onBack();
+        }}
+      ]
+    );
   };
 
   if (loading) {
@@ -59,9 +52,15 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
-        <Text style={styles.title}>Admin Dashboard</Text>
-        <Text style={styles.subtitle}>Welcome back! Here's your business overview</Text>
-        <Text style={styles.demoNote}>⚠️ Demo Mode - Login with admin email to access</Text>
+        <View style={styles.headerTop}>
+          <Text style={styles.title}>Admin Dashboard</Text>
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.welcomeText}>Welcome back, {user?.email}!</Text>
+        <Text style={styles.subtitle}>Here's your business overview</Text>
+        <Text style={styles.demoNote}>⚠️ Demo Mode - Using mock data</Text>
       </View>
       
       <View style={styles.statsContainer}>
@@ -149,6 +148,29 @@ const styles = StyleSheet.create({
   header: {
     padding: 24,
     paddingBottom: 16,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  logoutBtn: {
+    backgroundColor: '#FF4444',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  logoutText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  welcomeText: {
+    fontSize: 16,
+    color: '#E8C97A',
+    fontWeight: '600',
+    marginBottom: 4,
   },
   title: {
     fontSize: 32,
