@@ -49,8 +49,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
       <TouchableOpacity style={styles.signupBtn} onPress={() => Alert.alert('Sign Up', 'Sign up pressed!')}>
         <Text style={styles.signupBtnText}>Sign up</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.forgotBtn} onPress={() => Alert.alert('Forgot Password', 'Forgot password pressed!')}>
+        <Text style={styles.forgotBtnText}>Forgot password?</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={onBack}>
-        <Text style={styles.forgot}>{onBack ? '← Back' : 'Forgot password?'}</Text>
+        <Text style={styles.forgot}>{onBack ? '← Back' : ''}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -115,10 +118,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  forgotBtn: {
+    backgroundColor: 'transparent',
+    marginBottom: 8,
+  },
+  forgotBtnText: {
+    color: '#E8C97A',
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   forgot: {
     color: '#E8C97A',
     marginTop: 12,
     fontSize: 14,
+    textAlign: 'center',
   },
 });
 
