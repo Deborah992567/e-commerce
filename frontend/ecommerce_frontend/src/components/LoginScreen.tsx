@@ -72,7 +72,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup }) => {
       <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleSignIn}>
         <Text style={styles.googleBtnText}>Sign in with Google</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.signupBtn} onPress={() => Alert.alert('Sign Up', 'Sign up pressed!')}>
+      <TouchableOpacity style={styles.signupBtn} onPress={onGoToSignup}>
         <Text style={styles.signupBtnText}>Sign up</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.forgotBtn} onPress={() => Alert.alert('Forgot Password', 'Forgot password pressed!')}>

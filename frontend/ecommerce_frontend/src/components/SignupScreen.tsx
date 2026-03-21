@@ -4,9 +4,10 @@ import CTAButton from './CTAButton';
 
 interface SignupScreenProps {
   onBack?: () => void;
+  onGoToLogin?: () => void;
 }
 
-const SignupScreen: React.FC<SignupScreenProps> = ({ onBack }) => {
+const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
