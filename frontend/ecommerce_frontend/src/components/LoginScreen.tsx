@@ -63,9 +63,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
       />
       <CTAButton title="Login" onPress={handleLogin} color="#7B1FA2" size="lg" />
       <Text style={styles.or}>or</Text>
-      <TouchableOpacity style={styles.adminBtn} onPress={onGoToDashboard}>
-        <Text style={styles.adminBtnText}>Admin Dashboard</Text>
-      </TouchableOpacity>
       <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleSignIn}>
         <Text style={styles.googleBtnText}>Sign in with Google</Text>
       </TouchableOpacity>
@@ -75,6 +72,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
       <TouchableOpacity style={styles.forgotBtn} onPress={onGoToForgot}>
         <Text style={styles.forgotBtnText}>Forgot password?</Text>
       </TouchableOpacity>
+      <View style={styles.adminContainer}>
+        <TouchableOpacity style={styles.adminBtn} onPress={onGoToDashboard}>
+          <Text style={styles.adminBtnText}>Admin Access</Text>
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity onPress={onBack}>
         <Text style={styles.forgot}>{onBack ? '← Back' : ''}</Text>
       </TouchableOpacity>
@@ -157,16 +159,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
+  adminContainer: {
+    marginTop: 16,
+    marginBottom: 8,
+    opacity: 0.7,
+  },
   adminBtn: {
     backgroundColor: '#333',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginBottom: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignSelf: 'center',
   },
   adminBtnText: {
-    color: '#A0A0A0',
-    fontSize: 14,
+    color: '#888',
+    fontSize: 12,
     textAlign: 'center',
   },
 });
