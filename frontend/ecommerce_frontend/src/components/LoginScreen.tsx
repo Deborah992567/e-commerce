@@ -46,6 +46,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
       <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleSignIn}>
         <Text style={styles.googleBtnText}>Sign in with Google</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.signupBtn} onPress={() => Alert.alert('Sign Up', 'Sign up pressed!')}>
+        <Text style={styles.signupBtnText}>Sign up</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={onBack}>
         <Text style={styles.forgot}>{onBack ? '← Back' : 'Forgot password?'}</Text>
       </TouchableOpacity>
@@ -97,6 +100,18 @@ const styles = StyleSheet.create({
   },
   googleBtnText: {
     color: '#23232B',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  signupBtn: {
+    backgroundColor: '#23232B',
+    borderRadius: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    marginBottom: 8,
+  },
+  signupBtnText: {
+    color: '#E8C97A',
     fontWeight: 'bold',
     fontSize: 16,
   },
