@@ -5,9 +5,10 @@ import CTAButton from './CTAButton';
 interface LoginScreenProps {
   onBack?: () => void;
   onGoToSignup?: () => void;
+  onGoToForgot?: () => void;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToForgot }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayedTitle, setDisplayedTitle] = useState('');
@@ -67,7 +68,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup }) => {
       <TouchableOpacity style={styles.signupBtn} onPress={onGoToSignup}>
         <Text style={styles.signupBtnText}>Sign up</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.forgotBtn} onPress={() => Alert.alert('Forgot Password', 'Forgot password pressed!')}>
+      <TouchableOpacity style={styles.forgotBtn} onPress={onGoToForgot}>
         <Text style={styles.forgotBtnText}>Forgot password?</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={onBack}>
