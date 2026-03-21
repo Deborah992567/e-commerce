@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import CTAButton from './CTAButton';
 
 interface LoginScreenProps {
@@ -11,17 +11,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayedTitle, setDisplayedTitle] = useState('');
-  const slideAnim = useRef(new Animated.Value(300)).current; // Start off-screen to the right
   const fullTitle = 'Welcome Back';
 
   useEffect(() => {
-    // Slide-in animation
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 600,
-      useNativeDriver: true,
-    }).start();
-
     // Typewriter animation
     let index = 0;
     const typewriterInterval = setInterval(() => {
@@ -47,7 +39,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup }) => {
   };
 
   return (
-    <Animated.View style={[styles.container, { transform: [{ translateX: slideAnim }] }]}>
+    <View style={styles.container}>
       <Text style={styles.title}>{displayedTitle}</Text>
       <Text style={styles.subtitle}>Sign in to your account</Text>
       <TextInput
@@ -81,7 +73,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup }) => {
       <TouchableOpacity onPress={onBack}>
         <Text style={styles.forgot}>{onBack ? '← Back' : ''}</Text>
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
 };
 
