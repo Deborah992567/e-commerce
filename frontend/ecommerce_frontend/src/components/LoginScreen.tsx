@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated } from 'react-native';
 import CTAButton from './CTAButton';
 
 interface LoginScreenProps {
@@ -9,6 +9,15 @@ interface LoginScreenProps {
 const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 700,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const handleLogin = () => {
     // Replace with real authentication logic
@@ -21,7 +30,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <Text style={styles.title}>Welcome Back</Text>
       <Text style={styles.subtitle}>Sign in to your account</Text>
       <TextInput
@@ -55,7 +64,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack }) => {
       <TouchableOpacity onPress={onBack}>
         <Text style={styles.forgot}>{onBack ? '← Back' : ''}</Text>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
