@@ -86,46 +86,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // });
       // const data = await response.json();
       
-      // Mock authentication - specific admin credentials
-      const ADMIN_EMAIL = 'admin@ecommerce.com';
-      const ADMIN_PASSWORD = 'admin123';
-      
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        const mockUser: User = {
-          id: 1,
-          email: email,
-          role: 'admin'
-        };
-        const mockToken = 'mock_admin_token_' + Date.now();
-        
-        setUser(mockUser);
-        setToken(mockToken);
-        
-        // Store in memory storage
-        await storage.setItem('auth_token', mockToken);
-        await storage.setItem('user_data', JSON.stringify(mockUser));
-        
-        return true;
-      } else if (email && password) {
-        // Regular user login
-        const mockUser: User = {
-          id: 2,
-          email: email,
-          role: 'customer'
-        };
-        const mockToken = 'mock_customer_token_' + Date.now();
-        
-        setUser(mockUser);
-        setToken(mockToken);
-        
-        await storage.setItem('auth_token', mockToken);
-        await storage.setItem('user_data', JSON.stringify(mockUser));
-        
-        return true;
+      const MOCK_USERS = [
+        { id: 1, email: 'admin@ecommerce.com', password: 'admin123', role: 'admin' as const },
+        { id: 2, email: 'user1@ecommerce.com', password: 'user123', role: 'customer' as const },
+        { id: 3, email: 'user2@ecommerce.com', password: 'user123', role: 'customer' as const },
+      ];
+
+      const matchedUser = MOCK_USERS.find((u) => u.email === email && u.password === password);
+
+      if (!matchedUser) {
+        return false;
       }
       
-      // Invalid credentials
-      return false;
+      const mockUser: User = {
+        id: matchedUser.id,
+        email: matchedUser.email,
+        role: matchedUser.role,
+      };
+      const mockToken = `mock_${matchedUser.role}_token_${Date.now()}`;
+
+      setUser(mockUser);
+      setToken(mockToken);
+
+      await storage.setItem('auth_token', mockToken);
+      await storage.setItem('user_data', JSON.stringify(mockUser));
+
+      return true;
     } catch (error) {
       console.error('Login error:', error);
       return false;
