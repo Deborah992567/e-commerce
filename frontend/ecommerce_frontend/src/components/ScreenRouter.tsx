@@ -40,5 +40,5 @@ export default function ScreenRouter() {
   if (screen === 'cart') {
     return <CartScreen onBack={handleBack} />;
   }
-  return <HomeScreen onShopNow={handleShopNow} />;
+  return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
 }
