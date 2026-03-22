@@ -62,8 +62,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // });
       // const data = await response.json();
       
-      // Mock authentication - check if email contains 'admin'
-      if (email.toLowerCase().includes('admin')) {
+      // Mock authentication - fixed admin credentials
+      const ADMIN_EMAIL = 'admin@ecommerce.com';
+      const ADMIN_PASSWORD = 'admin123';
+
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         const mockUser: User = {
           id: 1,
           email: email,
@@ -79,7 +82,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         await AsyncStorage.setItem('user_data', JSON.stringify(mockUser));
         
         return true;
-      } else {
+      } else if (email && password) {
         // Regular user login
         const mockUser: User = {
           id: 2,
@@ -96,6 +99,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         return true;
       }
+      
+      // Invalid credentials
+      return false;
     } catch (error) {
       console.error('Login error:', error);
       return false;

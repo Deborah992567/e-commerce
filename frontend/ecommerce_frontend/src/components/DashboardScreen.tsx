@@ -356,3 +356,7 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
+
+function fetchDashboardStats() {
+    throw new Error('Function not implemented.');
+}
