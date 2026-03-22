@@ -18,6 +18,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   const fullTitle = 'Welcome Back';
   const { login } = useAuth();
 
+  const helperText = 'Mock login:\n- admin@ecommerce.com / admin123 (admin)\n- user1@ecommerce.com / user123 (customer)\n- user2@ecommerce.com / user123 (customer)';
+
   useEffect(() => {
     // Typewriter animation
     let index = 0;
@@ -62,6 +64,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{displayedTitle}</Text>
+      <Text style={styles.helper}>{helperText}</Text>
       <Text style={styles.subtitle}>Sign in to your account</Text>
       <TextInput
         style={styles.input}
@@ -172,6 +175,13 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 14,
     textAlign: 'center',
+  },
+  helper: {
+    textAlign: 'center',
+    color: '#B3B3C2',
+    marginBottom: 10,
+    fontSize: 12,
+    lineHeight: 16,
   },
   adminContainer: {
     marginTop: 16,
