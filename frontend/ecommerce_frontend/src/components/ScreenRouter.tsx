@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AppMain from '../../App';
+import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
 import ForgotPasswordScreen from './ForgotPasswordScreen';
@@ -35,5 +35,5 @@ export default function ScreenRouter() {
   if (screen === 'dashboard') {
     return <DashboardScreen onBack={handleBack} />;
   }
-  return <AppMain onShopNow={handleShopNow} />;
+  return <HomeScreen onShopNow={handleShopNow} />;
 }
