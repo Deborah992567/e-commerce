@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { useAuth } from '../contexts/AuthContext';
 import CTAButton from './CTAButton';
 
 const PRODUCTS = [
@@ -18,6 +19,7 @@ interface ProductListScreenProps {
 
 const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart }) => {
   const [activeFilter, setActiveFilter] = useState('All');
+  const { user } = useAuth();
 
   const filtered = activeFilter === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeFilter);
 
@@ -29,8 +31,10 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Shop All Products</Text>
+        <Text style={styles.title}>{user ? `Hello, ${user.email}` : 'Shop All Products'}</Text>
       </View>
+
+      {user && <Text style={styles.welcome}>Role: {user.role} • Continue shopping below</Text>}
 
       <View style={styles.filterRow}>
         {FILTERS.map((filter) => (
@@ -97,6 +101,7 @@ const styles = StyleSheet.create({
   priceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   price: { color: '#E8C97A', fontWeight: '700', marginRight: 10 },
   oldPrice: { color: '#7A7A8A', textDecorationLine: 'line-through' },
+  welcome: { color: '#B3B3C2', marginBottom: 10, fontSize: 14 },
 });
 
 export default ProductListScreen;
