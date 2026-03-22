@@ -62,12 +62,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <Text style={styles.title}>Admin Dashboard</Text>
-          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.title}>Admin Dashboard</Text>
         <Text style={styles.welcomeText}>Welcome back, {user?.email}!</Text>
         <Text style={styles.subtitle}>Here's your business overview</Text>
         <Text style={styles.demoNote}>⚠️ Demo Mode - Using mock data</Text>
@@ -143,6 +138,12 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
         </View>
       </View>
 
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>🚪 Logout</Text>
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity onPress={onBack} style={styles.backBtn}>
         <Text style={styles.backText}>← Back to Main</Text>
       </TouchableOpacity>
@@ -165,17 +166,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
-  },
-  logoutBtn: {
-    backgroundColor: '#FF4444',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-  },
-  logoutText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: 'bold',
   },
   welcomeText: {
     fontSize: 16,
@@ -363,6 +353,27 @@ const styles = StyleSheet.create({
     color: '#E8C97A',
     fontSize: 16,
     fontWeight: '600',
+  },
+  footer: {
+    marginTop: 20,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  logoutButton: {
+    backgroundColor: '#FF4444',
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 12,
+    shadowColor: '#FF4444',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  logoutButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
