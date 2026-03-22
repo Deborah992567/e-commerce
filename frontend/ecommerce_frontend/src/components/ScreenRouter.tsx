@@ -4,10 +4,11 @@ import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
 import ForgotPasswordScreen from './ForgotPasswordScreen';
 import DashboardScreen from './DashboardScreen';
+import CartScreen from './CartScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
-  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard'>('main');
+  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart'>('main');
   const { isAdmin } = useAuth();
 
   // Handler to pass to AppMain for navigation
@@ -21,6 +22,7 @@ export default function ScreenRouter() {
       setScreen('dashboard');
     }
   };
+  const handleViewCart = () => setScreen('cart');
   const handleBackToLogin = () => setScreen('login');
 
   if (screen === 'signup') {
@@ -34,6 +36,9 @@ export default function ScreenRouter() {
   }
   if (screen === 'dashboard') {
     return <DashboardScreen onBack={handleBack} />;
+  }
+  if (screen === 'cart') {
+    return <CartScreen onBack={handleBack} />;
   }
   return <HomeScreen onShopNow={handleShopNow} />;
 }
