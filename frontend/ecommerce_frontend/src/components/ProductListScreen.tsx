@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import CTAButton from './CTAButton';
 
@@ -8,6 +8,12 @@ const PRODUCTS = [
   { id: 2, name: 'Void Jacket', category: 'Outerwear', price: 389, oldPrice: null, badge: 'New', img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80' },
   { id: 3, name: 'Eclipse Watch', category: 'Accessories', price: 549, oldPrice: null, badge: 'Limited', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80' },
   { id: 4, name: 'Core Tee', category: 'Apparel', price: 79, oldPrice: null, badge: null, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80' },
+  { id: 5, name: 'Luna Backpack', category: 'Accessories', price: 129, oldPrice: 149, badge: 'Trending', img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80' },
+  { id: 6, name: 'Monarch Sunglasses', category: 'Accessories', price: 199, oldPrice: null, badge: 'New', img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500&q=80' },
+  { id: 7, name: 'Swift Sneakers', category: 'Footwear', price: 159, oldPrice: 189, badge: 'Best Seller', img: 'https://images.unsplash.com/photo-1528701800489-20e46c66ea59?w=500&q=80' },
+  { id: 8, name: 'Nimbus Hoodie', category: 'Apparel', price: 99, oldPrice: 129, badge: 'Limited', img: 'https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=500&q=80' },
+  { id: 9, name: 'Atlas Denim', category: 'Apparel', price: 119, oldPrice: 149, badge: null, img: 'https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?w=500&q=80' },
+  { id: 10, name: 'Aero Jacket', category: 'Outerwear', price: 439, oldPrice: 499, badge: 'Premium', img: 'https://images.unsplash.com/photo-1600180758895-8f4076ea7f24?w=500&q=80' },
 ];
 
 const FILTERS = ['All', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
@@ -19,9 +25,13 @@ interface ProductListScreenProps {
 
 const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart }) => {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [search, setSearch] = useState('');
   const { user } = useAuth();
 
-  const filtered = activeFilter === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeFilter);
+  const filteredByCategory = activeFilter === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeFilter);
+  const filtered = filteredByCategory.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase())
+  );
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
 
@@ -36,6 +46,14 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
 
       {user && <Text style={styles.welcome}>Role: {user.role} • Continue shopping below</Text>}
 
+      <TextInput
+        style={styles.searchInput}
+        value={search}
+        onChangeText={setSearch}
+        placeholder="Search products by name or category..."
+        placeholderTextColor="#888"
+      />
+
       <View style={styles.filterRow}>
         {FILTERS.map((filter) => (
           <TouchableOpacity
@@ -47,6 +65,10 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
           </TouchableOpacity>
         ))}
       </View>
+
+      {filtered.length === 0 && (
+        <Text style={styles.noResults}>No products found. Try another keyword.</Text>
+      )}
 
       <FlatList
         data={filtered}
@@ -80,8 +102,8 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0D0D12', padding: 14 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  container: { flex: 1, backgroundColor: '#0D0D12', padding: 14, paddingTop: 26 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 18 },
   backBtn: { marginRight: 10 },
   backText: { color: '#E8C97A', fontSize: 16, fontWeight: '600' },
   title: { color: '#FFF', fontSize: 20, fontWeight: '700' },
@@ -101,7 +123,18 @@ const styles = StyleSheet.create({
   priceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   price: { color: '#E8C97A', fontWeight: '700', marginRight: 10 },
   oldPrice: { color: '#7A7A8A', textDecorationLine: 'line-through' },
+  searchInput: {
+    backgroundColor: '#23232B',
+    color: '#ffffff',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#444',
+  },
   welcome: { color: '#B3B3C2', marginBottom: 10, fontSize: 14 },
+  noResults: { color: '#FF6B6B', fontSize: 14, marginVertical: 10, textAlign: 'center' },
 });
 
 export default ProductListScreen;
