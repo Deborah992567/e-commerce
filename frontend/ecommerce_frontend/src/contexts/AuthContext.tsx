@@ -1,5 +1,14 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
+// Temporarily using in-memory storage instead of AsyncStorage
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+
+/**
+ * MOCK ADMIN CREDENTIALS:
+ * Email: admin@ecommerce.com
+ * Password: admin123
+ * 
+ * Any other email/password combination will work as a regular customer login.
+ */
 
 interface User {
   id: number;
@@ -32,13 +41,28 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  
+  // Simple in-memory storage for demo (replace with AsyncStorage later)
+  const memoryStorage = useRef<{[key: string]: string}>({});
+  
+  const storage = {
+    getItem: (key: string) => Promise.resolve(memoryStorage.current[key] || null),
+    setItem: (key: string, value: string) => {
+      memoryStorage.current[key] = value;
+      return Promise.resolve();
+    },
+    removeItem: (key: string) => {
+      delete memoryStorage.current[key];
+      return Promise.resolve();
+    }
+  };
 
   // Check for stored token on app start
   useEffect(() => {
     const loadStoredAuth = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('auth_token');
-        const storedUser = await AsyncStorage.getItem('user_data');
+        const storedToken = await storage.getItem('auth_token');
+        const storedUser = await storage.getItem('user_data');
         
         if (storedToken && storedUser) {
           setToken(storedToken);
@@ -62,10 +86,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // });
       // const data = await response.json();
       
-      // Mock authentication - fixed admin credentials
+      // Mock authentication - specific admin credentials
       const ADMIN_EMAIL = 'admin@ecommerce.com';
       const ADMIN_PASSWORD = 'admin123';
-
+      
       if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         const mockUser: User = {
           id: 1,
@@ -77,9 +101,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(mockUser);
         setToken(mockToken);
         
-        // Store in AsyncStorage
-        await AsyncStorage.setItem('auth_token', mockToken);
-        await AsyncStorage.setItem('user_data', JSON.stringify(mockUser));
+        // Store in memory storage
+        await storage.setItem('auth_token', mockToken);
+        await storage.setItem('user_data', JSON.stringify(mockUser));
         
         return true;
       } else if (email && password) {
@@ -94,8 +118,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(mockUser);
         setToken(mockToken);
         
-        await AsyncStorage.setItem('auth_token', mockToken);
-        await AsyncStorage.setItem('user_data', JSON.stringify(mockUser));
+        await storage.setItem('auth_token', mockToken);
+        await storage.setItem('user_data', JSON.stringify(mockUser));
         
         return true;
       }
@@ -111,8 +135,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     setUser(null);
     setToken(null);
-    await AsyncStorage.removeItem('auth_token');
-    await AsyncStorage.removeItem('user_data');
+    await storage.removeItem('auth_token');
+    await storage.removeItem('user_data');
   };
 
   const value: AuthContextType = {
