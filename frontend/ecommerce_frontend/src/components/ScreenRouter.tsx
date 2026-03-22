@@ -28,10 +28,10 @@ export default function ScreenRouter() {
   const handleBackToLogin = () => setScreen('login');
 
   if (screen === 'signup') {
-    return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} />;
+    return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} onGoToProductList={handleGoToProducts} />;
   }
   if (screen === 'login') {
-    return <LoginScreen onBack={handleBack} onGoToSignup={handleGoToSignup} onGoToForgot={handleGoToForgot} onGoToDashboard={handleGoToDashboard} />;
+    return <LoginScreen onBack={handleBack} onGoToSignup={handleGoToSignup} onGoToForgot={handleGoToForgot} onGoToDashboard={handleGoToDashboard} onGoToProductList={handleGoToProducts} />;
   }
   if (screen === 'forgot') {
     return <ForgotPasswordScreen onBack={handleBackToLogin} />;
