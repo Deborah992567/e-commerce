@@ -21,7 +21,17 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
   const { user, logout } = useAuth();
 
   useEffect(() => {
-    fetchDashboardStats();
+    // Simulate loading dashboard data
+    const timer = setTimeout(() => {
+      setStats({
+        total_users: 1250,
+        total_orders: 456,
+        total_products: 89
+      });
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleLogout = () => {
@@ -356,7 +366,3 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
-
-function fetchDashboardStats() {
-    throw new Error('Function not implemented.');
-}

@@ -15,7 +15,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   const [password, setPassword] = useState('');
   const [displayedTitle, setDisplayedTitle] = useState('');
   const fullTitle = 'Welcome Back';
-  const { login, isAdmin } = useAuth();
+  const { login } = useAuth();
 
   useEffect(() => {
     // Typewriter animation
@@ -35,9 +35,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   const handleLogin = async () => {
     const success = await login(email, password);
     if (success) {
-      if (isAdmin && onGoToDashboard) {
+      // Check if admin login by email (since state update is async)
+      if (email === 'admin@ecommerce.com') {
         Alert.alert('Admin Login', 'Welcome to the admin dashboard!');
-        onGoToDashboard();
+        if (onGoToDashboard) onGoToDashboard();
       } else {
         Alert.alert('Login Success', `Welcome back, ${email}!`);
         // For regular users, you might want to navigate to user dashboard or main app
