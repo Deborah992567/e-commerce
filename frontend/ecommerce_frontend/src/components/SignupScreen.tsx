@@ -5,9 +5,10 @@ import CTAButton from './CTAButton';
 interface SignupScreenProps {
   onBack?: () => void;
   onGoToLogin?: () => void;
+  onGoToProductList?: () => void;
 }
 
-const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin }) => {
+const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin, onGoToProductList }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +37,12 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin }) => {
       return;
     }
     // Replace with real signup logic
-    Alert.alert('Signup', `Name: ${name}\nEmail: ${email}\nPassword: ${password}`);
+    Alert.alert('Signup Successful', `Welcome, ${name}!`);
+    if (onGoToProductList) {
+      onGoToProductList();
+    } else if (onBack) {
+      onBack();
+    }
   };
 
   const handleGoogleSignIn = () => {

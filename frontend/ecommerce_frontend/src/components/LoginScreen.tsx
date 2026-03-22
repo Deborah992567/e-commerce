@@ -8,9 +8,10 @@ interface LoginScreenProps {
   onGoToSignup?: () => void;
   onGoToForgot?: () => void;
   onGoToDashboard?: () => void;
+  onGoToProductList?: () => void;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToForgot, onGoToDashboard }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToForgot, onGoToDashboard, onGoToProductList }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayedTitle, setDisplayedTitle] = useState('');
@@ -42,7 +43,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
       } else {
         Alert.alert('Login Success', `Welcome back, ${email}!`);
         // For regular users, you might want to navigate to user dashboard or main app
-        if (onBack) onBack(); // Go back to main for now
+        if (onGoToProductList) {
+          onGoToProductList();
+        } else if (onBack) {
+          onBack();
+        }
       }
     } else {
       Alert.alert('Login Failed', 'Invalid credentials');
