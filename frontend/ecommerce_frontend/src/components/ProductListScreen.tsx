@@ -37,6 +37,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
 
   return (
     <View style={styles.container}>
+      <View style={styles.spacerAbove} />
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
@@ -44,7 +45,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
         <Text style={styles.title}>{user ? `Hello, ${user.email}` : 'Shop All Products'}</Text>
       </View>
 
-      {user && <Text style={styles.welcome}>Role: {user.role} • Continue shopping below</Text>}
+      {/* Role line removed by request */}
 
       <TextInput
         style={styles.searchInput}
@@ -103,7 +104,8 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0D0D12', padding: 14, paddingTop: 26 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 18 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 30 },
+  spacerAbove: { height: 16 },
   backBtn: { marginRight: 10 },
   backText: { color: '#E8C97A', fontSize: 16, fontWeight: '600' },
   title: { color: '#FFF', fontSize: 20, fontWeight: '700' },
