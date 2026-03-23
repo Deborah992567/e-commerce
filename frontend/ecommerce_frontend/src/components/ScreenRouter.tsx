@@ -7,6 +7,7 @@ import DashboardScreen from './DashboardScreen';
 import CartScreen from './CartScreen';
 import ProductListScreen from './ProductListScreen';
 import ProfileScreen from './ProfileScreen';
+import ProductDetailScreen from './ProductDetailScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
@@ -29,6 +30,10 @@ export default function ScreenRouter() {
   const handleGoToProductDetail = (product: any) => {
     setSelectedProduct(product);
     setScreen('productDetail');
+  };
+  const handleBackFromProductDetail = () => {
+    setScreen('productList');
+    setSelectedProduct(null);
   };
   const handleViewCart = () => setScreen('cart');
   const handleGoToProfile = () => setScreen('profile');
@@ -61,6 +66,9 @@ export default function ScreenRouter() {
   }
   if (screen === 'profile') {
     return <ProfileScreen onBack={handleBack} />;
+  }
+  if (screen === 'productDetail' && selectedProduct) {
+    return <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} />;
   }
   return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
 }
