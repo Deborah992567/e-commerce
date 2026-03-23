@@ -10,7 +10,7 @@ import ProfileScreen from './ProfileScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
-  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile'>('main');
+  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail'>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const { isAdmin } = useAuth();
 
