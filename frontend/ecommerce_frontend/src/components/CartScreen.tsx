@@ -53,7 +53,7 @@ const CartScreen: React.FC<CartScreenProps> = ({ onBack }) => {
                   <Text style={styles.itemSubtotal}>${(item.price * item.quantity).toFixed(2)}</Text>
                 </View>
                 <TouchableOpacity
-                  onPress={() => removeFromCart(item.id)}
+                  onPress={() => removeFromCart(Number(item.id))}
                   style={styles.removeBtn}
                 >
                   <Text style={styles.removeText}>Remove</Text>

@@ -12,7 +12,7 @@ import { useAuth } from '../contexts/AuthContext';
 export default function ScreenRouter() {
   const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail'>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
 
   // Handler to pass to AppMain for navigation
   const handleShopNow = () => setScreen('login');
@@ -33,6 +33,13 @@ export default function ScreenRouter() {
   const handleViewCart = () => setScreen('cart');
   const handleGoToProfile = () => setScreen('profile');
   const handleBackToLogin = () => setScreen('login');
+  const handleCartBack = () => {
+    if (user) {
+      setScreen('productList');
+    } else {
+      setScreen('main');
+    }
+  };
 
   if (screen === 'signup') {
     return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} onGoToProductList={handleGoToProducts} />;
@@ -50,7 +57,7 @@ export default function ScreenRouter() {
     return <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => setScreen('cart')} onLogout={() => setScreen('main')} />;
   }
   if (screen === 'cart') {
-    return <CartScreen onBack={handleBack} />;
+    return <CartScreen onBack={handleCartBack} />;
   }
   if (screen === 'profile') {
     return <ProfileScreen onBack={handleBack} />;

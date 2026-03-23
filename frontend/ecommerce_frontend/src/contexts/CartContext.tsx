@@ -9,7 +9,7 @@ export interface CartProduct extends Product {
 interface CartContextType {
   cart: CartProduct[];
   addToCart: (product: Product) => void;
-  removeFromCart: (productId: number) => void;
+  removeFromCart: (productId: string | number) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -62,7 +62,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addToCart = (product: Product) => {
     setCart((current) => {
-      const existingIndex = current.findIndex((item) => item.id === product.id);
+      const existingIndex = current.findIndex((item) => String(item.id) === String(product.id));
       if (existingIndex !== -1) {
         const next = [...current];
         next[existingIndex] = { ...next[existingIndex], quantity: next[existingIndex].quantity + 1 };
@@ -72,8 +72,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const removeFromCart = (productId: number) => {
-    setCart((current) => current.filter((item) => item.id !== productId));
+  const removeFromCart = (productId: string | number) => {
+    setCart((current) => current.filter((item) => String(item.id) !== String(productId)));
   };
 
   const clearCart = () => {
