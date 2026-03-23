@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Alert,
   Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -101,7 +102,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
   const handleAddToCart = () => {
     // Check if size selection is required but not selected
     if (details.sizes && details.sizes.length > 0 && !selectedSize) {
-      alert('Please select a size before adding to cart');
+      Alert.alert('Select size', 'Please select a size before adding to cart');
       return;
     }
 
