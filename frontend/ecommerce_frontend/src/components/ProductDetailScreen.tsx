@@ -30,6 +30,7 @@ const PRODUCT_DETAILS: { [key: number]: any } = {
     rating: 4.8,
     reviews: 245,
     inStock: true,
+    sizes: ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13'],
     specs: [
       { label: 'Material', value: 'Mesh & Rubber' },
       { label: 'Weight', value: '280g' },
@@ -47,6 +48,7 @@ const PRODUCT_DETAILS: { [key: number]: any } = {
     rating: 4.6,
     reviews: 189,
     inStock: true,
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     specs: [
       { label: 'Material', value: '100% Polyester' },
       { label: 'Care', value: 'Machine Washable' },
@@ -63,6 +65,7 @@ const PRODUCT_DETAILS: { [key: number]: any } = {
     rating: 4.9,
     reviews: 312,
     inStock: true,
+    sizes: [],
     specs: [
       { label: 'Display', value: 'AMOLED' },
       { label: 'Battery Life', value: '7 Days' },
@@ -78,6 +81,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [scaleAnim] = useState(new Animated.Value(1));
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   const details = PRODUCT_DETAILS[product.id] || {
     images: [product.img],
@@ -86,6 +90,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
     rating: 4.5,
     reviews: 100,
     inStock: true,
+    sizes: [],
     specs: [
       { label: 'Quality', value: 'Premium' },
       { label: 'Warranty', value: '1 Year' },
@@ -94,8 +99,22 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
   };
 
   const handleAddToCart = () => {
+    // Check if size selection is required but not selected
+    if (details.sizes && details.sizes.length > 0 && !selectedSize) {
+      alert('Please select a size before adding to cart');
+      return;
+    }
+
+    // normalize to the shape expected by the cart (ensure image & description exist)
+    const cartItem = {
+      ...product,
+      image: (product as any).image || (product as any).img || details.images?.[0] || '',
+      description: (product as any).description || details.description || '',
+    };
+
     for (let i = 0; i < quantity; i++) {
-      addToCart(product);
+      // cast to any to avoid cross-module type mismatch between duplicate Product types
+      addToCart(cartItem as any);
     }
     Animated.sequence([
       Animated.spring(scaleAnim, {
@@ -206,6 +225,34 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.description}>{details.fullDescription}</Text>
         </View>
+
+        {/* Size Selection */}
+        {details.sizes && details.sizes.length > 0 && (
+          <View style={styles.sizeSection}>
+            <Text style={styles.sectionTitle}>Select Size</Text>
+            <View style={styles.sizeGrid}>
+              {details.sizes.map((size: string) => (
+                <TouchableOpacity
+                  key={size}
+                  onPress={() => setSelectedSize(size)}
+                  style={[
+                    styles.sizeButton,
+                    selectedSize === size && styles.sizeButtonSelected,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.sizeButtonText,
+                      selectedSize === size && styles.sizeButtonTextSelected,
+                    ]}
+                  >
+                    {size}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
 
         {/* Specifications */}
         <View style={styles.specsSection}>
@@ -438,6 +485,42 @@ const styles = StyleSheet.create({
     color: '#C0C0C8',
     fontSize: 14,
     lineHeight: 22,
+  },
+  sizeSection: {
+    marginBottom: 24,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1F1F2A',
+  },
+  sizeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  sizeButton: {
+    flex: 1,
+    minWidth: '22%',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#1F1F2A',
+    backgroundColor: '#18181F',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sizeButtonSelected: {
+    backgroundColor: '#E8C97A',
+    borderColor: '#E8C97A',
+  },
+  sizeButtonText: {
+    color: '#A0A0A0',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  sizeButtonTextSelected: {
+    color: '#000',
+    fontWeight: '700',
   },
   specsSection: {
     marginBottom: 24,
