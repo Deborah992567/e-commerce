@@ -8,7 +8,7 @@ export interface CartProduct extends Product {
 interface CartContextType {
   cart: CartProduct[];
   addToCart: (product: Product) => void;
-  removeFromCart: (productId: number) => void;
+  removeFromCart: (productId: string) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -39,7 +39,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = (productId: string) => {
     setCart((current) => current.filter((item) => item.id !== productId));
   };
 
