@@ -21,10 +21,30 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
     country: 'USA'
   });
 
-  const [paymentMethod, setPaymentMethod] = useState({
-    cardNumber: '**** **** **** 1234',
-    expiryDate: '12/26',
-    cardholderName: 'John Doe'
+  const [paymentMethods, setPaymentMethods] = useState([
+    {
+      id: 1,
+      type: 'credit_card',
+      cardNumber: '**** **** **** 1234',
+      expiryDate: '12/26',
+      cardholderName: 'John Doe',
+      isDefault: true
+    },
+    {
+      id: 2,
+      type: 'paypal',
+      email: 'john.doe@email.com',
+      isDefault: false
+    }
+  ]);
+
+  const [showAddPayment, setShowAddPayment] = useState(false);
+  const [newPaymentMethod, setNewPaymentMethod] = useState({
+    type: 'credit_card',
+    cardNumber: '',
+    expiryDate: '',
+    cardholderName: '',
+    email: ''
   });
 
   const [notifications, setNotifications] = useState({
