@@ -31,7 +31,7 @@ interface ProductListScreenProps {
   onLogout?: () => void;
 }
 
-const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart, onGoToProductDetail }) => {
+const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart, onGoToProductDetail, onGoToProfile, onLogout }) => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [wishlist, setWishlist] = useState<number[]>([]);
@@ -152,7 +152,18 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
   return (
     <View style={[styles.container, { paddingTop: insets.top + 30 }]}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+          <Icon name="arrow-back" size={24} color="#E8C97A" />
+        </TouchableOpacity>
         <Text style={styles.title}>{user ? `Hello, ${user.email.split('@')[0]}` : 'Shop All Products'}</Text>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={onGoToProfile} style={styles.headerBtn}>
+            <Icon name="person-outline" size={20} color="#E8C97A" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onLogout} style={styles.headerBtn}>
+            <Icon name="log-out-outline" size={20} color="#E8C97A" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <TextInput
@@ -242,7 +253,9 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0D0D12', padding: 14 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 20 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 20, justifyContent: 'space-between' },
+  headerActions: { flexDirection: 'row', gap: 12 },
+  headerBtn: { padding: 8, borderRadius: 8, backgroundColor: '#1F1F2A' },
   spacerAbove: { height: 10 },
   backBtn: { marginRight: 10 },
   backBtnSoft: {
