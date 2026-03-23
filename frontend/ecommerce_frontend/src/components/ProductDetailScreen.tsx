@@ -111,6 +111,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
       ...product,
       image: (product as any).image || (product as any).img || details.images?.[0] || '',
       description: (product as any).description || details.description || '',
+      size: selectedSize,
     };
 
     for (let i = 0; i < quantity; i++) {

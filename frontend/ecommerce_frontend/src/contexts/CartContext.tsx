@@ -4,12 +4,13 @@ import { Product } from '../types';
 
 export interface CartProduct extends Product {
   quantity: number;
+  size?: string | null;
 }
 
 interface CartContextType {
   cart: CartProduct[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string | number) => void;
+  addToCart: (product: Product & { size?: string | null }) => void;
+  removeFromCart: (productId: string | number, size?: string | null) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -60,20 +61,26 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [cart, isLoading]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product & { size?: string | null }) => {
     setCart((current) => {
-      const existingIndex = current.findIndex((item) => String(item.id) === String(product.id));
+      const existingIndex = current.findIndex(
+        (item) => String(item.id) === String(product.id) && item.size === product.size
+      );
       if (existingIndex !== -1) {
         const next = [...current];
         next[existingIndex] = { ...next[existingIndex], quantity: next[existingIndex].quantity + 1 };
         return next;
       }
-      return [...current, { ...product, quantity: 1 }];
+      return [...current, { ...product, quantity: 1, size: product.size }];
     });
   };
 
-  const removeFromCart = (productId: string | number) => {
-    setCart((current) => current.filter((item) => String(item.id) !== String(productId)));
+  const removeFromCart = (productId: string | number, size?: string | null) => {
+    setCart((current) =>
+      current.filter(
+        (item) => !(String(item.id) === String(productId) && item.size === size)
+      )
+    );
   };
 
   const clearCart = () => {
