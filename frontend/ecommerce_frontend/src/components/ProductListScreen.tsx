@@ -39,12 +39,8 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 30 }]}>
-      <View style={styles.spacerAbove} />
+    <View style={[styles.container, { paddingTop: insets.top + 30 }]}>   
       <View style={styles.header}>
-          <TouchableOpacity onPress={onBack} style={styles.backBtnSoft}>
-            <Text style={styles.backText}>← Back</Text>
-          </TouchableOpacity>
         <Text style={styles.title}>{user ? `Hello, ${user.email.split('@')[0]}` : 'Shop All Products'}</Text>
       </View>
 
@@ -101,6 +97,12 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
           </View>
         )}
       />
+
+      <View style={styles.bottomNav}>
+        <TouchableOpacity onPress={onBack} style={styles.backBtnSoft}>
+          <Text style={styles.backText}>← Back</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -118,6 +120,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E8C97A',
     marginRight: 10,
+  },
+  bottomNav: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    alignItems: 'center',
   },
   backText: { color: '#E8C97A', fontSize: 16, fontWeight: '600' },
   title: { color: '#FFF', fontSize: 20, fontWeight: '700' },
