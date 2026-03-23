@@ -11,7 +11,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
 import { Product } from '../types';
-import CTAButton from './CTAButton';
 
 interface ProductDetailScreenProps {
   product: Product;
