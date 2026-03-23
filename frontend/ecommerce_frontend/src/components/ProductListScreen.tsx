@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput, Animated, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
 import CTAButton from './CTAButton';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -25,19 +26,20 @@ const FILTERS = ['All', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
 
 interface ProductListScreenProps {
   onBack?: () => void;
-  onAddToCart?: (id: number) => void;
   onGoToProductDetail?: (product: any) => void;
   onGoToProfile?: () => void;
+  onGoToCart?: () => void;
   onLogout?: () => void;
 }
 
-const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart, onGoToProductDetail, onGoToProfile, onLogout }) => {
+const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToProductDetail, onGoToProfile, onGoToCart, onLogout }) => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [scrollY] = useState(new Animated.Value(0));
   const { user } = useAuth();
+  const { addToCart, totalItems } = useCart();
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -105,7 +107,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
             </View>
             <CTAButton
               title="Add to Cart"
-              onPress={() => onAddToCart?.(item.id)}
+              onPress={() => addToCart(item)}
               size="sm"
               color="#E8C97A"
             />
@@ -157,6 +159,14 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
         </TouchableOpacity>
         <Text style={styles.title}>{user ? `Hello, ${user.email.split('@')[0]}` : 'Shop All Products'}</Text>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={onGoToCart} style={styles.headerBtn}>
+            <Text style={styles.emojiBtn}>🛒</Text>
+            {totalItems > 0 && (
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>{totalItems}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
           <TouchableOpacity onPress={onGoToProfile} style={styles.headerBtn}>
             <Text style={styles.emojiBtn}>👤</Text>
           </TouchableOpacity>
@@ -257,6 +267,23 @@ const styles = StyleSheet.create({
   headerActions: { flexDirection: 'row', gap: 12 },
   headerBtn: { padding: 8, borderRadius: 8, backgroundColor: '#1F1F2A' },
   emojiBtn: { fontSize: 20, color: '#E8C97A' },
+  cartBadge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: '#E8C97A',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  cartBadgeText: {
+    color: '#000',
+    fontSize: 12,
+    fontWeight: '700',
+  },
   spacerAbove: { height: 10 },
   backBtn: { marginRight: 10 },
   backBtnSoft: {

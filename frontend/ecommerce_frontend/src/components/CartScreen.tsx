@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useCart } from '../contexts/CartContext';
 
 interface CartItem {
   id: number;
@@ -19,37 +21,57 @@ const demoCartItems: CartItem[] = [
 ];
 
 const CartScreen: React.FC<CartScreenProps> = ({ onBack }) => {
-  const total = demoCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const { cart, removeFromCart, totalPrice, totalItems } = useCart();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 30 }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Your Cart</Text>
+        <Text style={styles.title}>Your Cart ({totalItems})</Text>
       </View>
 
-      <FlatList
-        data={demoCartItems}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <View style={styles.itemCard}>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemDetail}>Qty: {item.quantity} • ${item.price.toFixed(2)}</Text>
+      {cart.length === 0 ? (
+        <View style={styles.emptyCart}>
+          <Text style={styles.emptyText}>🛒</Text>
+          <Text style={styles.emptyTitle}>Your cart is empty</Text>
+          <Text style={styles.emptySubtitle}>Add some products to get started!</Text>
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={cart}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.list}
+            renderItem={({ item }) => (
+              <View style={styles.itemCard}>
+                <View style={styles.itemInfo}>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemDetail}>Qty: {item.quantity} • ${item.price.toFixed(2)}</Text>
+                  <Text style={styles.itemSubtotal}>${(item.price * item.quantity).toFixed(2)}</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => removeFromCart(item.id)}
+                  style={styles.removeBtn}
+                >
+                  <Text style={styles.removeText}>Remove</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+
+          <View style={styles.footer}>
+            <Text style={styles.totalLabel}>Total</Text>
+            <Text style={styles.totalValue}>${totalPrice.toFixed(2)}</Text>
           </View>
-        )}
-      />
 
-      <View style={styles.footer}>
-        <Text style={styles.totalLabel}>Total</Text>
-        <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
-      </View>
-
-      <TouchableOpacity style={styles.checkoutBtn} onPress={() => console.log('Checkout pressed')}>
-        <Text style={styles.checkoutText}>Proceed to Checkout</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.checkoutBtn} onPress={() => console.log('Checkout pressed')}>
+            <Text style={styles.checkoutText}>Proceed to Checkout</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 };
@@ -58,15 +80,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0D0D12',
-    padding: 16,
+    padding: 14,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
+    marginTop: 20,
   },
   backBtn: {
-    marginRight: 12,
+    marginRight: 10,
   },
   backText: {
     color: '#E8C97A',
@@ -75,7 +98,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#fff',
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '700',
   },
   list: {
@@ -86,6 +109,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  itemInfo: {
+    flex: 1,
   },
   itemName: {
     color: '#FFF',
@@ -96,6 +125,45 @@ const styles = StyleSheet.create({
   itemDetail: {
     color: '#B3B3C2',
     fontSize: 14,
+    marginBottom: 2,
+  },
+  itemSubtotal: {
+    color: '#E8C97A',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  removeBtn: {
+    backgroundColor: '#FF6B6B',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  removeText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  emptyCart: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  emptyText: {
+    fontSize: 60,
+    marginBottom: 20,
+  },
+  emptyTitle: {
+    color: '#FFF',
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    color: '#B3B3C2',
+    fontSize: 16,
+    textAlign: 'center',
   },
   footer: {
     borderTopWidth: 1,
