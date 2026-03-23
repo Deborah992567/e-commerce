@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
 import CTAButton from './CTAButton';
 
@@ -21,12 +22,14 @@ const FILTERS = ['All', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
 interface ProductListScreenProps {
   onBack?: () => void;
   onAddToCart?: (id: number) => void;
+  onGoToProductDetail?: (product: any) => void;
 }
 
-const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart }) => {
+const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart, onGoToProductDetail }) => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [search, setSearch] = useState('');
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const filteredByCategory = activeFilter === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeFilter);
   const filtered = filteredByCategory.filter((p) =>
@@ -36,7 +39,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
       <View style={styles.spacerAbove} />
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
@@ -103,9 +106,9 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0D0D12', padding: 14, paddingTop: 80 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 40 },
-  spacerAbove: { height: 20 },
+  container: { flex: 1, backgroundColor: '#0D0D12', padding: 14 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 20 },
+  spacerAbove: { height: 10 },
   backBtn: { marginRight: 10 },
   backText: { color: '#E8C97A', fontSize: 16, fontWeight: '600' },
   title: { color: '#FFF', fontSize: 20, fontWeight: '700' },
