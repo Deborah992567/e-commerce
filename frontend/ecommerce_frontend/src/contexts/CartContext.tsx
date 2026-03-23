@@ -1,0 +1,58 @@
+import React, { createContext, useContext, useMemo, useState } from 'react';
+import { Product } from '../types';
+
+export interface CartProduct extends Product {
+  quantity: number;
+}
+
+interface CartContextType {
+  cart: CartProduct[];
+  addToCart: (product: Product) => void;
+  removeFromCart: (productId: number) => void;
+  clearCart: () => void;
+  totalItems: number;
+  totalPrice: number;
+}
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export const useCart = (): CartContextType => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within CartProvider');
+  }
+  return context;
+};
+
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [cart, setCart] = useState<CartProduct[]>([]);
+
+  const addToCart = (product: Product) => {
+    setCart((current) => {
+      const existingIndex = current.findIndex((item) => item.id === product.id);
+      if (existingIndex !== -1) {
+        const next = [...current];
+        next[existingIndex] = { ...next[existingIndex], quantity: next[existingIndex].quantity + 1 };
+        return next;
+      }
+      return [...current, { ...product, quantity: 1 }];
+    });
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCart((current) => current.filter((item) => item.id !== productId));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const totalItems = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
+  const totalPrice = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
+
+  return (
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, totalItems, totalPrice }}>
+      {children}
+    </CartContext.Provider>
+  );
+};

@@ -103,9 +103,9 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0D0D12', padding: 14, paddingTop: 26 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 30 },
-  spacerAbove: { height: 16 },
+  container: { flex: 1, backgroundColor: '#0D0D12', padding: 14, paddingTop: 10 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 10 },
+  spacerAbove: { height: 8 },
   backBtn: { marginRight: 10 },
   backText: { color: '#E8C97A', fontSize: 16, fontWeight: '600' },
   title: { color: '#FFF', fontSize: 20, fontWeight: '700' },
