@@ -42,9 +42,9 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
     <View style={[styles.container, { paddingTop: insets.top + 30 }]}>
       <View style={styles.spacerAbove} />
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.backText}>← Back</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={onBack} style={styles.backBtnSoft}>
+            <Text style={styles.backText}>← Back</Text>
+          </TouchableOpacity>
         <Text style={styles.title}>{user ? `Hello, ${user.email}` : 'Shop All Products'}</Text>
       </View>
 
@@ -110,6 +110,15 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 20 },
   spacerAbove: { height: 10 },
   backBtn: { marginRight: 10 },
+  backBtnSoft: {
+    backgroundColor: '#1F1F2A',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E8C97A',
+    marginRight: 10,
+  },
   backText: { color: '#E8C97A', fontSize: 16, fontWeight: '600' },
   title: { color: '#FFF', fontSize: 20, fontWeight: '700' },
   filterRow: { flexDirection: 'row', flexWrap: 'wrap', marginVertical: 10, gap: 8 },
