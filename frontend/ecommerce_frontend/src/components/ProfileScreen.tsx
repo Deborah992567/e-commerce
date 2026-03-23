@@ -66,6 +66,67 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
     Alert.alert('Success', 'Notification preferences updated!');
   };
 
+  const addPaymentMethod = () => {
+    if (newPaymentMethod.type === 'paypal' && !newPaymentMethod.email) {
+      Alert.alert('Error', 'Please enter your PayPal email');
+      return;
+    }
+    if (newPaymentMethod.type !== 'paypal' && (!newPaymentMethod.cardNumber || !newPaymentMethod.expiryDate || !newPaymentMethod.cardholderName)) {
+      Alert.alert('Error', 'Please fill in all card details');
+      return;
+    }
+
+    const newMethod: any = {
+      id: Date.now(),
+      type: newPaymentMethod.type,
+      isDefault: paymentMethods.length === 0 // First payment method is default
+    };
+
+    if (newPaymentMethod.type === 'paypal') {
+      newMethod.email = newPaymentMethod.email;
+    } else {
+      newMethod.cardNumber = newPaymentMethod.cardNumber;
+      newMethod.expiryDate = newPaymentMethod.expiryDate;
+      newMethod.cardholderName = newPaymentMethod.cardholderName;
+    }
+
+    setPaymentMethods([...paymentMethods, newMethod]);
+    setNewPaymentMethod({
+      type: 'credit_card',
+      cardNumber: '',
+      expiryDate: '',
+      cardholderName: '',
+      email: ''
+    });
+    setShowAddPayment(false);
+    Alert.alert('Success', 'Payment method added successfully!');
+  };
+
+  const removePaymentMethod = (id: number) => {
+    Alert.alert(
+      'Remove Payment Method',
+      'Are you sure you want to remove this payment method?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => {
+            setPaymentMethods(paymentMethods.filter(method => method.id !== id));
+          }
+        }
+      ]
+    );
+  };
+
+  const setDefaultPaymentMethod = (id: number) => {
+    setPaymentMethods(paymentMethods.map(method => ({
+      ...method,
+      isDefault: method.id === id
+    })));
+    Alert.alert('Success', 'Default payment method updated!');
+  };
+
   const handleLogout = () => {
     Alert.alert(
       'Logout',
@@ -150,35 +211,145 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
           <CTAButton title="Save Address" onPress={handleSaveAddress} size="sm" color="#E8C97A" />
         </View>
 
-        {/* Payment Method Section */}
+        {/* Payment Methods Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Payment Method</Text>
-          <View style={styles.inputGroup}>
-            <TextInput
-              style={styles.input}
-              value={paymentMethod.cardNumber}
-              onChangeText={(text) => setPaymentMethod({...paymentMethod, cardNumber: text})}
-              placeholder="Card Number"
-              placeholderTextColor="#888"
-            />
-            <View style={styles.row}>
-              <TextInput
-                style={[styles.input, { flex: 1, marginRight: 8 }]}
-                value={paymentMethod.expiryDate}
-                onChangeText={(text) => setPaymentMethod({...paymentMethod, expiryDate: text})}
-                placeholder="MM/YY"
-                placeholderTextColor="#888"
-              />
-              <TextInput
-                style={[styles.input, { flex: 1, marginLeft: 8 }]}
-                value={paymentMethod.cardholderName}
-                onChangeText={(text) => setPaymentMethod({...paymentMethod, cardholderName: text})}
-                placeholder="Cardholder Name"
-                placeholderTextColor="#888"
-              />
-            </View>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Payment Methods</Text>
+            <TouchableOpacity onPress={() => setShowAddPayment(!showAddPayment)}>
+              <Text style={styles.addButton}>+ Add</Text>
+            </TouchableOpacity>
           </View>
-          <CTAButton title="Save Payment Method" onPress={handleSavePayment} size="sm" color="#E8C97A" />
+
+          {/* Existing Payment Methods */}
+          {paymentMethods.map((method) => (
+            <View key={method.id} style={styles.paymentCard}>
+              <View style={styles.paymentInfo}>
+                <View style={styles.paymentTypeRow}>
+                  <Text style={styles.paymentType}>
+                    {method.type === 'credit_card' && '💳 Credit Card'}
+                    {method.type === 'debit_card' && '💳 Debit Card'}
+                    {method.type === 'paypal' && '🅿️ PayPal'}
+                    {method.type === 'apple_pay' && '📱 Apple Pay'}
+                    {method.type === 'google_pay' && '🎯 Google Pay'}
+                  </Text>
+                  {method.isDefault && <Text style={styles.defaultBadge}>Default</Text>}
+                </View>
+
+                {method.type === 'paypal' ? (
+                  <Text style={styles.paymentDetail}>{method.email}</Text>
+                ) : (
+                  <View>
+                    <Text style={styles.paymentDetail}>•••• •••• •••• {method.cardNumber?.slice(-4)}</Text>
+                    <Text style={styles.paymentDetail}>{method.cardholderName} • Expires {method.expiryDate}</Text>
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.paymentActions}>
+                {!method.isDefault && (
+                  <TouchableOpacity
+                    onPress={() => setDefaultPaymentMethod(method.id)}
+                    style={styles.actionBtn}
+                  >
+                    <Text style={styles.actionText}>Set Default</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  onPress={() => removePaymentMethod(method.id)}
+                  style={[styles.actionBtn, { backgroundColor: '#FF6B6B' }]}
+                >
+                  <Text style={styles.actionText}>Remove</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+
+          {/* Add New Payment Method Form */}
+          {showAddPayment && (
+            <View style={styles.addPaymentForm}>
+              <Text style={styles.formTitle}>Add New Payment Method</Text>
+
+              <View style={styles.paymentTypeSelector}>
+                {[
+                  { type: 'credit_card', label: '💳 Credit Card', emoji: '💳' },
+                  { type: 'debit_card', label: '💳 Debit Card', emoji: '💳' },
+                  { type: 'paypal', label: '🅿️ PayPal', emoji: '🅿️' },
+                  { type: 'apple_pay', label: '📱 Apple Pay', emoji: '📱' },
+                  { type: 'google_pay', label: '🎯 Google Pay', emoji: '🎯' }
+                ].map((option) => (
+                  <TouchableOpacity
+                    key={option.type}
+                    style={[
+                      styles.typeOption,
+                      newPaymentMethod.type === option.type && styles.typeOptionSelected
+                    ]}
+                    onPress={() => setNewPaymentMethod({...newPaymentMethod, type: option.type})}
+                  >
+                    <Text style={styles.typeEmoji}>{option.emoji}</Text>
+                    <Text style={[
+                      styles.typeLabel,
+                      newPaymentMethod.type === option.type && styles.typeLabelSelected
+                    ]}>
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {newPaymentMethod.type === 'paypal' ? (
+                <TextInput
+                  style={styles.input}
+                  value={newPaymentMethod.email}
+                  onChangeText={(text) => setNewPaymentMethod({...newPaymentMethod, email: text})}
+                  placeholder="PayPal Email"
+                  placeholderTextColor="#888"
+                  keyboardType="email-address"
+                />
+              ) : (
+                <View style={styles.inputGroup}>
+                  <TextInput
+                    style={styles.input}
+                    value={newPaymentMethod.cardNumber}
+                    onChangeText={(text) => setNewPaymentMethod({...newPaymentMethod, cardNumber: text})}
+                    placeholder="Card Number"
+                    placeholderTextColor="#888"
+                    keyboardType="numeric"
+                  />
+                  <View style={styles.row}>
+                    <TextInput
+                      style={[styles.input, { flex: 1, marginRight: 8 }]}
+                      value={newPaymentMethod.expiryDate}
+                      onChangeText={(text) => setNewPaymentMethod({...newPaymentMethod, expiryDate: text})}
+                      placeholder="MM/YY"
+                      placeholderTextColor="#888"
+                    />
+                    <TextInput
+                      style={[styles.input, { flex: 1, marginLeft: 8 }]}
+                      value={newPaymentMethod.cardholderName}
+                      onChangeText={(text) => setNewPaymentMethod({...newPaymentMethod, cardholderName: text})}
+                      placeholder="Cardholder Name"
+                      placeholderTextColor="#888"
+                    />
+                  </View>
+                </View>
+              )}
+
+              <View style={styles.formActions}>
+                <TouchableOpacity
+                  onPress={() => setShowAddPayment(false)}
+                  style={[styles.formBtn, styles.cancelBtn]}
+                >
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={addPaymentMethod}
+                  style={[styles.formBtn, styles.saveBtn]}
+                >
+                  <Text style={styles.saveText}>Add Payment Method</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </View>
 
         {/* Notification Preferences */}
