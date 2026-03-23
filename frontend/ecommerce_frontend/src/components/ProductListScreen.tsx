@@ -45,7 +45,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
           <TouchableOpacity onPress={onBack} style={styles.backBtnSoft}>
             <Text style={styles.backText}>← Back</Text>
           </TouchableOpacity>
-        <Text style={styles.title}>{user ? `Hello, ${user.email}` : 'Shop All Products'}</Text>
+        <Text style={styles.title}>{user ? `Hello, ${user.email.split('@')[0]}` : 'Shop All Products'}</Text>
       </View>
 
       {/* Role line removed by request */}
