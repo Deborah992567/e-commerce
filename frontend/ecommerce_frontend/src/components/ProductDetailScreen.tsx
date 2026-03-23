@@ -149,7 +149,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
             showsHorizontalScrollIndicator={false}
             style={styles.thumbnailContainer}
           >
-            {details.images.map((image, index) => (
+            {details.images.map((image: string, index: number) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => setSelectedImage(index)}
