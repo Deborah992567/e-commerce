@@ -18,6 +18,9 @@ const PRODUCTS = [
   { id: 10, name: 'Aero Jacket', category: 'Outerwear', price: 439, oldPrice: 499, badge: 'Premium', img: 'https://images.unsplash.com/photo-1600180758895-8f4076ea7f24?w=500&q=80' },
 ];
 
+const RECENTLY_VIEWED = PRODUCTS.slice(0, 3);
+const RECOMMENDED = PRODUCTS.slice(3, 6);
+
 const FILTERS = ['All', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
 
 interface ProductListScreenProps {
@@ -29,8 +32,113 @@ interface ProductListScreenProps {
 const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart, onGoToProductDetail }) => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [search, setSearch] = useState('');
+  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [scrollY] = useState(new Animated.Value(0));
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const toggleWishlist = (productId: number) => {
+    setWishlist(prev =>
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  const renderSkeletonCard = () => (
+    <View style={styles.skeletonCard}>
+      <View style={styles.skeletonImage} />
+      <View style={styles.skeletonInfo}>
+        <View style={styles.skeletonTitle} />
+        <View style={styles.skeletonCategory} />
+        <View style={styles.skeletonPrice} />
+        <View style={styles.skeletonButton} />
+      </View>
+    </View>
+  );
+
+  const renderProductCard = ({ item }: { item: any }) => {
+    const scaleValue = new Animated.Value(1);
+
+    const handlePressIn = () => {
+      Animated.spring(scaleValue, {
+        toValue: 0.95,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    const handlePressOut = () => {
+      Animated.spring(scaleValue, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    return (
+      <Animated.View style={[styles.card, { transform: [{ scale: scaleValue }] }]}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          onPress={() => onGoToProductDetail?.(item)}
+          style={styles.cardTouchable}
+        >
+          <Image source={{ uri: item.img }} style={styles.cardImg} />
+          <View style={styles.cardInfo}>
+            <View style={styles.cardTitleRow}>
+              <Text style={styles.cardName}>{item.name}</Text>
+              {item.badge && <Text style={styles.badge}>{item.badge}</Text>}
+            </View>
+            <Text style={styles.cardCategory}>{item.category}</Text>
+            <View style={styles.priceRow}>
+              <Text style={styles.price}>{formatCurrency(item.price)}</Text>
+              {item.oldPrice && <Text style={styles.oldPrice}>{formatCurrency(item.oldPrice)}</Text>}
+            </View>
+            <CTAButton
+              title="Add to Cart"
+              onPress={() => onAddToCart?.(item.id)}
+              size="sm"
+              color="#E8C97A"
+            />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.wishlistButton}
+          onPress={() => toggleWishlist(item.id)}
+        >
+          <Icon
+            name={wishlist.includes(item.id) ? "heart" : "heart-outline"}
+            size={20}
+            color={wishlist.includes(item.id) ? "#FF6B6B" : "#888"}
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+
+  const renderSection = (title: string, data: any[], showViewAll = false) => (
+    <View style={styles.section}>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {showViewAll && <TouchableOpacity><Text style={styles.viewAllText}>View All</Text></TouchableOpacity>}
+      </View>
+      <FlatList
+        data={data}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderProductCard}
+        contentContainerStyle={styles.horizontalList}
+      />
+    </View>
+  );
 
   const filteredByCategory = activeFilter === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeFilter);
   const filtered = filteredByCategory.filter((p) =>
@@ -40,12 +148,10 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 30 }]}>   
+    <View style={[styles.container, { paddingTop: insets.top + 30 }]}>
       <View style={styles.header}>
         <Text style={styles.title}>{user ? `Hello, ${user.email.split('@')[0]}` : 'Shop All Products'}</Text>
       </View>
-
-      {/* Role line removed by request */}
 
       <TextInput
         style={styles.searchInput}
@@ -67,43 +173,67 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
         ))}
       </View>
 
-      {filtered.length === 0 && (
-        <Text style={styles.noResults}>No products found. Try another keyword.</Text>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <View key={index} style={styles.skeletonCard}>
+              <View style={styles.skeletonImage} />
+              <View style={styles.skeletonInfo}>
+                <View style={styles.skeletonTitle} />
+                <View style={styles.skeletonCategory} />
+                <View style={styles.skeletonPrice} />
+                <View style={styles.skeletonButton} />
+              </View>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <Animated.ScrollView
+          style={styles.scrollContainer}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={16}
+        >
+          {renderSection('Recently Viewed', RECENTLY_VIEWED)}
+          {renderSection('Recommended for You', RECOMMENDED, true)}
+
+          <View style={styles.allProductsSection}>
+            <Text style={styles.allProductsTitle}>All Products</Text>
+            {filtered.length === 0 && (
+              <Text style={styles.noResults}>No products found. Try another keyword.</Text>
+            )}
+            {filtered.map((item) => (
+              <View key={item.id}>
+                {renderProductCard({ item })}
+              </View>
+            ))}
+          </View>
+        </Animated.ScrollView>
       )}
 
-      <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={{ uri: item.img }} style={styles.cardImg} />
-            <View style={styles.cardInfo}>
-              <View style={styles.cardTitleRow}>
-                <Text style={styles.cardName}>{item.name}</Text>
-                {item.badge && <Text style={styles.badge}>{item.badge}</Text>}
-              </View>
-              <Text style={styles.cardCategory}>{item.category}</Text>
-              <View style={styles.priceRow}>
-                <Text style={styles.price}>{formatCurrency(item.price)}</Text>
-                {item.oldPrice && <Text style={styles.oldPrice}>{formatCurrency(item.oldPrice)}</Text>}
-              </View>
-              <CTAButton
-                title="Add to Cart"
-                onPress={() => onAddToCart?.(item.id)}
-                size="sm"
-                color="#E8C97A"
-              />
-            </View>
-          </View>
-        )}
-      />
-
-      <View style={styles.bottomNav}>
+      <Animated.View
+        style={[
+          styles.stickyFooter,
+          {
+            shadowOpacity: scrollY.interpolate({
+              inputRange: [0, 100],
+              outputRange: [0, 0.3],
+              extrapolate: 'clamp',
+            }),
+            elevation: scrollY.interpolate({
+              inputRange: [0, 100],
+              outputRange: [0, 5],
+              extrapolate: 'clamp',
+            }),
+          },
+        ]}
+      >
         <TouchableOpacity onPress={onBack} style={styles.backBtnSoft}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -138,6 +268,7 @@ const styles = StyleSheet.create({
   filterTextActive: { color: '#23232B' },
   list: { paddingBottom: 30 },
   card: { backgroundColor: '#18181F', borderRadius: 14, marginBottom: 12, overflow: 'hidden', flexDirection: 'row' },
+  cardTouchable: { flex: 1, flexDirection: 'row' },
   cardImg: { width: 100, height: 100 },
   cardInfo: { flex: 1, padding: 10 },
   cardTitleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
@@ -159,6 +290,45 @@ const styles = StyleSheet.create({
   },
   welcome: { color: '#B3B3C2', marginBottom: 10, fontSize: 14 },
   noResults: { color: '#FF6B6B', fontSize: 14, marginVertical: 10, textAlign: 'center' },
+  // New styles
+  loadingContainer: { flex: 1, paddingTop: 20 },
+  skeletonCard: { backgroundColor: '#18181F', borderRadius: 14, marginBottom: 12, overflow: 'hidden', flexDirection: 'row', opacity: 0.7 },
+  skeletonImage: { width: 100, height: 100, backgroundColor: '#23232B' },
+  skeletonInfo: { flex: 1, padding: 10 },
+  skeletonTitle: { height: 16, backgroundColor: '#23232B', borderRadius: 4, marginBottom: 6 },
+  skeletonCategory: { height: 12, backgroundColor: '#23232B', borderRadius: 4, marginBottom: 8, width: '60%' },
+  skeletonPrice: { height: 14, backgroundColor: '#23232B', borderRadius: 4, marginBottom: 8, width: '40%' },
+  skeletonButton: { height: 32, backgroundColor: '#23232B', borderRadius: 6, width: '80%' },
+  scrollContainer: { flex: 1 },
+  section: { marginBottom: 24 },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  sectionTitle: { color: '#FFF', fontSize: 18, fontWeight: '700' },
+  viewAllText: { color: '#E8C97A', fontSize: 14, fontWeight: '600' },
+  horizontalList: { paddingRight: 14 },
+  allProductsSection: { marginBottom: 100 },
+  allProductsTitle: { color: '#FFF', fontSize: 20, fontWeight: '700', marginBottom: 16 },
+  wishlistButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 16,
+    padding: 6,
+  },
+  stickyFooter: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#0D0D12',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#23232B',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowRadius: 4,
+  },
 });
 
 export default ProductListScreen;
