@@ -27,6 +27,8 @@ interface ProductListScreenProps {
   onBack?: () => void;
   onAddToCart?: (id: number) => void;
   onGoToProductDetail?: (product: any) => void;
+  onGoToProfile?: () => void;
+  onLogout?: () => void;
 }
 
 const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCart, onGoToProductDetail }) => {
