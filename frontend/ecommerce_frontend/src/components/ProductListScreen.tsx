@@ -153,15 +153,15 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onAddToCa
     <View style={[styles.container, { paddingTop: insets.top + 30 }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Icon name="arrow-back" size={24} color="#E8C97A" />
+          <Text style={styles.emojiBtn}>←</Text>
         </TouchableOpacity>
         <Text style={styles.title}>{user ? `Hello, ${user.email.split('@')[0]}` : 'Shop All Products'}</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity onPress={onGoToProfile} style={styles.headerBtn}>
-            <Icon name="person-outline" size={20} color="#E8C97A" />
+            <Text style={styles.emojiBtn}>👤</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onLogout} style={styles.headerBtn}>
-            <Icon name="log-out-outline" size={20} color="#E8C97A" />
+            <Text style={styles.emojiBtn}>🚪</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -256,6 +256,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 20, justifyContent: 'space-between' },
   headerActions: { flexDirection: 'row', gap: 12 },
   headerBtn: { padding: 8, borderRadius: 8, backgroundColor: '#1F1F2A' },
+  emojiBtn: { fontSize: 20, color: '#E8C97A' },
   spacerAbove: { height: 10 },
   backBtn: { marginRight: 10 },
   backBtnSoft: {

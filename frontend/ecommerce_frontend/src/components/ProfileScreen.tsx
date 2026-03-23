@@ -170,14 +170,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
               onPress={() => setNotifications({...notifications, orderUpdates: !notifications.orderUpdates})}
             >
               <View style={styles.notificationContent}>
-                <Icon name="notifications-outline" size={20} color="#E8C97A" />
+                <Text style={styles.emojiIcon}>📦</Text>
                 <Text style={styles.notificationText}>Order Updates</Text>
               </View>
-              <Icon
-                name={notifications.orderUpdates ? "checkbox" : "square-outline"}
-                size={20}
-                color="#E8C97A"
-              />
+              <Text style={styles.checkboxEmoji}>
+                {notifications.orderUpdates ? '☑️' : '⬜'}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -185,14 +183,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
               onPress={() => setNotifications({...notifications, promotions: !notifications.promotions})}
             >
               <View style={styles.notificationContent}>
-                <Icon name="pricetag-outline" size={20} color="#E8C97A" />
+                <Text style={styles.emojiIcon}>🏷️</Text>
                 <Text style={styles.notificationText}>Promotions & Offers</Text>
               </View>
-              <Icon
-                name={notifications.promotions ? "checkbox" : "square-outline"}
-                size={20}
-                color="#E8C97A"
-              />
+              <Text style={styles.checkboxEmoji}>
+                {notifications.promotions ? '☑️' : '⬜'}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -200,14 +196,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
               onPress={() => setNotifications({...notifications, newArrivals: !notifications.newArrivals})}
             >
               <View style={styles.notificationContent}>
-                <Icon name="bag-outline" size={20} color="#E8C97A" />
+                <Text style={styles.emojiIcon}>🛍️</Text>
                 <Text style={styles.notificationText}>New Arrivals</Text>
               </View>
-              <Icon
-                name={notifications.newArrivals ? "checkbox" : "square-outline"}
-                size={20}
-                color="#E8C97A"
-              />
+              <Text style={styles.checkboxEmoji}>
+                {notifications.newArrivals ? '☑️' : '⬜'}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -215,14 +209,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
               onPress={() => setNotifications({...notifications, securityAlerts: !notifications.securityAlerts})}
             >
               <View style={styles.notificationContent}>
-                <Icon name="shield-outline" size={20} color="#E8C97A" />
+                <Text style={styles.emojiIcon}>🛡️</Text>
                 <Text style={styles.notificationText}>Security Alerts</Text>
               </View>
-              <Icon
-                name={notifications.securityAlerts ? "checkbox" : "square-outline"}
-                size={20}
-                color="#E8C97A"
-              />
+              <Text style={styles.checkboxEmoji}>
+                {notifications.securityAlerts ? '☑️' : '⬜'}
+              </Text>
             </TouchableOpacity>
           </View>
           <CTAButton title="Save Preferences" onPress={handleSaveNotifications} size="sm" color="#E8C97A" />
@@ -232,7 +224,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account Actions</Text>
           <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
-            <Icon name="log-out-outline" size={20} color="#FF6B6B" />
+            <Text style={styles.emojiIcon}>🚪</Text>
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
         </View>
@@ -263,7 +255,9 @@ const styles = StyleSheet.create({
   notificationGroup: { marginBottom: 16 },
   notificationItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, paddingHorizontal: 16, backgroundColor: '#18181F', borderRadius: 8, marginBottom: 8 },
   notificationContent: { flexDirection: 'row', alignItems: 'center' },
-  notificationText: { color: '#FFF', fontSize: 16, marginLeft: 12 },
+  emojiIcon: { fontSize: 20, marginRight: 12 },
+  notificationText: { color: '#FFF', fontSize: 16 },
+  checkboxEmoji: { fontSize: 18 },
   actionButton: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#18181F', borderRadius: 8 },
   logoutText: { color: '#FF6B6B', fontSize: 16, fontWeight: '600', marginLeft: 12 },
 });
