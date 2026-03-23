@@ -24,6 +24,10 @@ export default function ScreenRouter() {
     }
   };
   const handleGoToProducts = () => setScreen('productList');
+  const handleGoToProductDetail = (product: any) => {
+    setSelectedProduct(product);
+    setScreen('productDetail');
+  };
   const handleViewCart = () => setScreen('cart');
   const handleBackToLogin = () => setScreen('login');
 
@@ -40,7 +44,7 @@ export default function ScreenRouter() {
     return <DashboardScreen onBack={handleBack} />;
   }
   if (screen === 'productList') {
-    return <ProductListScreen onBack={handleBack} onAddToCart={() => console.log('Add product to cart')} />;
+    return <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} />;
   }
   if (screen === 'cart') {
     return <CartScreen onBack={handleBack} />;

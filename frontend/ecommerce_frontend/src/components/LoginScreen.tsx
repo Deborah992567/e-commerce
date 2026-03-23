@@ -40,11 +40,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
     if (success) {
       // Check if admin login by email (since state update is async)
       if (email === 'admin@ecommerce.com') {
-        Alert.alert('Admin Login', 'Welcome to the admin dashboard!');
         if (onGoToDashboard) onGoToDashboard();
       } else {
-        Alert.alert('Login Success', `Welcome back, ${email}!`);
-        // For regular users, you might want to navigate to user dashboard or main app
+        // For regular users, navigate directly to product list
         if (onGoToProductList) {
           onGoToProductList();
         } else if (onBack) {
