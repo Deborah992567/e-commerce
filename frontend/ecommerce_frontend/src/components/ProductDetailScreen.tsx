@@ -300,10 +300,16 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
           </TouchableOpacity>
         </View>
 
-        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+        <Animated.View style={{ transform: [{ scale: scaleAnim }], flex: 1 }}>
           <TouchableOpacity
             onPress={handleAddToCart}
-            style={styles.addToCartBtn}
+            style={[
+              styles.addToCartBtn,
+              details.sizes &&
+              details.sizes.length > 0 &&
+              !selectedSize &&
+              styles.addToCartBtnDisabled,
+            ]}
             disabled={!details.inStock}
           >
             <Text style={styles.addToCartText}>🛒 Add to Cart</Text>
@@ -626,6 +632,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  addToCartBtnDisabled: {
+    backgroundColor: '#A0A0A0',
+    opacity: 0.6,
   },
   addToCartText: {
     color: '#000',
