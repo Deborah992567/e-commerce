@@ -74,7 +74,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
           <Text style={styles.sectionTitle}>Account Information</Text>
           <View style={styles.userInfo}>
             <View style={styles.avatar}>
-              <Icon name="person" size={40} color="#E8C97A" />
+              <Text style={styles.avatarEmoji}>👤</Text>
             </View>
             <View style={styles.userDetails}>
               <Text style={styles.userName}>{user?.email.split('@')[0]}</Text>
@@ -246,6 +246,7 @@ const styles = StyleSheet.create({
   sectionTitle: { color: '#FFF', fontSize: 18, fontWeight: '600', marginBottom: 16 },
   userInfo: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#18181F', padding: 16, borderRadius: 12 },
   avatar: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#1F1F2A', alignItems: 'center', justifyContent: 'center', marginRight: 16 },
+  avatarEmoji: { fontSize: 30 },
   userDetails: { flex: 1 },
   userName: { color: '#FFF', fontSize: 18, fontWeight: '600', marginBottom: 4 },
   userEmail: { color: '#A0A0A0', fontSize: 14, marginBottom: 2 },
