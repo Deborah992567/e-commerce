@@ -8,10 +8,12 @@ import CartScreen from './CartScreen';
 import ProductListScreen from './ProductListScreen';
 import ProfileScreen from './ProfileScreen';
 import ProductDetailScreen from './ProductDetailScreen';
+import CheckoutScreen from './CheckoutScreen';
+import OrderSuccessScreen from './OrderSuccessScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
-  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail'>('main');
+  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess'>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const { isAdmin, user } = useAuth();
 
