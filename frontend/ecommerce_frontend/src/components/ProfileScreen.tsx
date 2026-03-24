@@ -164,6 +164,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
               <Text style={styles.userRole}>{user?.role === 'admin' ? 'Administrator' : 'Customer'}</Text>
             </View>
           </View>
+          <TouchableOpacity onPress={onGoToOrderHistory} style={styles.orderHistoryBtn}>
+            <Text style={styles.orderHistoryBtnText}>📦 View Order History</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Delivery Address Section */}
