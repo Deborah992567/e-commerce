@@ -7,9 +7,10 @@ import CTAButton from './CTAButton';
 
 interface ProfileScreenProps {
   onBack?: () => void;
+  onGoToOrderHistory?: () => void;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory }) => {
   const { user, logout } = useAuth();
   const insets = useSafeAreaInsets();
 

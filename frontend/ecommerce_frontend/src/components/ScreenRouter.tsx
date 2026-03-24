@@ -94,5 +94,11 @@ export default function ScreenRouter() {
   if (screen === 'orderSuccess') {
     return <OrderSuccessScreen onContinueShopping={handleContinueShopping} onViewOrders={handleViewOrders} />;
   }
+  if (screen === 'orderHistory') {
+    return <OrderHistoryScreen onBack={handleBack} onViewDetails={handleViewOrderDetail} />;
+  }
+  if (screen === 'orderDetail' && selectedOrder) {
+    return <OrderDetailScreen order={selectedOrder} onBack={handleBackFromOrderDetail} />;
+  }
   return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
 }
