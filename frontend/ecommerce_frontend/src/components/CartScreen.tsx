@@ -3,13 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
 
-interface CartItem {
-  id: number;
-  name: string;
-  quantity: number;
-  price: number;
-}
-
 interface CartScreenProps {
   onBack?: () => void;
   onCheckout?: () => void;

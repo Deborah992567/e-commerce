@@ -86,7 +86,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Checkout</Text>
-        <View style={{ width: 40 }} />
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView
@@ -264,6 +264,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     flex: 1,
     textAlign: 'center',
+  },
+  headerSpacer: {
+    width: 40,
   },
   content: {
     paddingHorizontal: 14,
