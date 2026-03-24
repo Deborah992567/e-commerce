@@ -12,6 +12,7 @@ interface CartItem {
 
 interface CartScreenProps {
   onBack?: () => void;
+  onCheckout?: () => void;
 }
 
 const demoCartItems: CartItem[] = [
@@ -20,7 +21,7 @@ const demoCartItems: CartItem[] = [
   { id: 3, name: 'Minimalist Smartwatch', quantity: 1, price: 199.00 },
 ];
 
-const CartScreen: React.FC<CartScreenProps> = ({ onBack }) => {
+const CartScreen: React.FC<CartScreenProps> = ({ onBack, onCheckout }) => {
   const { cart, removeFromCart, totalPrice, totalItems } = useCart();
   const insets = useSafeAreaInsets();
 

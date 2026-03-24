@@ -47,6 +47,10 @@ export default function ScreenRouter() {
       setScreen('main');
     }
   };
+  const handleGoToCheckout = () => setScreen('checkout');
+  const handleOrderSuccess = () => setScreen('orderSuccess');
+  const handleContinueShopping = () => setScreen('productList');
+  const handleViewOrders = () => setScreen('profile'); // For now, redirect to profile
 
   if (screen === 'signup') {
     return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} onGoToProductList={handleGoToProducts} />;
@@ -71,6 +75,12 @@ export default function ScreenRouter() {
   }
   if (screen === 'productDetail' && selectedProduct) {
     return <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} />;
+  }
+  if (screen === 'checkout') {
+    return <CheckoutScreen onBack={() => setScreen('cart')} onOrderSuccess={handleOrderSuccess} />;
+  }
+  if (screen === 'orderSuccess') {
+    return <OrderSuccessScreen onContinueShopping={handleContinueShopping} onViewOrders={handleViewOrders} />;
   }
   return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
 }
