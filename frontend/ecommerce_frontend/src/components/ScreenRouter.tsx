@@ -10,11 +10,14 @@ import ProfileScreen from './ProfileScreen';
 import ProductDetailScreen from './ProductDetailScreen';
 import CheckoutScreen from './CheckoutScreen';
 import OrderSuccessScreen from './OrderSuccessScreen';
+import OrderHistoryScreen from './OrderHistoryScreen';
+import OrderDetailScreen from './OrderDetailScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
-  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess'>('main');
+  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail'>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const { isAdmin, user } = useAuth();
 
   // Handler to pass to AppMain for navigation
@@ -50,7 +53,16 @@ export default function ScreenRouter() {
   const handleGoToCheckout = () => setScreen('checkout');
   const handleOrderSuccess = () => setScreen('orderSuccess');
   const handleContinueShopping = () => setScreen('productList');
-  const handleViewOrders = () => setScreen('profile'); // For now, redirect to profile
+  const handleViewOrders = () => setScreen('orderHistory');
+  const handleGoToOrderHistory = () => setScreen('orderHistory');
+  const handleViewOrderDetail = (order: any) => {
+    setSelectedOrder(order);
+    setScreen('orderDetail');
+  };
+  const handleBackFromOrderDetail = () => {
+    setScreen('orderHistory');
+    setSelectedOrder(null);
+  };
 
   if (screen === 'signup') {
     return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} onGoToProductList={handleGoToProducts} />;
@@ -71,7 +83,7 @@ export default function ScreenRouter() {
     return <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />;
   }
   if (screen === 'profile') {
-    return <ProfileScreen onBack={handleBack} />;
+    return <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} />;
   }
   if (screen === 'productDetail' && selectedProduct) {
     return <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} />;
