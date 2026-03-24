@@ -503,14 +503,14 @@ const styles = StyleSheet.create({
   sizeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 6,
   },
   sizeButton: {
     flex: 1,
-    minWidth: '22%',
-    paddingVertical: 8,
-    paddingHorizontal: 6,
-    borderRadius: 8,
+    minWidth: '18%',
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+    borderRadius: 6,
     borderWidth: 1.5,
     borderColor: '#1F1F2A',
     backgroundColor: '#18181F',
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
   },
   sizeButtonText: {
     color: '#A0A0A0',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
   },
   sizeButtonTextSelected: {
