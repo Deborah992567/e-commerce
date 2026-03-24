@@ -495,8 +495,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   sizeSection: {
-    marginBottom: 40,
-    paddingBottom: 32,
+    marginBottom: 48,
+    paddingBottom: 40,
     borderBottomWidth: 1,
     borderBottomColor: '#1F1F2A',
   },
