@@ -68,7 +68,7 @@ export default function ScreenRouter() {
     return <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => setScreen('cart')} onLogout={() => setScreen('main')} />;
   }
   if (screen === 'cart') {
-    return <CartScreen onBack={handleCartBack} />;
+    return <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />;
   }
   if (screen === 'profile') {
     return <ProfileScreen onBack={handleBack} />;

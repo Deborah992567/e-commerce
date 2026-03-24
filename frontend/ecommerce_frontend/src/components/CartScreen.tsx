@@ -69,7 +69,7 @@ const CartScreen: React.FC<CartScreenProps> = ({ onBack, onCheckout }) => {
             <Text style={styles.totalValue}>${totalPrice.toFixed(2)}</Text>
           </View>
 
-          <TouchableOpacity style={styles.checkoutBtn} onPress={() => console.log('Checkout pressed')}>
+          <TouchableOpacity style={styles.checkoutBtn} onPress={onCheckout}>
             <Text style={styles.checkoutText}>Proceed to Checkout</Text>
           </TouchableOpacity>
         </>
