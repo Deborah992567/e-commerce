@@ -508,10 +508,10 @@ const styles = StyleSheet.create({
   sizeButton: {
     flex: 1,
     minWidth: '22%',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 10,
-    borderWidth: 2,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    borderRadius: 8,
+    borderWidth: 1.5,
     borderColor: '#1F1F2A',
     backgroundColor: '#18181F',
     alignItems: 'center',
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
   },
   sizeButtonText: {
     color: '#A0A0A0',
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: '600',
   },
   sizeButtonTextSelected: {
