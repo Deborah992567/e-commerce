@@ -9,8 +9,6 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
-import CTAButton from './CTAButton';
 
 interface CheckoutScreenProps {
   onBack?: () => void;
@@ -19,12 +17,10 @@ interface CheckoutScreenProps {
 
 const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess }) => {
   const insets = useSafeAreaInsets();
-  const { cart, totalPrice, totalItems, clearCart } = useCart();
-  const { user } = useAuth();
+  const { cart, totalPrice, clearCart } = useCart();
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
-  const [orderNotes, setOrderNotes] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Mock payment methods (in real app, get from user profile)

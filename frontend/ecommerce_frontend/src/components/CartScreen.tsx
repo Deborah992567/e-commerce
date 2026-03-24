@@ -15,12 +15,6 @@ interface CartScreenProps {
   onCheckout?: () => void;
 }
 
-const demoCartItems: CartItem[] = [
-  { id: 1, name: 'Limited Edition Leather Jacket', quantity: 1, price: 249.99 },
-  { id: 2, name: 'Luxury Sneakers', quantity: 2, price: 179.95 },
-  { id: 3, name: 'Minimalist Smartwatch', quantity: 1, price: 199.00 },
-];
-
 const CartScreen: React.FC<CartScreenProps> = ({ onBack, onCheckout }) => {
   const { cart, removeFromCart, totalPrice, totalItems } = useCart();
   const insets = useSafeAreaInsets();
