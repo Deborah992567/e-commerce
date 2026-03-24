@@ -495,15 +495,16 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   sizeSection: {
-    marginBottom: 24,
-    paddingBottom: 16,
+    marginBottom: 32,
+    paddingBottom: 24,
     borderBottomWidth: 1,
     borderBottomColor: '#1F1F2A',
   },
   sizeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: 5,
+    marginBottom: 8,
   },
   sizeButton: {
     flex: 1,
