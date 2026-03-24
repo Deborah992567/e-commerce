@@ -495,8 +495,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   sizeSection: {
-    marginBottom: 32,
-    paddingBottom: 24,
+    marginBottom: 40,
+    paddingBottom: 32,
     borderBottomWidth: 1,
     borderBottomColor: '#1F1F2A',
   },
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 5,
-    marginBottom: 8,
+    marginBottom: 16,
   },
   sizeButton: {
     flex: 1,
