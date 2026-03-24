@@ -446,6 +446,8 @@ const styles = StyleSheet.create({
   userName: { color: '#FFF', fontSize: 18, fontWeight: '600', marginBottom: 4 },
   userEmail: { color: '#A0A0A0', fontSize: 14, marginBottom: 2 },
   userRole: { color: '#E8C97A', fontSize: 12, fontWeight: '500' },
+  orderHistoryBtn: { marginTop: 12, backgroundColor: '#E8C97A', paddingVertical: 10, borderRadius: 8, alignItems: 'center' },
+  orderHistoryBtnText: { color: '#000', fontSize: 14, fontWeight: '600' },
   inputGroup: { marginBottom: 16 },
   input: { backgroundColor: '#23232B', color: '#FFF', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 12, marginBottom: 8, borderWidth: 1, borderColor: '#444' },
   row: { flexDirection: 'row' },
