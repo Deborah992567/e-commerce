@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput, Animated, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput, Animated, ScrollView, Modal } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import CTAButton from './CTAButton';
+import FilterPanel from './FilterPanel';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const PRODUCTS = [
@@ -38,6 +39,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [scrollY] = useState(new Animated.Value(0));
+  const [showFilters, setShowFilters] = useState(false);
   const { user } = useAuth();
   const { addToCart, totalItems } = useCart();
   const insets = useSafeAreaInsets();
