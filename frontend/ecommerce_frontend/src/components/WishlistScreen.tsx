@@ -23,98 +23,74 @@ type FilterCategory = 'all' | string;
 
 const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) => {
   const insets = useSafeAreaInsets();
+  const { wishlist, removeFromWishlist } = useWishlist();
+  const { addItem } = useCart();
+  const [sortBy, setSortBy] = useState<SortOption>('date_added');
+  const [filterCategory, setFilterCategory] = useState<FilterCategory>('all');
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
 
-  // Mock wishlist data
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([
-    {
-      id: 1,
-      name: 'Premium Running Shoes',
-      price: 149.99,
-      oldPrice: 199.99,
-      category: 'Shoes',
-      rating: 4.8,
-      reviews: 245,
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',
-      inStock: true,
-      addedDate: 'Mar 15, 2026',
-    },
-    {
-      id: 2,
-      name: 'Luxury Designer Jacket',
-      price: 299.99,
-      category: 'Clothing',
-      rating: 4.6,
-      reviews: 189,
-      image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80',
-      inStock: true,
-      addedDate: 'Mar 12, 2026',
-    },
-    {
-      id: 3,
-      name: 'Wireless Headphones',
-      price: 199.99,
-      oldPrice: 249.99,
-      category: 'Electronics',
-      rating: 4.5,
-      reviews: 312,
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80',
-      inStock: false,
-      addedDate: 'Mar 8, 2026',
-    },
-    {
-      id: 4,
-      name: 'Smartwatch Pro',
-      price: 299.99,
-      category: 'Electronics',
-      rating: 4.7,
-      reviews: 428,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80',
-      inStock: true,
-      addedDate: 'Mar 5, 2026',
-    },
-    {
-      id: 5,
-      name: 'Athletic Shorts',
-      price: 79.99,
-      category: 'Clothing',
-      rating: 4.4,
-      reviews: 156,
-      image: 'https://images.unsplash.com/photo-1506629082632-59d7ee8ccd2f?w=500&q=80',
-      inStock: true,
-      addedDate: 'Feb 28, 2026',
-    },
-  ]);
+  // Get unique categories from wishlist
+  const categories = useMemo(() => {
+    const cats = new Set(wishlist.map((item) => item.category));
+    return Array.from(cats);
+  }, [wishlist]);
 
-  const handleRemoveFromWishlist = (id: number) => {
-    Alert.alert(
-      'Remove from Wishlist',
-      'Are you sure you want to remove this item?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: () => {
-            setWishlistItems(wishlistItems.filter((item) => item.id !== id));
-            Alert.alert('Removed', 'Item removed from wishlist');
-          },
-        },
-      ]
-    );
-  };
+  // Filter and sort wishlist
+  const filteredAndSorted = useMemo(() => {
+    let filtered = wishlist.filter((item) => {
+      const categoryMatch = filterCategory === 'all' || item.category === filterCategory;
+      const priceMatch = item.price >= priceRange.min && item.price <= priceRange.max;
+      return categoryMatch && priceMatch;
+    });
 
-  const handleAddToCart = (item: WishlistItem) => {
-    if (!item.inStock) {
-      Alert.alert('Out of Stock', 'This item is currently unavailable');
-      return;
+    // Sort
+    switch (sortBy) {
+      case 'price_low':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price_high':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating':
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'date_added':
+      default:
+        filtered.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
     }
-    onAddToCart?.(item);
-    Alert.alert('Added to Cart', `${item.name} has been added to your cart`);
+
+    return filtered;
+  }, [wishlist, sortBy, filterCategory, priceRange]);
+
+  const handleRemove = (id: string) => {
+    Alert.alert('Remove from Wishlist', 'Are you sure you want to remove this item?', [
+      { text: 'Cancel', onPress: () => {} },
+      {
+        text: 'Remove',
+        onPress: async () => {
+          await removeFromWishlist(id);
+          Alert.alert('✅ Removed', 'Item removed from wishlist');
+        },
+      },
+    ]);
   };
 
-  const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
+  const handleAddToCart = (item: any) => {
+    addItem({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      quantity: 1,
+      category: item.category,
+    });
+    Alert.alert('✅ Added to Cart', `${item.name} added to your cart`);
+    if (onAddToCart) {
+      onAddToCart();
+    }
+  };
 
-  const renderWishlistItem = ({ item }: { item: WishlistItem }) => (
+  const renderWishlistItem = ({ item }: { item: any }) => (
     <View style={styles.itemCard}>
       <TouchableOpacity
         onPress={() => onViewProduct?.(item.id)}
