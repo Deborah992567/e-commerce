@@ -12,10 +12,11 @@ import CheckoutScreen from './CheckoutScreen';
 import OrderSuccessScreen from './OrderSuccessScreen';
 import OrderHistoryScreen from './OrderHistoryScreen';
 import OrderDetailScreen from './OrderDetailScreen';
+import ReviewsScreen from './ReviewsScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
-  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail'>('main');
+  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail' | 'reviews'>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const { isAdmin, user } = useAuth();
@@ -63,6 +64,14 @@ export default function ScreenRouter() {
     setScreen('orderHistory');
     setSelectedOrder(null);
   };
+  const handleGoToReviews = (product: any) => {
+    setSelectedProduct(product);
+    setScreen('reviews');
+  };
+  const handleBackFromReviews = () => {
+    setScreen('productDetail');
+    setSelectedProduct(null);
+  };
 
   if (screen === 'signup') {
     return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} onGoToProductList={handleGoToProducts} />;
@@ -86,7 +95,7 @@ export default function ScreenRouter() {
     return <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} />;
   }
   if (screen === 'productDetail' && selectedProduct) {
-    return <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} />;
+    return <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} onViewReviews={handleGoToReviews} />;
   }
   if (screen === 'checkout') {
     return <CheckoutScreen onBack={() => setScreen('cart')} onOrderSuccess={handleOrderSuccess} />;
@@ -99,6 +108,9 @@ export default function ScreenRouter() {
   }
   if (screen === 'orderDetail' && selectedOrder) {
     return <OrderDetailScreen order={selectedOrder} onBack={handleBackFromOrderDetail} />;
+  }
+  if (screen === 'reviews' && selectedProduct) {
+    return <ReviewsScreen productId={selectedProduct.id} productName={selectedProduct.name} onClose={handleBackFromReviews} />;
   }
   return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
 }

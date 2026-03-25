@@ -439,12 +439,17 @@ const styles = StyleSheet.create({
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 8,
+  },
+  ratingBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   stars: {
-    color: '#FFC107',
+    color: '#E8C97A',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     marginRight: 8,
   },
   reviews: {
