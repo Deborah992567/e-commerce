@@ -92,129 +92,174 @@ const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) 
 
   const renderWishlistItem = ({ item }: { item: any }) => (
     <View style={styles.itemCard}>
-      <TouchableOpacity
-        onPress={() => onViewProduct?.(item.id)}
-        style={styles.itemTouchable}
-      >
-        <Image
-          source={{ uri: item.image }}
-          style={styles.itemImage}
-        />
-        {!item.inStock && <View style={styles.outOfStockOverlay} />}
-
-        <View style={styles.itemContent}>
+      <Image source={{ uri: item.image }} style={styles.itemImage} />
+      <View style={styles.itemContent}>
+        <View style={styles.itemHeader}>
           <Text style={styles.itemName} numberOfLines={2}>
             {item.name}
           </Text>
-
-          <View style={styles.categoryRatingRow}>
-            <Text style={styles.category}>{item.category}</Text>
-            <View style={styles.ratingBadge}>
-              <Text style={styles.ratingIcon}>⭐</Text>
-              <Text style={styles.ratingText}>{item.rating}</Text>
-            </View>
-          </View>
-
-          <Text style={styles.reviewCount}>({item.reviews} reviews)</Text>
-
-          <View style={styles.priceRow}>
-            <Text style={styles.price}>{formatCurrency(item.price)}</Text>
-            {item.oldPrice && (
-              <Text style={styles.oldPrice}>
-                {formatCurrency(item.oldPrice)}
-              </Text>
-            )}
-          </View>
-
-          <Text style={styles.addedDate}>Added {item.addedDate}</Text>
-
-          {!item.inStock && (
-            <Text style={styles.outOfStockText}>Out of Stock</Text>
-          )}
+          <TouchableOpacity
+            onPress={() => handleRemove(item.id)}
+            style={styles.removeBtn}
+          >
+            <Text style={styles.removeBtnText}>✕</Text>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
 
-      <View style={styles.itemActions}>
-        <TouchableOpacity
-          onPress={() => handleAddToCart(item)}
-          style={[
-            styles.cartBtn,
-            !item.inStock && styles.cartBtnDisabled,
-          ]}
-        >
-          <Text style={styles.cartBtnText}>🛒</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleRemoveFromWishlist(item.id)}
-          style={styles.removeBtn}
-        >
-          <Text style={styles.removeBtnText}>✕</Text>
-        </TouchableOpacity>
+        <View style={styles.categoryBadge}>
+          <Text style={styles.categoryText}>{item.category}</Text>
+        </View>
+
+        <View style={styles.ratingRow}>
+          <Text style={styles.rating}>⭐ {item.rating}</Text>
+          <Text style={styles.dateAdded}>Added {formatDate(item.addedAt)}</Text>
+        </View>
+
+        <View style={styles.priceRow}>
+          <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+          <TouchableOpacity
+            style={styles.addCartBtn}
+            onPress={() => handleAddToCart(item)}
+          >
+            <Text style={styles.addCartBtnText}>Add to Cart</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 
-  const totalValue = wishlistItems.reduce((sum, item) => sum + item.price, 0);
-  const inStockCount = wishlistItems.filter((item) => item.inStock).length;
-
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Text style={styles.emoji}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>My Wishlist</Text>
-        <View style={styles.headerSpacer} />
+        <Text style={styles.title}>❤️ Wishlist</Text>
+        <View style={styles.badgeContainer}>
+          <Text style={styles.badge}>{filteredAndSorted.length}</Text>
+        </View>
       </View>
 
-      {wishlistItems.length === 0 ? (
+      {wishlist.length === 0 ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>❤️</Text>
+          <Text style={styles.emptyEmoji}>💔</Text>
           <Text style={styles.emptyTitle}>Your wishlist is empty</Text>
-          <Text style={styles.emptySubtitle}>
-            Save items you love and find them here anytime
-          </Text>
+          <Text style={styles.emptySubtitle}>Start adding your favorite items!</Text>
         </View>
       ) : (
         <>
-          {/* Summary Stats */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>{wishlistItems.length}</Text>
-              <Text style={styles.statLabel}>Items</Text>
+          {/* Filters Section */}
+          <ScrollView
+            style={styles.filterSection}
+            showsHorizontalScrollIndicator={false}
+            horizontal
+          >
+            <View style={styles.filterGroup}>
+              <Text style={styles.filterLabel}>Sort:</Text>
+              {(['date_added', 'price_low', 'price_high', 'rating'] as SortOption[]).map(
+                (option) => (
+                  <TouchableOpacity
+                    key={option}
+                    onPress={() => setSortBy(option)}
+                    style={[
+                      styles.filterOption,
+                      sortBy === option && styles.filterOptionActive,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.filterOptionText,
+                        sortBy === option && styles.filterOptionTextActive,
+                      ]}
+                    >
+                      {option === 'date_added' && 'Recently Added'}
+                      {option === 'price_low' && 'Price ↑'}
+                      {option === 'price_high' && 'Price ↓'}
+                      {option === 'rating' && 'Rating ⭐'}
+                    </Text>
+                  </TouchableOpacity>
+                )
+              )}
             </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>{inStockCount}</Text>
-              <Text style={styles.statLabel}>In Stock</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>${totalValue.toFixed(0)}</Text>
-              <Text style={styles.statLabel}>Total Value</Text>
-            </View>
-          </View>
+          </ScrollView>
+
+          {/* Category Filter */}
+          <ScrollView
+            style={styles.categoryFilter}
+            showsHorizontalScrollIndicator={false}
+            horizontal
+          >
+            <TouchableOpacity
+              onPress={() => setFilterCategory('all')}
+              style={[
+                styles.categoryOption,
+                filterCategory === 'all' && styles.categoryOptionActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.categoryOptionText,
+                  filterCategory === 'all' && styles.categoryOptionTextActive,
+                ]}
+              >
+                All
+              </Text>
+            </TouchableOpacity>
+            {categories.map((cat) => (
+              <TouchableOpacity
+                key={cat}
+                onPress={() => setFilterCategory(cat)}
+                style={[
+                  styles.categoryOption,
+                  filterCategory === cat && styles.categoryOptionActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.categoryOptionText,
+                    filterCategory === cat && styles.categoryOptionTextActive,
+                  ]}
+                >
+                  {cat}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
           {/* Wishlist Items */}
           <FlatList
-            data={wishlistItems}
-            keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={styles.listContent}
+            data={filteredAndSorted}
             renderItem={renderWishlistItem}
-            scrollEnabled={false}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+            ListEmptyComponent={
+              <View style={styles.emptyFilter}>
+                <Text style={styles.emptyFilterEmoji}>🔍</Text>
+                <Text style={styles.emptyFilterTitle}>No items found</Text>
+                <Text style={styles.emptyFilterSubtitle}>
+                  Try adjusting your filters
+                </Text>
+              </View>
+            }
           />
-
-          {/* Action Buttons */}
-          <View style={[styles.bottomActions, { paddingBottom: insets.bottom + 10 }]}>
-            <TouchableOpacity style={styles.shareBtn}>
-              <Text style={styles.shareBtnText}>📤 Share Wishlist</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.clearBtn}>
-              <Text style={styles.clearBtnText}>🗑️ Clear All</Text>
-            </TouchableOpacity>
-          </View>
         </>
       )}
     </View>
   );
+};
+
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - date.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'today';
+  if (diffDays === 1) return 'yesterday';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+  return `${Math.floor(diffDays / 30)} months ago`;
 };
 
 const styles = StyleSheet.create({
