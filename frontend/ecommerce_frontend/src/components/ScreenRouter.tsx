@@ -99,7 +99,7 @@ export default function ScreenRouter() {
     return <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />;
   }
   if (screen === 'profile') {
-    return <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} />;
+    return <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} onGoToWishlist={handleGoToWishlist} onGoToNotifications={handleGoToNotifications} />;
   }
   if (screen === 'productDetail' && selectedProduct) {
     return <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} onViewReviews={handleGoToReviews} />;
