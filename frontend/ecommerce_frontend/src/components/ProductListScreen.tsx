@@ -264,6 +264,19 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
       </Animated.View>
+
+      {/* Filter Modal */}
+      <Modal
+        visible={showFilters}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowFilters(false)}
+      >
+        <FilterPanel
+          onClose={() => setShowFilters(false)}
+          productCount={filtered.length}
+        />
+      </Modal>
     </View>
   );
 };
