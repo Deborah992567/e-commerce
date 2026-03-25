@@ -24,7 +24,7 @@ type FilterCategory = 'all' | string;
 const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) => {
   const insets = useSafeAreaInsets();
   const { wishlist, removeFromWishlist } = useWishlist();
-  const { addItem } = useCart();
+  const { addToCart } = useCart();
   const [sortBy, setSortBy] = useState<SortOption>('date_added');
   const [filterCategory, setFilterCategory] = useState<FilterCategory>('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
@@ -76,14 +76,16 @@ const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) 
   };
 
   const handleAddToCart = (item: any) => {
-    addItem({
+    const product: any = {
       id: item.id,
       name: item.name,
       price: item.price,
-      image: item.image,
-      quantity: 1,
       category: item.category,
-    });
+      oldPrice: null,
+      badge: null,
+      img: item.image,
+    };
+    addToCart(product);
     Alert.alert('✅ Added to Cart', `${item.name} added to your cart`);
     if (onAddToCart) {
       onAddToCart();
@@ -263,10 +265,7 @@ const formatDate = (dateString: string): string => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0D0D12',
-  },
+  container: { flex: 1, backgroundColor: '#0D0D12' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -276,231 +275,87 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#1F1F2A',
   },
-  backBtn: {
-    padding: 8,
-  },
-  backText: {
-    fontSize: 24,
-    color: '#E8C97A',
-  },
-  title: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: '700',
-    flex: 1,
+  backBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
+  emoji: { fontSize: 20, color: '#E8C97A' },
+  title: { color: '#FFF', fontSize: 20, fontWeight: '700', flex: 1, textAlign: 'center' },
+  badgeContainer: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
+  badge: {
+    color: '#000',
+    fontSize: 14,
+    fontWeight: '600',
+    backgroundColor: '#E8C97A',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     textAlign: 'center',
+    lineHeight: 24,
   },
-  headerSpacer: {
-    width: 40,
+  emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 },
+  emptyEmoji: { fontSize: 60, marginBottom: 16 },
+  emptyTitle: { color: '#FFF', fontSize: 20, fontWeight: '600', marginBottom: 8 },
+  emptySubtitle: { color: '#A0A0A0', fontSize: 14, textAlign: 'center' },
+  filterSection: { paddingHorizontal: 14, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#1F1F2A' },
+  filterGroup: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  filterLabel: { color: '#A0A0A0', fontSize: 12, fontWeight: '600', marginRight: 8 },
+  filterOption: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#1F1F2A',
+    marginRight: 6,
   },
-  statsContainer: {
-    flexDirection: 'row',
+  filterOptionActive: { backgroundColor: '#E8C97A' },
+  filterOptionText: { color: '#A0A0A0', fontSize: 12, fontWeight: '500' },
+  filterOptionTextActive: { color: '#000', fontWeight: '600' },
+  categoryFilter: { paddingHorizontal: 14, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#1F1F2A' },
+  categoryOption: {
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    gap: 10,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#1F1F2A',
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: '#444',
   },
-  statBox: {
-    flex: 1,
-    backgroundColor: '#18181F',
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  statValue: {
-    color: '#E8C97A',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  statLabel: {
-    color: '#A0A0A0',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  listContent: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
+  categoryOptionActive: { backgroundColor: '#E8C97A', borderColor: '#E8C97A' },
+  categoryOptionText: { color: '#A0A0A0', fontSize: 12, fontWeight: '500' },
+  categoryOptionTextActive: { color: '#000', fontWeight: '600' },
+  listContent: { paddingHorizontal: 14, paddingVertical: 12, paddingBottom: 100 },
   itemCard: {
+    flexDirection: 'row',
     backgroundColor: '#18181F',
     borderRadius: 12,
-    marginBottom: 12,
-    flexDirection: 'row',
     overflow: 'hidden',
-  },
-  itemTouchable: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  itemImage: {
-    width: 100,
-    height: 120,
-    backgroundColor: '#23232B',
-  },
-  outOfStockOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  itemContent: {
-    flex: 1,
-    padding: 12,
-    justifyContent: 'space-between',
-  },
-  itemName: {
-    color: '#FFF',
-    fontSize: 14,
-    fontWeight: '700',
-    marginBottom: 6,
-  },
-  categoryRatingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  category: {
-    color: '#A0A0A0',
-    fontSize: 12,
-  },
-  ratingBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#2A2A35',
-    borderRadius: 4,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    gap: 2,
-  },
-  ratingIcon: {
-    fontSize: 12,
-  },
-  ratingText: {
-    color: '#E8C97A',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  reviewCount: {
-    color: '#A0A0A0',
-    fontSize: 11,
-    marginBottom: 6,
-  },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 6,
-  },
-  price: {
-    color: '#E8C97A',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  oldPrice: {
-    color: '#7A7A8A',
-    fontSize: 12,
-    textDecorationLine: 'line-through',
-  },
-  addedDate: {
-    color: '#707080',
-    fontSize: 11,
-  },
-  outOfStockText: {
-    color: '#FF6B6B',
-    fontSize: 11,
-    fontWeight: '600',
-    marginTop: 4,
-  },
-  itemActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    gap: 4,
-  },
-  cartBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: '#E8C97A',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cartBtnDisabled: {
-    backgroundColor: '#A0A0A0',
-    opacity: 0.5,
-  },
-  cartBtnText: {
-    fontSize: 18,
-  },
-  removeBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: '#FF6B6B',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  removeBtnText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  emptyIcon: {
-    fontSize: 80,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    color: '#FFF',
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  emptySubtitle: {
-    color: '#A0A0A0',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  bottomActions: {
-    flexDirection: 'row',
-    paddingHorizontal: 14,
-    paddingTop: 12,
-    gap: 10,
-  },
-  shareBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    backgroundColor: '#18181F',
-    borderRadius: 8,
+    marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E8C97A',
-    alignItems: 'center',
+    borderColor: '#1F1F2A',
   },
-  shareBtnText: {
-    color: '#E8C97A',
-    fontSize: 14,
-    fontWeight: '600',
+  itemImage: { width: 100, height: 100 },
+  itemContent: { flex: 1, padding: 12 },
+  itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
+  itemName: { flex: 1, color: '#FFF', fontSize: 14, fontWeight: '600', marginRight: 8 },
+  removeBtn: { width: 24, height: 24, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2A2A33', borderRadius: 12 },
+  removeBtnText: { color: '#FF6B6B', fontSize: 12, fontWeight: '600' },
+  categoryBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: '#E8C97A',
+    marginBottom: 6,
   },
-  clearBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    backgroundColor: '#FF6B6B',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  clearBtnText: {
-    color: '#FFF',
-    fontSize: 14,
-    fontWeight: '600',
-  },
+  categoryText: { color: '#000', fontSize: 11, fontWeight: '600' },
+  ratingRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  rating: { color: '#E8C97A', fontSize: 12, fontWeight: '600' },
+  dateAdded: { color: '#A0A0A0', fontSize: 11 },
+  priceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  price: { color: '#E8C97A', fontSize: 16, fontWeight: '700' },
+  addCartBtn: { backgroundColor: '#E8C97A', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+  addCartBtnText: { color: '#000', fontSize: 11, fontWeight: '600' },
+  emptyFilter: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 40 },
+  emptyFilterEmoji: { fontSize: 48, marginBottom: 12 },
+  emptyFilterTitle: { color: '#FFF', fontSize: 16, fontWeight: '600', marginBottom: 4 },
+  emptyFilterSubtitle: { color: '#A0A0A0', fontSize: 12 },
 });
 
 export default WishlistScreen;
