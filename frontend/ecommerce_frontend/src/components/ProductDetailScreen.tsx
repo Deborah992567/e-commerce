@@ -16,6 +16,7 @@ import { Product } from '../types';
 interface ProductDetailScreenProps {
   product: Product;
   onBack?: () => void;
+  onViewReviews?: (product: Product) => void;
 }
 
 // Extended product details
@@ -76,7 +77,7 @@ const PRODUCT_DETAILS: { [key: number]: any } = {
   },
 };
 
-const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBack }) => {
+const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBack, onViewReviews }) => {
   const insets = useSafeAreaInsets();
   const { addToCart } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
