@@ -187,15 +187,20 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
       />
 
       <View style={styles.filterRow}>
-        {FILTERS.map((filter) => (
-          <TouchableOpacity
-            key={filter}
-            style={[styles.filterPill, activeFilter === filter && styles.filterPillActive]}
-            onPress={() => setActiveFilter(filter)}
-          >
-            <Text style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}>{filter}</Text>
-          </TouchableOpacity>
-        ))}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+          {FILTERS.map((filter) => (
+            <TouchableOpacity
+              key={filter}
+              style={[styles.filterPill, activeFilter === filter && styles.filterPillActive]}
+              onPress={() => setActiveFilter(filter)}
+            >
+              <Text style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}>{filter}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <TouchableOpacity onPress={() => setShowFilters(true)} style={styles.advancedFilterBtn}>
+          <Text style={styles.advancedFilterText}>⚙️</Text>
+        </TouchableOpacity>
       </View>
 
       {loading ? (
