@@ -201,8 +201,10 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
 
           {/* Rating */}
           <View style={styles.ratingRow}>
-            <Text style={styles.stars}>⭐ {details.rating}</Text>
-            <Text style={styles.reviews}>({details.reviews} reviews)</Text>
+            <TouchableOpacity onPress={() => onViewReviews?.(product)} style={styles.ratingBtn}>
+              <Text style={styles.stars}>⭐ {details.rating}</Text>
+              <Text style={styles.reviews}>({details.reviews} reviews)</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Price */}
