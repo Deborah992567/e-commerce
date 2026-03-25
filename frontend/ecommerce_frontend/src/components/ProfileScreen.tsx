@@ -169,6 +169,14 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
           <TouchableOpacity onPress={onGoToOrderHistory} style={styles.orderHistoryBtn}>
             <Text style={styles.orderHistoryBtnText}>📦 View Order History</Text>
           </TouchableOpacity>
+          <View style={styles.quickActionsRow}>
+            <TouchableOpacity onPress={onGoToWishlist} style={styles.quickActionBtn}>
+              <Text style={styles.quickActionBtnText}>❤️ Wishlist</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onGoToNotifications} style={styles.quickActionBtn}>
+              <Text style={styles.quickActionBtnText}>🔔 Notifications</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Delivery Address Section */}
@@ -450,6 +458,9 @@ const styles = StyleSheet.create({
   userRole: { color: '#E8C97A', fontSize: 12, fontWeight: '500' },
   orderHistoryBtn: { marginTop: 12, backgroundColor: '#E8C97A', paddingVertical: 10, borderRadius: 8, alignItems: 'center' },
   orderHistoryBtnText: { color: '#000', fontSize: 14, fontWeight: '600' },
+  quickActionsRow: { flexDirection: 'row', marginTop: 12, gap: 12 },
+  quickActionBtn: { flex: 1, backgroundColor: '#1F1F2A', paddingVertical: 10, borderRadius: 8, alignItems: 'center', borderWidth: 1, borderColor: '#E8C97A' },
+  quickActionBtnText: { color: '#E8C97A', fontSize: 13, fontWeight: '600' },
   inputGroup: { marginBottom: 16 },
   input: { backgroundColor: '#23232B', color: '#FFF', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 12, marginBottom: 8, borderWidth: 1, borderColor: '#444' },
   row: { flexDirection: 'row' },
