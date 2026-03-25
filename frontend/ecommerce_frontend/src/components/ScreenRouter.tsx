@@ -13,10 +13,13 @@ import OrderSuccessScreen from './OrderSuccessScreen';
 import OrderHistoryScreen from './OrderHistoryScreen';
 import OrderDetailScreen from './OrderDetailScreen';
 import ReviewsScreen from './ReviewsScreen';
+import WishlistScreen from './WishlistScreen';
+import RecommendationsPanel from './RecommendationsPanel';
+import PushNotificationsManager from './PushNotificationsManager';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
-  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail' | 'reviews'>('main');
+  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail' | 'reviews' | 'wishlist' | 'notifications'>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const { isAdmin, user } = useAuth();
@@ -72,6 +75,10 @@ export default function ScreenRouter() {
     setScreen('productDetail');
     setSelectedProduct(null);
   };
+  const handleGoToWishlist = () => setScreen('wishlist');
+  const handleBackFromWishlist = () => setScreen('productList');
+  const handleGoToNotifications = () => setScreen('notifications');
+  const handleBackFromNotifications = () => setScreen('profile');
 
   if (screen === 'signup') {
     return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} onGoToProductList={handleGoToProducts} />;
@@ -111,6 +118,12 @@ export default function ScreenRouter() {
   }
   if (screen === 'reviews' && selectedProduct) {
     return <ReviewsScreen productId={selectedProduct.id} productName={selectedProduct.name} onClose={handleBackFromReviews} />;
+  }
+  if (screen === 'wishlist') {
+    return <WishlistScreen onBack={handleBackFromWishlist} onAddToCart={() => setScreen('cart')} />;
+  }
+  if (screen === 'notifications') {
+    return <PushNotificationsManager onBack={handleBackFromNotifications} />;
   }
   return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
 }

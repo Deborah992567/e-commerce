@@ -8,9 +8,11 @@ import CTAButton from './CTAButton';
 interface ProfileScreenProps {
   onBack?: () => void;
   onGoToOrderHistory?: () => void;
+  onGoToWishlist?: () => void;
+  onGoToNotifications?: () => void;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory, onGoToWishlist, onGoToNotifications }) => {
   const { user, logout } = useAuth();
   const insets = useSafeAreaInsets();
 
