@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,33 +7,21 @@ import {
   FlatList,
   Image,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-interface WishlistItem {
-  id: number;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  category: string;
-  rating: number;
-  reviews: number;
-  image: string;
-  inStock: boolean;
-  addedDate: string;
-}
+import { useWishlist } from '../contexts/WishlistContext';
+import { useCart } from '../contexts/CartContext';
 
 interface WishlistScreenProps {
   onBack?: () => void;
-  onViewProduct?: (id: number) => void;
-  onAddToCart?: (item: WishlistItem) => void;
+  onAddToCart?: () => void;
 }
 
-const WishlistScreen: React.FC<WishlistScreenProps> = ({
-  onBack,
-  onViewProduct,
-  onAddToCart,
-}) => {
+type SortOption = 'date_added' | 'price_low' | 'price_high' | 'rating';
+type FilterCategory = 'all' | string;
+
+const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) => {
   const insets = useSafeAreaInsets();
 
   // Mock wishlist data
