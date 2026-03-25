@@ -97,7 +97,7 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
   };
 
   const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = 0;
+  const shipping: number = 0;
   const tax = (subtotal + shipping) * 0.08;
 
   return (
