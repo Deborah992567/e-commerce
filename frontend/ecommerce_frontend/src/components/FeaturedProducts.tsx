@@ -68,7 +68,12 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
           <Text style={styles.fpEyebrow}>— Featured</Text>
           <Text style={styles.fpTitle}>This Season's <Text style={styles.fpTitleEm}>Icons</Text></Text>
         </View>
-        <View style={styles.fpFilters}>
+        <ScrollView
+          style={styles.fpFilters}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.fpFiltersContent}
+        >
           {FILTERS.map((f) => (
             <TouchableOpacity
               key={f}
@@ -78,7 +83,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
               <Text style={[styles.fpFilterText, active === f && styles.fpFilterTextActive]}>{f}</Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       </View>
 
       <View style={styles.fpGrid}>
@@ -156,6 +161,10 @@ const styles = StyleSheet.create({
   fpFilters: {
     flexDirection: 'row',
     marginTop: 8,
+  },
+  fpFiltersContent: {
+    alignItems: 'center',
+    paddingRight: 8,
   },
   fpFilter: {
     paddingHorizontal: 12,
