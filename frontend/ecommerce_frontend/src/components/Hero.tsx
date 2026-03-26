@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Alert } from 'react-native';
 import CTAButton from './CTAButton';
 
 interface HeroProps {
@@ -28,7 +28,11 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
 
         <View style={styles.heroActions}>
           <CTAButton label="Shop Collection" onClick={onShop} variant="primary" icon="→" />
-          <CTAButton label="Explore Lookbook" variant="ghost" />
+          <CTAButton
+            label="Explore Lookbook"
+            variant="ghost"
+            onClick={() => Alert.alert('Coming Soon', 'The Lookbook feature is coming soon! Stay tuned for curated style inspiration.')}
+          />
         </View>
 
         <View style={styles.heroStats}>
