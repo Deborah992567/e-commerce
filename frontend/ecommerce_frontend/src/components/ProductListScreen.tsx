@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput, Animated, ScrollView, Modal } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput, Animated, ScrollView, Modal, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
@@ -133,7 +133,9 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        {showViewAll && <TouchableOpacity><Text style={styles.viewAllText}>View All</Text></TouchableOpacity>}
+        {showViewAll && <TouchableOpacity onPress={() => Alert.alert('Coming Soon', 'View All feature is coming soon! Browse our complete collection.')}>
+          <Text style={styles.viewAllText}>View All</Text>
+        </TouchableOpacity>}
       </View>
       <FlatList
         data={data}

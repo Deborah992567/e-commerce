@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  TextInput,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
@@ -22,6 +23,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [orderNotes, setOrderNotes] = useState('');
 
   // Mock payment methods (in real app, get from user profile)
   const paymentMethods = [
@@ -203,11 +205,16 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
         {/* Order Notes */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Order Notes (Optional)</Text>
-          <TouchableOpacity style={styles.notesInput}>
-            <Text style={styles.notesPlaceholder}>
-              Add any special instructions...
-            </Text>
-          </TouchableOpacity>
+          <TextInput
+            style={styles.notesInput}
+            value={orderNotes}
+            onChangeText={setOrderNotes}
+            placeholder="Add any special instructions..."
+            placeholderTextColor="#A0A0A0"
+            multiline
+            numberOfLines={3}
+            textAlignVertical="top"
+          />
         </View>
 
         <View style={styles.spacer} />
@@ -417,10 +424,6 @@ const styles = StyleSheet.create({
     padding: 16,
     minHeight: 80,
     justifyContent: 'center',
-  },
-  notesPlaceholder: {
-    color: '#A0A0A0',
-    fontSize: 14,
   },
   spacer: {
     height: 100,

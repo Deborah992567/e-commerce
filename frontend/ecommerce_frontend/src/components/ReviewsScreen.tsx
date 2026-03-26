@@ -300,10 +300,16 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
             <Text style={styles.reviewContent}>{item.content}</Text>
 
             <View style={styles.reviewFooter}>
-              <TouchableOpacity style={styles.helpfulBtn}>
+              <TouchableOpacity
+                style={styles.helpfulBtn}
+                onPress={() => Alert.alert('Coming Soon', 'Helpful voting feature is coming soon!')}
+              >
                 <Text style={styles.helpfulText}>👍 Helpful ({item.helpful})</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.reportBtn}>
+              <TouchableOpacity
+                style={styles.reportBtn}
+                onPress={() => Alert.alert('Coming Soon', 'Report feature is coming soon!')}
+              >
                 <Text style={styles.reportText}>Report</Text>
               </TouchableOpacity>
             </View>

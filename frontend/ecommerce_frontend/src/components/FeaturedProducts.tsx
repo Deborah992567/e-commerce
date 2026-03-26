@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import CTAButton from './CTAButton';
 
 const PRODUCTS = [
@@ -91,7 +91,12 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
               <Image source={{ uri: p.img }} style={styles.fpImg} />
               {p.badge && <View style={styles.fpBadge}><Text style={styles.fpBadgeText}>{p.badge}</Text></View>}
               <View style={styles.fpHoverActions}>
-                <TouchableOpacity style={styles.fpQuick}><Text style={styles.fpQuickText}>♡ Wishlist</Text></TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.fpQuick}
+                  onPress={() => Alert.alert('Coming Soon', 'Wishlist feature is coming soon! Save your favorite items for later.')}
+                >
+                  <Text style={styles.fpQuickText}>♡ Wishlist</Text>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.fpInfo}>
