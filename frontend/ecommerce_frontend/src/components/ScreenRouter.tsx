@@ -20,6 +20,7 @@ import PushNotificationsManager from './PushNotificationsManager';
 import ReferralScreen from './ReferralScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import { useAuth } from '../contexts/AuthContext';
+import DealsScreen from './DealsScreen';
 
 export default function ScreenRouter() {
   const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail' | 'reviews' | 'wishlist' | 'notifications' | 'referral'>('main');
@@ -33,6 +34,7 @@ export default function ScreenRouter() {
   const getActiveTab = () => {
     if (screen === 'main' || screen === 'dashboard') return 'home';
     if (screen === 'productList' || screen === 'productDetail') return 'shop';
+    if (screen === 'deals') return 'deals';
     if (screen === 'cart' || screen === 'checkout' || screen === 'orderSuccess') return 'shop';
     if (screen === 'profile' || screen === 'wishlist' || screen === 'notifications') return 'account';
     return 'home';
@@ -42,7 +44,7 @@ export default function ScreenRouter() {
   const handleTabChange = (tab: string) => {
     if (tab === 'home') setScreen('main');
     if (tab === 'shop') setScreen('productList');
-    if (tab === 'deals') setScreen('main'); // Could be a dedicated deals screen
+    if (tab === 'deals') setScreen('deals');
     if (tab === 'account') setScreen('profile');
   };
 
@@ -130,6 +132,7 @@ export default function ScreenRouter() {
   // Render main screen based on state
   const renderMainContent = () => {
     if (screen === 'main') return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
+    if (screen === 'deals') return <DealsScreen />;
     if (screen === 'productList') return <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => handleGoToCart('productList')} onLogout={() => setScreen('main')} />;
     if (screen === 'cart') return <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />;
     if (screen === 'profile') return <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} onGoToWishlist={handleGoToWishlist} onGoToNotifications={handleGoToNotifications} />;
