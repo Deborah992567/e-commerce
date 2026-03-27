@@ -99,7 +99,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
 
       <View style={styles.revenueCard}>
         <Text style={styles.revenueTitle}>Revenue Overview</Text>
-        <Text style={styles.revenueAmount}>$45,678.90</Text>
+        <Text style={styles.revenueAmount}>₦45,678.90</Text>
         <Text style={styles.revenueSubtext}>+15% from last month</Text>
         <View style={styles.revenueBar}>
           <View style={styles.revenueProgress} />
