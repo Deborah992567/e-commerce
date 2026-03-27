@@ -150,29 +150,30 @@ export default function ScreenRouter() {
   if (screen === 'notifications') {
     return <PushNotificationsManager onBack={handleBackFromNotifications} />;
   }
-  
-  // Main authenticated screens with bottom navigation
-  const mainContent = (
-    <>
-      {screen === 'main' && <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />}
-      {screen === 'productList' && <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => handleGoToCart('productList')} onLogout={() => setScreen('main')} />}
-      {screen === 'cart' && <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />}
-      {screen === 'profile' && <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} onGoToWishlist={handleGoToWishlist} onGoToNotifications={handleGoToNotifications} />}
-      {screen === 'productDetail' && selectedProduct && <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} onViewReviews={handleGoToReviews} />}
-      {screen === 'checkout' && <CheckoutScreen onBack={() => setScreen('cart')} onOrderSuccess={handleOrderSuccess} />}
-      {screen === 'orderSuccess' && <OrderSuccessScreen onContinueShopping={handleContinueShopping} onViewOrders={handleViewOrders} />}
-      {screen === 'orderHistory' && <OrderHistoryScreen onBack={handleBack} onViewDetails={handleViewOrderDetail} />}
-      {screen === 'orderDetail' && selectedOrder && <OrderDetailScreen order={selectedOrder} onBack={handleBackFromOrderDetail} />}
-      {screen === 'reviews' && selectedProduct && <ReviewsScreen productId={selectedProduct.id} productName={selectedProduct.name} onClose={handleBackFromReviews} />}
-      {screen === 'wishlist' && <WishlistScreen onBack={handleBackFromWishlist} onAddToCart={() => setScreen('cart')} />}
-    </>
-  );
+
+  // Render main screen based on state
+  const renderMainContent = () => {
+    if (screen === 'main') return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
+    if (screen === 'productList') return <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => handleGoToCart('productList')} onLogout={() => setScreen('main')} />;
+    if (screen === 'cart') return <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />;
+    if (screen === 'profile') return <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} onGoToWishlist={handleGoToWishlist} onGoToNotifications={handleGoToNotifications} />;
+    if (screen === 'productDetail' && selectedProduct) return <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} onViewReviews={handleGoToReviews} />;
+    if (screen === 'checkout') return <CheckoutScreen onBack={() => setScreen('cart')} onOrderSuccess={handleOrderSuccess} />;
+    if (screen === 'orderSuccess') return <OrderSuccessScreen onContinueShopping={handleContinueShopping} onViewOrders={handleViewOrders} />;
+    if (screen === 'orderHistory') return <OrderHistoryScreen onBack={handleBack} onViewDetails={handleViewOrderDetail} />;
+    if (screen === 'orderDetail' && selectedOrder) return <OrderDetailScreen order={selectedOrder} onBack={handleBackFromOrderDetail} />;
+    if (screen === 'reviews' && selectedProduct) return <ReviewsScreen productId={selectedProduct.id} productName={selectedProduct.name} onClose={handleBackFromReviews} />;
+    if (screen === 'wishlist') return <WishlistScreen onBack={handleBackFromWishlist} onAddToCart={() => setScreen('cart')} />;
+    return <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />;
+  };
+
+  // Show bottom navigation only for main authenticated screens
+  const showBottomNav = !['login', 'signup', 'forgot', 'dashboard', 'checkout', 'orderSuccess', 'notifications'].includes(screen);
 
   return (
     <View style={{ flex: 1 }}>
-      {mainContent}
-      {/* Show bottom navigation only for main authenticated screens (not login/signup/checkout) */}
-      {!['login', 'signup', 'forgot', 'dashboard', 'checkout', 'orderSuccess', 'notifications'].includes(screen) && (
+      {renderMainContent()}
+      {showBottomNav && (
         <BottomTabNavigator
           activeTab={getActiveTab()}
           onTabChange={handleTabChange}
@@ -183,28 +184,3 @@ export default function ScreenRouter() {
     </View>
   );
 }
-
-// Show bottom navigation only for main authenticated screens (not login/signup/checkout)
-return (
-  <View style={{ flex: 1 }}>
-    {screen === 'main' && <HomeScreen onShopNow={handleShopNow} onViewCart={handleViewCart} />}
-    {screen === 'productList' && <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => handleGoToCart('productList')} onLogout={() => setScreen('main')} />}
-    {screen === 'cart' && <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />}
-    {screen === 'profile' && <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} onGoToWishlist={handleGoToWishlist} onGoToNotifications={handleGoToNotifications} />}
-    {screen === 'productDetail' && selectedProduct && <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} onViewReviews={handleGoToReviews} />}
-    {screen === 'checkout' && <CheckoutScreen onBack={() => setScreen('cart')} onOrderSuccess={handleOrderSuccess} />}
-    {screen === 'orderSuccess' && <OrderSuccessScreen onContinueShopping={handleContinueShopping} onViewOrders={handleViewOrders} />}
-    {screen === 'orderHistory' && <OrderHistoryScreen onBack={handleBack} onViewDetails={handleViewOrderDetail} />}
-    {screen === 'orderDetail' && selectedOrder && <OrderDetailScreen order={selectedOrder} onBack={handleBackFromOrderDetail} />}
-    {screen === 'reviews' && selectedProduct && <ReviewsScreen productId={selectedProduct.id} productName={selectedProduct.name} onClose={handleBackFromReviews} />}
-    {screen === 'wishlist' && <WishlistScreen onBack={handleBackFromWishlist} onAddToCart={() => setScreen('cart')} />}
-    {!['login', 'signup', 'forgot', 'dashboard', 'checkout', 'orderSuccess', 'notifications'].includes(screen) && (
-      <BottomTabNavigator
-        activeTab={getActiveTab()}
-        onTabChange={handleTabChange}
-        cartCount={cartCount}
-        notificationCount={0}
-      />
-    )}
-  </View>
-);
