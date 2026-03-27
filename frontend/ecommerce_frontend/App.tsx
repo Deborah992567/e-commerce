@@ -1,5 +1,5 @@
 /**
- * Debbie's E-Commerce — Dark Luxury Landing Page
+ * Dez Collection — Dark Luxury Landing Page
  */
 import React, { useRef, useEffect } from 'react';
 import {
