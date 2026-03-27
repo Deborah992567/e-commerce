@@ -119,6 +119,10 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
     console.log('Shop now pressed!');
   };
   const handleViewCart = () => {
+  const handleDealsNow = () => {
+    setActiveTab('deals');
+    console.log('Deals tab selected');
+  };
     setActiveTab('shop');
     console.log('View cart pressed!');
   };
@@ -149,7 +153,8 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
             {/* ── CTA Buttons ── */}
             <Section delay={500} style={styles.sectionPad}>
               <CTASection onShopNow={handleShopNow} onViewCart={handleViewCart} />
-            </Section>
+              <CTASection onShopNow={handleShopNow} onViewCart={handleViewCart} />
+              <CTAButton title="Deals" onPress={handleDealsNow} color="#FF5722" variant="outline" size="lg" icon="⚡" />
 
             <Divider delay={700} />
 
@@ -168,13 +173,13 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
 
             <Section delay={1300} style={styles.sectionPad}>
               <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
+              {/* Removed from home; handled in Deals tab only */}
             </Section>
 
             <Divider delay={1500} />
-
+            
             <Section delay={1600} style={styles.sectionPad}>
-              <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
-            </Section>
+              {/* empty placeholder to keep layout consistent */}
           </ScrollView>
         );
       case 'shop':
@@ -198,13 +203,13 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
 
             <Section delay={300} style={styles.sectionPad}>
               <FeaturedProducts onAddToCart={handleAddToCart} />
-            </Section>
+              <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
 
             <Divider delay={500} />
 
             <Section delay={600} style={styles.sectionPad}>
               <AnimatedCart count={cartCount} />
-            </Section>
+              <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
           </ScrollView>
         );
       case 'deals':
@@ -228,7 +233,7 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
 
             <Section delay={300} style={styles.sectionPad}>
               <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
-            </Section>
+              {/* Removed from account to consolidate in Deals */}
 
             <Divider delay={500} />
 
