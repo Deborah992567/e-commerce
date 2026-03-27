@@ -8,16 +8,16 @@ import FilterPanel from './FilterPanel';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const PRODUCTS = [
-  { id: 1, name: 'Phantom Runner', category: 'Footwear', price: 219, oldPrice: 279, badge: 'Best Seller', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80', rating: 5, inStock: true },
-  { id: 2, name: 'Void Jacket', category: 'Outerwear', price: 389, oldPrice: null, badge: 'New', img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80', rating: 4, inStock: true },
-  { id: 3, name: 'Eclipse Watch', category: 'Accessories', price: 549, oldPrice: null, badge: 'Limited', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80', rating: 5, inStock: false },
-  { id: 4, name: 'Core Tee', category: 'Apparel', price: 79, oldPrice: null, badge: null, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80', rating: 3, inStock: true },
-  { id: 5, name: 'Luna Backpack', category: 'Accessories', price: 129, oldPrice: 149, badge: 'Trending', img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80', rating: 4, inStock: true },
-  { id: 6, name: 'Monarch Sunglasses', category: 'Accessories', price: 199, oldPrice: null, badge: 'New', img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500&q=80', rating: 4, inStock: true },
-  { id: 7, name: 'Swift Sneakers', category: 'Footwear', price: 159, oldPrice: 189, badge: 'Best Seller', img: 'https://images.unsplash.com/photo-1528701800489-20e46c66ea59?w=500&q=80', rating: 5, inStock: false },
-  { id: 8, name: 'Nimbus Hoodie', category: 'Apparel', price: 99, oldPrice: 129, badge: 'Limited', img: 'https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=500&q=80', rating: 3, inStock: true },
-  { id: 9, name: 'Atlas Denim', category: 'Apparel', price: 119, oldPrice: 149, badge: null, img: 'https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?w=500&q=80', rating: 4, inStock: true },
-  { id: 10, name: 'Aero Jacket', category: 'Outerwear', price: 439, oldPrice: 499, badge: 'Premium', img: 'https://images.unsplash.com/photo-1600180758895-8f4076ea7f24?w=500&q=80', rating: 5, inStock: true },
+  { id: 1, name: 'Phantom Runner', category: 'Footwear', price: 219, oldPrice: 279, badge: 'Best Seller', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80', rating: 5, inStock: true, reviews: 442 },
+  { id: 2, name: 'Void Jacket', category: 'Outerwear', price: 389, oldPrice: null, badge: 'New', img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80', rating: 4, inStock: true, reviews: 238 },
+  { id: 3, name: 'Eclipse Watch', category: 'Accessories', price: 549, oldPrice: null, badge: 'Limited', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80', rating: 5, inStock: false, reviews: 156 },
+  { id: 4, name: 'Core Tee', category: 'Apparel', price: 79, oldPrice: null, badge: null, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80', rating: 3, inStock: true, reviews: 92 },
+  { id: 5, name: 'Luna Backpack', category: 'Accessories', price: 129, oldPrice: 149, badge: 'Trending', img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80', rating: 4, inStock: true, reviews: 311 },
+  { id: 6, name: 'Monarch Sunglasses', category: 'Accessories', price: 199, oldPrice: null, badge: 'New', img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500&q=80', rating: 4, inStock: true, reviews: 184 },
+  { id: 7, name: 'Swift Sneakers', category: 'Footwear', price: 159, oldPrice: 189, badge: 'Best Seller', img: 'https://images.unsplash.com/photo-1528701800489-20e46c66ea59?w=500&q=80', rating: 5, inStock: false, reviews: 520 },
+  { id: 8, name: 'Nimbus Hoodie', category: 'Apparel', price: 99, oldPrice: 129, badge: 'Limited', img: 'https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=500&q=80', rating: 3, inStock: true, reviews: 160 },
+  { id: 9, name: 'Atlas Denim', category: 'Apparel', price: 119, oldPrice: 149, badge: null, img: 'https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?w=500&q=80', rating: 4, inStock: true, reviews: 241 },
+  { id: 10, name: 'Aero Jacket', category: 'Outerwear', price: 439, oldPrice: 499, badge: 'Premium', img: 'https://images.unsplash.com/photo-1600180758895-8f4076ea7f24?w=500&q=80', rating: 5, inStock: true, reviews: 374 },
 ];
 
 const RECENTLY_VIEWED = PRODUCTS.slice(0, 3);
@@ -318,6 +318,9 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
       >
         <FilterPanel
           onClose={() => setShowFilters(false)}
+          onFiltersChange={handleFiltersChange}
+          onApply={handleApplyFilters}
+          products={PRODUCTS}
           productCount={filtered.length}
         />
       </Modal>
