@@ -131,7 +131,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
     ]).start();
   };
 
-  const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
+  const formatCurrency = (value: number) => `₦${value.toFixed(2)}`;
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0;
@@ -278,7 +278,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
               <View key={item} style={styles.relatedCard}>
                 <View style={styles.relatedImage} />
                 <Text style={styles.relatedName}>Product {item}</Text>
-                <Text style={styles.relatedPrice}>$99.99</Text>
+                  <Text style={styles.relatedPrice}>₦99.99</Text>
               </View>
             ))}
           </View>

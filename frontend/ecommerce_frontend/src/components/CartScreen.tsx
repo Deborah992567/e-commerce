@@ -37,10 +37,9 @@ const CartScreen: React.FC<CartScreenProps> = ({ onBack, onCheckout }) => {
               <View style={styles.itemCard}>
                 <View style={styles.itemInfo}>
                   <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemDetail}>Qty: {item.quantity} • ${item.price.toFixed(2)}</Text>
+                  <Text style={styles.itemDetail}>Qty: {item.quantity} • ₦{item.price.toFixed(2)}</Text>
                   {item.size ? <Text style={styles.itemDetail}>Size: {item.size}</Text> : null}
-                    <Text style={styles.itemDetail}>Qty: {item.quantity} • ₦{item.price.toFixed(2)}</Text>
-                    <Text style={styles.itemSubtotal}>₦{(item.price * item.quantity).toFixed(2)}</Text>
+                  <Text style={styles.itemSubtotal}>₦{(item.price * item.quantity).toFixed(2)}</Text>
                 </View>
                 <TouchableOpacity
                   onPress={() => removeFromCart(Number(item.id), item.size)}
@@ -54,8 +53,7 @@ const CartScreen: React.FC<CartScreenProps> = ({ onBack, onCheckout }) => {
 
           <View style={styles.footer}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>${totalPrice.toFixed(2)}</Text>
-              <Text style={styles.totalValue}>₦{totalPrice.toFixed(2)}</Text>
+            <Text style={styles.totalValue}>₦{totalPrice.toFixed(2)}</Text>
           </View>
 
           <TouchableOpacity style={styles.checkoutBtn} onPress={onCheckout}>
