@@ -25,6 +25,22 @@ const RECOMMENDED = PRODUCTS.slice(3, 6);
 
 const FILTERS = ['All', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
 
+type FilterOptions = {
+  categories: string[];
+  priceRange: [number, number];
+  ratings: number[];
+  sortBy: 'relevant' | 'price-low' | 'price-high' | 'rating' | 'newest';
+  inStock: boolean;
+};
+
+const defaultFilterOptions: FilterOptions = {
+  categories: [],
+  priceRange: [0, 1000],
+  ratings: [],
+  sortBy: 'relevant',
+  inStock: false,
+};
+
 interface ProductListScreenProps {
   onBack?: () => void;
   onGoToProductDetail?: (product: any) => void;
@@ -38,6 +54,8 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
   const [search, setSearch] = useState('');
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const [appliedFilters, setAppliedFilters] = useState<FilterOptions>(defaultFilterOptions);
+  const [pendingFilters, setPendingFilters] = useState<FilterOptions>(defaultFilterOptions);
   const [scrollY] = useState(new Animated.Value(0));
   const [showFilters, setShowFilters] = useState(false);
   const { user } = useAuth();
@@ -56,6 +74,15 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
         ? prev.filter(id => id !== productId)
         : [...prev, productId]
     );
+  };
+
+  const handleFiltersChange = (filters: FilterOptions) => {
+    setPendingFilters(filters);
+  };
+
+  const handleApplyFilters = (filters: FilterOptions) => {
+    setAppliedFilters(filters);
+    setShowFilters(false);
   };
 
   const renderSkeletonCard = () => (
@@ -149,6 +176,21 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
   );
 
   const filteredByCategory = activeFilter === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeFilter);
+  const filteredByAdvanced = filteredByCategory.filter((p) => {
+    if (appliedFilters.categories.length > 0 && !appliedFilters.categories.includes(p.category)) {
+      return false;
+    }
+    if (p.price < appliedFilters.priceRange[0] || p.price > appliedFilters.priceRange[1]) {
+      return false;
+    }
+    if (appliedFilters.ratings.length > 0 && !appliedFilters.ratings.includes(p.rating)) {
+      return false;
+    }
+    if (appliedFilters.inStock && !p.inStock) {
+      return false;
+    }
+    return true;
+  });
   const filtered = filteredByCategory.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase())
   );
