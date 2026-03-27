@@ -42,7 +42,7 @@ const PRODUCTS = [
   },
 ];
 
-const FILTERS = ['All', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
+const FILTERS = ['All', 'Recently Viewed', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
 
 interface FeaturedProductsProps {
   onAddToCart: (id: number) => void;
@@ -51,9 +51,27 @@ interface FeaturedProductsProps {
 const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
   const [active, setActive] = useState('All');
   const [added, setAdded] = useState<number[]>([]);
+  const [recentlyViewed, setRecentlyViewed] = useState<number[]>([]);
 
   const filtered =
-    active === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === active);
+    active === 'All'
+      ? PRODUCTS
+      : active === 'Recently Viewed'
+      ? PRODUCTS.filter((p) => recentlyViewed.includes(p.id))
+      : PRODUCTS.filter((p) => p.category === active);
+
+  const addRecentlyViewed = (id: number) => {
+    setRecentlyViewed((prev) => {
+      const normalized = [id, ...prev.filter((x) => x !== id)];
+      return normalized.slice(0, 6);
+    });
+  };
+
+  const handleViewProduct = (id: number, name: string) => {
+    addRecentlyViewed(id);
+    Alert.alert('Product View', `${name} was added to Recently Viewed. Product detail is coming soon!`);
+    setActive('Recently Viewed');
+  };
 
   const handleAdd = (id: number) => {
     setAdded((prev) => [...prev, id]);
@@ -86,11 +104,13 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
         </ScrollView>
       </View>
 
-      <View style={styles.fpGrid}>
+        <View style={styles.fpGrid}>
         {filtered.map((p, i) => (
-          <View
+          <TouchableOpacity
             style={[styles.fpCard, { borderColor: p.color }]}
             key={p.id}
+            activeOpacity={0.85}
+            onPress={() => handleViewProduct(p.id, p.name)}
           >
             <View style={styles.fpImgWrap}>
               <Image source={{ uri: p.img }} style={styles.fpImg} />
@@ -122,9 +142,15 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
+
+        {active === 'Recently Viewed' && filtered.length === 0 && (
+          <View style={styles.fpEmpty}> 
+            <Text style={styles.fpEmptyText}>No recently viewed items yet — tap a product to begin.</Text>
+          </View>
+        )}
 
       <View style={styles.fpCta}>
         <CTAButton label="View All Products" variant="ghost" icon="→" />
@@ -244,6 +270,18 @@ const styles = StyleSheet.create({
     color: '#A0A0A0',
     fontSize: 12,
     marginBottom: 2,
+  },
+  fpEmpty: {
+    marginTop: 16,
+    backgroundColor: '#17171f',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+  },
+  fpEmptyText: {
+    color: '#B3B3C2',
+    fontSize: 14,
+    textAlign: 'center',
   },
   fpName: {
     color: 'white',
