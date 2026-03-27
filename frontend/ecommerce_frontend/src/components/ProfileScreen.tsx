@@ -468,6 +468,8 @@ const styles = StyleSheet.create({
   quickActionsRow: { flexDirection: 'row', marginTop: 12, gap: 12 },
   quickActionBtn: { flex: 1, backgroundColor: '#1F1F2A', paddingVertical: 10, borderRadius: 8, alignItems: 'center', borderWidth: 1, borderColor: '#E8C97A' },
   quickActionBtnText: { color: '#E8C97A', fontSize: 13, fontWeight: '600' },
+  referralBtn: { marginTop: 12, backgroundColor: '#E8C97A', paddingVertical: 10, borderRadius: 8, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#FFF' },
+  referralBtnText: { color: '#0D0D12', fontSize: 14, fontWeight: '700' },
   inputGroup: { marginBottom: 16 },
   input: { backgroundColor: '#23232B', color: '#FFF', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 12, marginBottom: 8, borderWidth: 1, borderColor: '#444' },
   row: { flexDirection: 'row' },
