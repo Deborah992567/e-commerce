@@ -9,16 +9,20 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({ onShop }) => {
   return (
     <View style={styles.hero}>
+      <View style={styles.logoHeader}>
+        <View style={styles.logoBadge}>
+          <Text style={styles.logoBadgeText}>DC</Text>
+        </View>
+        <View style={styles.logoText}>
+          <Text style={styles.logoMainText}>DEZ COLLECTION</Text>
+          <Text style={styles.logoSubText}>Luxury Fashion</Text>
+        </View>
+      </View>
+
       <View style={styles.heroContent}>
         <View style={styles.heroEyebrow}>
           <View style={styles.heroDot} />
           <Text style={styles.heroEyebrowText}>New Season 2026</Text>
-        </View>
-        <View style={styles.brandBar}>
-          <View style={styles.brandLogo}>
-            <Text style={styles.brandLogoText}>DC</Text>
-          </View>
-          <Text style={styles.brandName}>Dez Collection</Text>
         </View>
 
         <Text style={styles.heroTitle}>
