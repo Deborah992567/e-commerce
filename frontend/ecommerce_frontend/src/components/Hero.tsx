@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Alert, ScrollView, Dimensions } from 'react-native';
 import CTAButton from './CTAButton';
+import FlashDealsPanel from './FlashDealsPanel';
 
 interface HeroProps {
   onShop: () => void;
@@ -40,6 +41,8 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
           </View>
         ))}
       </View>
+
+      <FlashDealsPanel onFlashDealPress={(dealId) => onShop()} />
 
       <ScrollView
         style={styles.heroVisualScroll}
