@@ -195,7 +195,6 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
     p.name.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
   const formatCurrency = (value: number) => `₦${value.toFixed(2)}`;
 
   return (
