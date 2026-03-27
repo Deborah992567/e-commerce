@@ -14,6 +14,12 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
           <View style={styles.heroDot} />
           <Text style={styles.heroEyebrowText}>New Season 2026</Text>
         </View>
+        <View style={styles.brandBar}>
+          <View style={styles.brandLogo}>
+            <Text style={styles.brandLogoText}>DC</Text>
+          </View>
+          <Text style={styles.brandName}>Dez Collection</Text>
+        </View>
 
         <Text style={styles.heroTitle}>
           <Text style={styles.heroTitleLine}>Wear the </Text>
@@ -151,6 +157,30 @@ const styles = StyleSheet.create({
   },
   heroTitleLineSm: {
     fontSize: 24,
+  },
+  brandBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
+  brandLogo: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: '#E8C97A',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  brandLogoText: {
+    color: '#23232B',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  brandName: {
+    color: '#E8C97A',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   heroSub: {
     color: '#A0A0A0',

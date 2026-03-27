@@ -131,8 +131,8 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
               </View>
               <View style={styles.fpBottom}>
                 <View style={styles.fpPrices}>
-                  <Text style={styles.fpPrice}>${p.price}</Text>
-                  {p.oldPrice && <Text style={styles.fpOld}>${p.oldPrice}</Text>}
+                  <Text style={styles.fpPrice}>₦{p.price}</Text>
+                  {p.oldPrice && <Text style={styles.fpOld}>₦{p.oldPrice}</Text>}
                 </View>
                 <TouchableOpacity
                   style={[styles.fpAdd, added.includes(p.id) && styles.fpAddDone]}

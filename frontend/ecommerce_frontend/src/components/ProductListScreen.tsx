@@ -196,6 +196,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ onBack, onGoToPro
   );
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
+  const formatCurrency = (value: number) => `₦${value.toFixed(2)}`;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 30 }]}>
