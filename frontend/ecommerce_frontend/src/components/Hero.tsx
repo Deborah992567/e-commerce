@@ -113,6 +113,44 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
 };
 
 const styles = StyleSheet.create({
+  logoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
+    paddingVertical: 12,
+    gap: 12,
+  },
+  logoBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#E8C97A',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFF3D4',
+  },
+  logoBadgeText: {
+    color: '#23232B',
+    fontWeight: 'bold',
+    fontSize: 18,
+    letterSpacing: 1,
+  },
+  logoText: {
+    alignItems: 'flex-start',
+  },
+  logoMainText: {
+    color: '#E8C97A',
+    fontWeight: 'bold',
+    fontSize: 20,
+    letterSpacing: 2,
+  },
+  logoSubText: {
+    color: '#A0A0A0',
+    fontSize: 12,
+    fontWeight: '500',
+  },
   heroVisualScroll: {
     marginTop: 24,
     width: '100%',
@@ -162,30 +200,6 @@ const styles = StyleSheet.create({
   heroTitleLineSm: {
     fontSize: 24,
   },
-  brandBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    gap: 8,
-  },
-  brandLogo: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: '#E8C97A',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  brandLogoText: {
-    color: '#23232B',
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  brandName: {
-    color: '#E8C97A',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
   heroSub: {
     color: '#A0A0A0',
     fontSize: 16,
@@ -215,7 +229,6 @@ const styles = StyleSheet.create({
     color: '#A0A0A0',
     fontSize: 12,
   },
-  // heroVisual: { ... } removed, replaced by heroVisualScroll/heroVisualScrollContent
   heroCardMain: {
     backgroundColor: '#23232B',
     borderRadius: 16,
