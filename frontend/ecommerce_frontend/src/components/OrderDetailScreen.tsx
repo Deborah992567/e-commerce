@@ -196,7 +196,7 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
             <View key={item.id} style={styles.itemCard}>
               <View style={styles.itemInfo}>
                 <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+                <Text style={styles.itemPrice}>₦{item.price.toFixed(2)}</Text>
                 {item.size && (
                   <Text style={styles.itemSize}>Size: {item.size}</Text>
                 )}
@@ -204,7 +204,7 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
               <View style={styles.itemQty}>
                 <Text style={styles.quantityLabel}>Qty: {item.quantity}</Text>
                 <Text style={styles.itemTotal}>
-                  ${(item.price * item.quantity).toFixed(2)}
+                  ₦{(item.price * item.quantity).toFixed(2)}
                 </Text>
               </View>
             </View>
@@ -215,21 +215,21 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
         <View style={styles.section}>
           <View style={styles.priceRow}>
             <Text style={styles.priceLabel}>Subtotal</Text>
-            <Text style={styles.priceValue}>${subtotal.toFixed(2)}</Text>
+            <Text style={styles.priceValue}>₦{subtotal.toFixed(2)}</Text>
           </View>
           <View style={styles.priceRow}>
             <Text style={styles.priceLabel}>Shipping</Text>
             <Text style={styles.priceValue}>
-              {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
+              {shipping === 0 ? 'Free' : `₦${shipping.toFixed(2)}`}
             </Text>
           </View>
           <View style={styles.priceRow}>
             <Text style={styles.priceLabel}>Tax</Text>
-            <Text style={styles.priceValue}>${tax.toFixed(2)}</Text>
+            <Text style={styles.priceValue}>₦{tax.toFixed(2)}</Text>
           </View>
           <View style={[styles.priceRow, styles.totalRow]}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>${order.total.toFixed(2)}</Text>
+            <Text style={styles.totalValue}>₦{order.total.toFixed(2)}</Text>
           </View>
         </View>
 

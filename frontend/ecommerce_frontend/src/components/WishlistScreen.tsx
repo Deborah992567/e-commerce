@@ -118,7 +118,7 @@ const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) 
         </View>
 
         <View style={styles.priceRow}>
-          <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+          <Text style={styles.price}>₦{item.price.toFixed(2)}</Text>
           <TouchableOpacity
             style={styles.addCartBtn}
             onPress={() => handleAddToCart(item)}
