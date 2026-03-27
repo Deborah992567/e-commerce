@@ -52,43 +52,43 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
 
       <FlashDealsPanel onFlashDealPress={(dealId) => onShop()} />
 
+      <View style={styles.categoriesSection}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+          {[
+            { label: 'Best Sellers', emoji: '🔥' },
+            { label: 'New In', emoji: '🆕' },
+            { label: 'Electronics', emoji: '📱' },
+            { label: 'Fashion', emoji: '👗' },
+            { label: 'Home', emoji: '🏠' },
+            { label: 'Beauty', emoji: '💄' },
+            { label: 'Sports', emoji: '🏀' },
+          ].map((cat) => (
+            <View key={cat.label} style={styles.categoryChip}>
+              <Text style={styles.categoryText}>{cat.emoji} {cat.label}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+
+      <View style={styles.socialProofRow}>
+        <View style={styles.socialProofItem}>
+          <Text style={styles.socialProofValue}>68K+</Text>
+          <Text style={styles.socialProofLabel}>Products Sold</Text>
+        </View>
+        <View style={styles.socialProofItem}>
+          <Text style={styles.socialProofValue}>4.8★</Text>
+          <Text style={styles.socialProofLabel}>Avg Rating</Text>
+        </View>
+        <View style={styles.socialProofItem}>
+          <Text style={styles.socialProofValue}>12K+</Text>
+          <Text style={styles.socialProofLabel}>Reviews</Text>
+        </View>
+      </View>
+
       <ScrollView
         style={styles.heroVisualScroll}
         horizontal
         showsHorizontalScrollIndicator={false}
-        
-         <View style={styles.categoriesSection}>
-           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-             {[
-               { label: 'Best Sellers', emoji: '🔥' },
-               { label: 'New In', emoji: '🆕' },
-               { label: 'Electronics', emoji: '📱' },
-               { label: 'Fashion', emoji: '👗' },
-               { label: 'Home', emoji: '🏠' },
-               { label: 'Beauty', emoji: '💄' },
-               { label: 'Sports', emoji: '🏀' },
-             ].map((cat) => (
-               <View key={cat.label} style={styles.categoryChip}>
-                 <Text style={styles.categoryText}>{cat.emoji} {cat.label}</Text>
-               </View>
-             ))}
-           </ScrollView>
-         </View>
-         
-         <View style={styles.socialProofRow}>
-           <View style={styles.socialProofItem}>
-             <Text style={styles.socialProofValue}>68K+</Text>
-             <Text style={styles.socialProofLabel}>Products Sold</Text>
-           </View>
-           <View style={styles.socialProofItem}>
-             <Text style={styles.socialProofValue}>4.8★</Text>
-             <Text style={styles.socialProofLabel}>Avg Rating</Text>
-           </View>
-           <View style={styles.socialProofItem}>
-             <Text style={styles.socialProofValue}>12K+</Text>
-             <Text style={styles.socialProofLabel}>Reviews</Text>
-           </View>
-         </View>
         contentContainerStyle={styles.heroVisualScrollContent}
       >
         <View style={styles.heroCardMain}>
@@ -276,6 +276,60 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
+  },
+  searchContainer: {
+    width: '100%',
+    marginBottom: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#3A3A45',
+    backgroundColor: '#1B1B1F',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  searchInput: {
+    height: 40,
+    color: 'white',
+    fontSize: 14,
+  },
+  categoriesSection: {
+    width: '100%',
+    marginBottom: 16,
+  },
+  categoryScroll: {
+    paddingBottom: 8,
+  },
+  categoryChip: {
+    backgroundColor: '#2A2A32',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginRight: 8,
+  },
+  categoryText: {
+    color: '#E8E8E8',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  socialProofRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 18,
+  },
+  socialProofItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  socialProofValue: {
+    color: '#E8C97A',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  socialProofLabel: {
+    color: '#A0A0A0',
+    fontSize: 12,
+    marginTop: 2,
   },
   heroStat: {
     alignItems: 'center',
