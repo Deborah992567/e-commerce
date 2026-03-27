@@ -109,7 +109,7 @@ const SpinToWin: React.FC<SpinToWinProps> = ({ onPrizeWon }) => {
                     styles.wheelSegment,
                     {
                       backgroundColor: prize.color,
-                      transform: [{ rotateZ: angle }],
+                      transform: [{ rotateZ: `${angle}deg` }],
                     },
                     isSelected && styles.wheelSegmentSelected,
                   ]}

@@ -5,6 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Hero from './Hero';
 import AnimatedCart from './AnimatedCart';
 import FeaturedProducts from './FeaturedProducts';
+import GamificationPanel from './GamificationPanel';
+import SpinToWin from './SpinToWin';
 import CTAButton from './CTAButton';
 
 interface HomeScreenProps {
