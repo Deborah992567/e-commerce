@@ -4,6 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CTAButton from './CTAButton';
+import GamificationPanel from './GamificationPanel';
+import SpinToWin from './SpinToWin';
 
 interface ProfileScreenProps {
   onBack?: () => void;
@@ -433,6 +435,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Gamification Section */}
+        <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
+
+        {/* Spin to Win Section */}
+        <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
 
         <View style={{ height: 100 }} />
       </ScrollView>
