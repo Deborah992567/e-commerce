@@ -17,11 +17,12 @@ import ReviewsScreen from './ReviewsScreen';
 import WishlistScreen from './WishlistScreen';
 import RecommendationsPanel from './RecommendationsPanel';
 import PushNotificationsManager from './PushNotificationsManager';
+import ReferralScreen from './ReferralScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
-  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail' | 'reviews' | 'wishlist' | 'notifications'>('main');
+  const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail' | 'reviews' | 'wishlist' | 'notifications' | 'referral'>('main');
   const [previousScreen, setPreviousScreen] = useState<typeof screen>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
@@ -104,6 +105,8 @@ export default function ScreenRouter() {
   const handleBackFromWishlist = () => setScreen('productList');
   const handleGoToNotifications = () => setScreen('notifications');
   const handleBackFromNotifications = () => setScreen('profile');
+  const handleGoToReferral = () => setScreen('referral');
+  const handleBackFromReferral = () => setScreen('profile');
 
   if (screen === 'signup') {
     return <SignupScreen onBack={handleBack} onGoToLogin={handleGoToLogin} onGoToProductList={handleGoToProducts} />;
@@ -119,6 +122,9 @@ export default function ScreenRouter() {
   }
   if (screen === 'notifications') {
     return <PushNotificationsManager onBack={handleBackFromNotifications} />;
+  }
+  if (screen === 'referral') {
+    return <ReferralScreen onBack={handleBackFromReferral} />;
   }
 
   // Render main screen based on state

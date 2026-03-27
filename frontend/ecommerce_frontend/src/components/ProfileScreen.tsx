@@ -12,9 +12,10 @@ interface ProfileScreenProps {
   onGoToOrderHistory?: () => void;
   onGoToWishlist?: () => void;
   onGoToNotifications?: () => void;
+  onGoToReferral?: () => void;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory, onGoToWishlist, onGoToNotifications }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory, onGoToWishlist, onGoToNotifications, onGoToReferral }) => {
   const { user, logout } = useAuth();
   const insets = useSafeAreaInsets();
 
@@ -176,6 +177,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
               <Text style={styles.quickActionBtnText}>🔔 Notifications</Text>
             </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={onGoToReferral} style={styles.referralBtn}>
+            <Text style={styles.referralBtnText}>👥 Refer & Earn</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Delivery Address Section */}
