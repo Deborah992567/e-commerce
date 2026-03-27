@@ -126,6 +126,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onShopNow, onViewCart }) => {
         <Section delay={1100} style={styles.sectionPad}>
           <FeaturedProducts onAddToCart={handleAddToCart} />
         </Section>
+
+        <Divider delay={1200} />
+
+        <Section delay={1300} style={styles.sectionPad}>
+          <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
+        </Section>
+
+        <Divider delay={1500} />
+
+        <Section delay={1600} style={styles.sectionPad}>
+          <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
+        </Section>
       </ScrollView>
     </View>
   );
