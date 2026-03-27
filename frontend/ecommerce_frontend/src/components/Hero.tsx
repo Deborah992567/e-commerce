@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Alert, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, Alert, ScrollView, Dimensions, TextInput } from 'react-native';
 import CTAButton from './CTAButton';
 import FlashDealsPanel from './FlashDealsPanel';
 
