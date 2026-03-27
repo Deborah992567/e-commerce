@@ -147,10 +147,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
     <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.emojiBtn}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Profile Settings</Text>
+        <Text style={styles.title}>👤 Account</Text>
         <View style={{ width: 32 }} />
       </View>
 
