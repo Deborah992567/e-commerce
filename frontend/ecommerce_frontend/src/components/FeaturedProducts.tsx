@@ -154,6 +154,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
 
       <View style={styles.fpCta}>
         <CTAButton label="View All Products" variant="ghost" icon="→" />
+        <View style={{ height: 32 }} />
       </View>
     </View>
   );
@@ -327,6 +328,7 @@ const styles = StyleSheet.create({
   fpCta: {
     marginTop: 24,
     alignItems: 'center',
+    marginBottom: 32,
   },
 });
 
