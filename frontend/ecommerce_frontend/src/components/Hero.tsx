@@ -14,6 +14,14 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
         <Text style={styles.temuStyleTitle}>🛍️ DEZ COLLECTION</Text>
         <Text style={styles.temuStyleSubtitle}>Shop. Save. Repeat.</Text>
       </View>
+        
+         <View style={styles.searchContainer}>
+           <TextInput
+             style={styles.searchInput}
+             placeholder="Search products, brands, deals..."
+             placeholderTextColor="#888"
+           />
+         </View>
 
       <View style={styles.temuUrgencyBanner}>
         <Text style={styles.urgencyText}>⚡ Flash Sale — 70% OFF Today</Text>
@@ -48,6 +56,39 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
         style={styles.heroVisualScroll}
         horizontal
         showsHorizontalScrollIndicator={false}
+        
+         <View style={styles.categoriesSection}>
+           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+             {[
+               { label: 'Best Sellers', emoji: '🔥' },
+               { label: 'New In', emoji: '🆕' },
+               { label: 'Electronics', emoji: '📱' },
+               { label: 'Fashion', emoji: '👗' },
+               { label: 'Home', emoji: '🏠' },
+               { label: 'Beauty', emoji: '💄' },
+               { label: 'Sports', emoji: '🏀' },
+             ].map((cat) => (
+               <View key={cat.label} style={styles.categoryChip}>
+                 <Text style={styles.categoryText}>{cat.emoji} {cat.label}</Text>
+               </View>
+             ))}
+           </ScrollView>
+         </View>
+         
+         <View style={styles.socialProofRow}>
+           <View style={styles.socialProofItem}>
+             <Text style={styles.socialProofValue}>68K+</Text>
+             <Text style={styles.socialProofLabel}>Products Sold</Text>
+           </View>
+           <View style={styles.socialProofItem}>
+             <Text style={styles.socialProofValue}>4.8★</Text>
+             <Text style={styles.socialProofLabel}>Avg Rating</Text>
+           </View>
+           <View style={styles.socialProofItem}>
+             <Text style={styles.socialProofValue}>12K+</Text>
+             <Text style={styles.socialProofLabel}>Reviews</Text>
+           </View>
+         </View>
         contentContainerStyle={styles.heroVisualScrollContent}
       >
         <View style={styles.heroCardMain}>
