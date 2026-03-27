@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import CTAButton from './CTAButton';
 
@@ -13,6 +13,8 @@ const PRODUCTS = [
     badge: 'Best Seller',
     img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',
     color: '#FF6B35',
+    stock: 5,
+    discount: 21,
   },
   {
     id: 2,
@@ -22,6 +24,8 @@ const PRODUCTS = [
     badge: 'New',
     img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80',
     color: '#4ECDC4',
+    stock: 12,
+    discount: 0,
   },
   {
     id: 3,
@@ -31,6 +35,8 @@ const PRODUCTS = [
     badge: 'Limited',
     img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80',
     color: '#C9B8FF',
+    stock: 2,
+    discount: 15,
   },
   {
     id: 4,
@@ -39,6 +45,8 @@ const PRODUCTS = [
     price: 79,
     img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80',
     color: '#FFE66D',
+    stock: 50,
+    discount: 0,
   },
 ];
 
@@ -52,6 +60,27 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
   const [active, setActive] = useState('All');
   const [added, setAdded] = useState<number[]>([]);
   const [recentlyViewed, setRecentlyViewed] = useState<number[]>([]);
+  const [timeLeft, setTimeLeft] = useState<{ [key: number]: string }>({});
+
+  // Countdown timer effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const newTimeLeft: { [key: number]: string } = {};
+      
+      PRODUCTS.forEach((p) => {
+        const endTime = now + (p.stock * 1000 * 3600); // Mock countdown
+        const diff = endTime - now;
+        const hours = Math.floor(diff / (1000 * 3600));
+        const mins = Math.floor((diff % (1000 * 3600)) / (1000 * 60));
+        newTimeLeft[p.id] = hours > 0 ? `${hours}h ${mins}m` : `${mins}m left`;
+      });
+      
+      setTimeLeft(newTimeLeft);
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
 
   const filtered =
     active === 'All'
@@ -115,6 +144,9 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
             <View style={styles.fpImgWrap}>
               <Image source={{ uri: p.img }} style={styles.fpImg} />
               {p.badge && <View style={styles.fpBadge}><Text style={styles.fpBadgeText}>{p.badge}</Text></View>}
+              {p.discount > 0 && <View style={styles.fpDiscountBadge}><Text style={styles.fpDiscountText}>-{p.discount}%</Text></View>}
+              {p.stock <= 5 && <View style={styles.fpLimitedBadge}><Text style={styles.fpLimitedText}>🔥 Only {p.stock} left</Text></View>}
+              {p.stock > 5 && <View style={styles.fpTimerBadge}><Text style={styles.fpTimerText}>⏱️ {timeLeft[p.id] || 'Loading...'}</Text></View>}
               <View style={styles.fpHoverActions}>
                 <TouchableOpacity
                   style={styles.fpQuick}
