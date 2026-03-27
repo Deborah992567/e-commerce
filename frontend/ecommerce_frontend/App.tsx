@@ -12,117 +12,120 @@ import {
   Text,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+    switch (activeTab) {
+      case 'home':
+        return (
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={[
+              styles.scrollContent,
+              { paddingTop: insets.top, paddingBottom: insets.bottom + 100 },
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* ── Hero ── */}
+            <Section delay={0}>
+              <Hero onShop={handleShopNow} />
+            </Section>
 
-import Hero from './src/components/Hero';
-import AnimatedCart from './src/components/AnimatedCart';
-import FeaturedProducts from './src/components/FeaturedProducts';
-import GamificationPanel from './src/components/GamificationPanel';
-import SpinToWin from './src/components/SpinToWin';
-import BottomTabNavigator from './src/components/BottomTabNavigator';
-import CTAButton from './src/components/CTAButton';
+            <Divider delay={400} />
 
-// ── Section wrapper with slide-up + fade entrance ─────────────────────────
-interface SectionProps {
-  children: React.ReactNode;
-  delay?: number;
-  style?: object;
-}
+            {/* ── CTA Buttons ── */}
+            <Section delay={500} style={styles.sectionPad}>
+              <CTASection onShopNow={handleShopNow} onViewCart={handleViewCart} />
+              <CTAButton title="Deals" onPress={handleDealsNow} color="#FF5722" variant="outline" size="lg" icon="⚡" />
+            </Section>
 
-const Section: React.FC<SectionProps> = ({ children, delay = 0, style }) => {
-  const translateY = useRef(new Animated.Value(40)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+            <Divider delay={700} />
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 700,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 700,
-        delay,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
+            {/* ── Cart ── */}
+            <Section delay={800} style={styles.sectionPad}>
+              <AnimatedCart count={cartCount} />
+            </Section>
 
-  return (
-    <Animated.View style={[{ opacity, transform: [{ translateY }] }, style]}>
-      {children}
-    </Animated.View>
-  );
-};
+            <Divider delay={1000} />
+            {/* ── Featured Products ── */}
+            <Section delay={1100} style={styles.sectionPad}>
+              <FeaturedProducts onAddToCart={handleAddToCart} />
+            </Section>
 
-// ── Horizontal divider with center diamond ────────────────────────────────
-const Divider: React.FC<{ delay?: number }> = ({ delay = 0 }) => {
-  const scaleX = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+            <Divider delay={1200} />
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(scaleX, { toValue: 1, duration: 600, delay, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-      Animated.timing(opacity, { toValue: 1, duration: 400, delay, useNativeDriver: true }),
-    ]).start();
-  }, []);
+            <Section delay={1300} style={styles.sectionPad}>
+              {/* Gamification content moved to Deals tab */}
+            </Section>
 
-  return (
-    <Animated.View style={[styles.dividerRow, { opacity }]}>
-      <Animated.View style={[styles.dividerLine, { transform: [{ scaleX }] }]} />
-      <View style={styles.dividerDiamond} />
-      <Animated.View style={[styles.dividerLine, { transform: [{ scaleX }] }]} />
-    </Animated.View>
-  );
-};
+            <Divider delay={1500} />
 
-// ── CTA section with label ────────────────────────────────────────────────
-const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void }> = ({
-  onShopNow,
-  onViewCart,
-}) => (
-  <View style={styles.ctaSection}>
-    <CTAButton
-      title="Shop Now"
-      onPress={onShopNow}
-      color="#E8C97A"
-      size="lg"
-      icon="→"
-    />
-    <CTAButton
-      title="View Cart"
-      onPress={onViewCart}
-      color="#C4A4F0"
-      variant="outline"
-      size="lg"
-      icon="🛒"
-    />
-  </View>
-);
+            <Section delay={1600} style={styles.sectionPad}>
+              {/* empty placeholder */}
+            </Section>
+          </ScrollView>
+        );
+      case 'shop':
+        return (
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={[
+              styles.scrollContent,
+              { paddingTop: insets.top, paddingBottom: insets.bottom + 100 },
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
+            <Section delay={0} style={styles.sectionPad}>
+              <View style={styles.tabHeaderContainer}>
+                <Text style={styles.tabHeaderTitle}>🛍️ Shop All Products</Text>
+                <Text style={styles.tabHeaderSubtitle}>Browse our full collection</Text>
+              </View>
+            </Section>
 
-// ── Main App ──────────────────────────────────────────────────────────────
-interface AppProps {
-  onShopNow?: () => void;
-}
+            <Divider delay={200} />
 
-function App({ onShopNow }: AppProps): React.JSX.Element {
-  const insets = useSafeAreaInsets();
-  const [activeTab, setActiveTab] = useState('home');
-  const [cartCount, setCartCount] = useState(0);
-  const [notificationCount] = useState(0);
+            <Section delay={300} style={styles.sectionPad}>
+              <FeaturedProducts onAddToCart={handleAddToCart} />
+            </Section>
 
-  const handleShopNow = () => {
-    setActiveTab('shop');
-    if (onShopNow) return onShopNow();
-    console.log('Shop now pressed!');
+            <Divider delay={500} />
+
+            <Section delay={600} style={styles.sectionPad}>
+              <AnimatedCart count={cartCount} />
+            </Section>
+          </ScrollView>
+        );
+      case 'deals':
+        return (
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={[
+              styles.scrollContent,
+              { paddingTop: insets.top, paddingBottom: insets.bottom + 100 },
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
+            <Section delay={0} style={styles.sectionPad}>
+              <View style={styles.tabHeaderContainer}>
+                <Text style={styles.tabHeaderTitle}>⚡ Flash Deals & Offers</Text>
+                <Text style={styles.tabHeaderSubtitle}>Limited time offers just for you</Text>
+              </View>
+            </Section>
+
+            <Divider delay={200} />
+
+            <Section delay={300} style={styles.sectionPad}>
+              <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
+            </Section>
+
+            <Divider delay={500} />
+
+            <Section delay={600} style={styles.sectionPad}>
+              <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
+            </Section>
+          </ScrollView>
+        );
+      case 'account':
+        return (
   };
   const handleViewCart = () => {
-  const handleDealsNow = () => {
-    setActiveTab('deals');
-    console.log('Deals tab selected');
-  };
     setActiveTab('shop');
     console.log('View cart pressed!');
   };
@@ -152,8 +155,6 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
 
             {/* ── CTA Buttons ── */}
             <Section delay={500} style={styles.sectionPad}>
-              <CTASection onShopNow={handleShopNow} onViewCart={handleViewCart} />
-              <CTASection onShopNow={handleShopNow} onViewCart={handleViewCart} />
               <CTAButton title="Deals" onPress={handleDealsNow} color="#FF5722" variant="outline" size="lg" icon="⚡" />
 
             <Divider delay={700} />
@@ -173,8 +174,7 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
 
             <Section delay={1300} style={styles.sectionPad}>
               <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
-              {/* Removed from home; handled in Deals tab only */}
-            </Section>
+              {/* SpinToWin moved to Deals tab */}
 
             <Divider delay={1500} />
             
@@ -205,14 +205,14 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
               <FeaturedProducts onAddToCart={handleAddToCart} />
               <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
 
-            <Divider delay={500} />
+              {/* Deals content moved to dedicated Deals tab */}
 
             <Section delay={600} style={styles.sectionPad}>
               <AnimatedCart count={cartCount} />
               <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
           </ScrollView>
         );
-      case 'deals':
+              {/* GamificationPanel now in Deals tab */}
         return (
           <ScrollView
             style={styles.scroll}
@@ -237,7 +237,7 @@ function App({ onShopNow }: AppProps): React.JSX.Element {
 
             <Divider delay={500} />
 
-            <Section delay={600} style={styles.sectionPad}>
+              {/* SpinToWin moved to Deals tab */}
               <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
             </Section>
           </ScrollView>
