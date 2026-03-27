@@ -20,6 +20,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function ScreenRouter() {
   const [screen, setScreen] = useState<'main' | 'login' | 'signup' | 'forgot' | 'dashboard' | 'cart' | 'productList' | 'profile' | 'productDetail' | 'checkout' | 'orderSuccess' | 'orderHistory' | 'orderDetail' | 'reviews' | 'wishlist' | 'notifications'>('main');
+  const [previousScreen, setPreviousScreen] = useState<typeof screen>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const { isAdmin, user } = useAuth();
@@ -44,15 +45,19 @@ export default function ScreenRouter() {
     setScreen('productList');
     setSelectedProduct(null);
   };
-  const handleViewCart = () => setScreen('cart');
+  const handleViewCart = () => {
+    setPreviousScreen(screen);
+    setScreen('cart');
+  };
+  const handleGoToCart = (from: typeof screen) => {
+    setPreviousScreen(from);
+    setScreen('cart');
+  };
   const handleGoToProfile = () => setScreen('profile');
   const handleBackToLogin = () => setScreen('login');
   const handleCartBack = () => {
-    if (user) {
-      setScreen('productList');
-    } else {
-      setScreen('main');
-    }
+    // Go back to the immediate previous route, falling back to main
+    setScreen(previousScreen || 'main');
   };
   const handleGoToCheckout = () => setScreen('checkout');
   const handleOrderSuccess = () => setScreen('orderSuccess');
@@ -93,7 +98,7 @@ export default function ScreenRouter() {
     return <DashboardScreen onBack={handleBack} />;
   }
   if (screen === 'productList') {
-    return <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => setScreen('cart')} onLogout={() => setScreen('main')} />;
+    return <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => handleGoToCart('productList')} onLogout={() => setScreen('main')} />;
   }
   if (screen === 'cart') {
     return <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />;
