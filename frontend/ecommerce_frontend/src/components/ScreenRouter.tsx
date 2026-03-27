@@ -117,36 +117,6 @@ export default function ScreenRouter() {
   if (screen === 'dashboard') {
     return <DashboardScreen onBack={handleBack} />;
   }
-  if (screen === 'productList') {
-    return <ProductListScreen onBack={handleBack} onGoToProductDetail={handleGoToProductDetail} onGoToProfile={handleGoToProfile} onGoToCart={() => handleGoToCart('productList')} onLogout={() => setScreen('main')} />;
-  }
-  if (screen === 'cart') {
-    return <CartScreen onBack={handleCartBack} onCheckout={handleGoToCheckout} />;
-  }
-  if (screen === 'profile') {
-    return <ProfileScreen onBack={handleBack} onGoToOrderHistory={handleGoToOrderHistory} onGoToWishlist={handleGoToWishlist} onGoToNotifications={handleGoToNotifications} />;
-  }
-  if (screen === 'productDetail' && selectedProduct) {
-    return <ProductDetailScreen product={selectedProduct} onBack={handleBackFromProductDetail} onViewReviews={handleGoToReviews} />;
-  }
-  if (screen === 'checkout') {
-    return <CheckoutScreen onBack={() => setScreen('cart')} onOrderSuccess={handleOrderSuccess} />;
-  }
-  if (screen === 'orderSuccess') {
-    return <OrderSuccessScreen onContinueShopping={handleContinueShopping} onViewOrders={handleViewOrders} />;
-  }
-  if (screen === 'orderHistory') {
-    return <OrderHistoryScreen onBack={handleBack} onViewDetails={handleViewOrderDetail} />;
-  }
-  if (screen === 'orderDetail' && selectedOrder) {
-    return <OrderDetailScreen order={selectedOrder} onBack={handleBackFromOrderDetail} />;
-  }
-  if (screen === 'reviews' && selectedProduct) {
-    return <ReviewsScreen productId={selectedProduct.id} productName={selectedProduct.name} onClose={handleBackFromReviews} />;
-  }
-  if (screen === 'wishlist') {
-    return <WishlistScreen onBack={handleBackFromWishlist} onAddToCart={() => setScreen('cart')} />;
-  }
   if (screen === 'notifications') {
     return <PushNotificationsManager onBack={handleBackFromNotifications} />;
   }
