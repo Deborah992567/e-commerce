@@ -132,7 +132,7 @@ const RecommendationsPanel: React.FC<RecommendationsProps> = ({
       <View style={styles.recRating}>
         <Text style={styles.stars}>⭐ {item.rating}</Text>
       </View>
-      <Text style={styles.recPrice}>${item.price.toFixed(2)}</Text>
+      <Text style={styles.recPrice}>₦{item.price.toFixed(2)}</Text>
     </TouchableOpacity>
   );
 
