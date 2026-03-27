@@ -79,7 +79,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
     }, 2000);
   };
 
-  const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
+  const formatCurrency = (value: number) => `₦${value.toFixed(2)}`;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
