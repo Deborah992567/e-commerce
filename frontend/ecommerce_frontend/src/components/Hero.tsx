@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, Alert, ScrollView, Dimensions } from 'react-native';
 import CTAButton from './CTAButton';
 
 interface HeroProps {
@@ -49,7 +49,12 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
         </View>
       </View>
 
-      <View style={styles.heroVisual}>
+      <ScrollView
+        style={styles.heroVisualScroll}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.heroVisualScrollContent}
+      >
         <View style={styles.heroCardMain}>
           <View style={styles.heroImgWrap}>
             <Image
@@ -64,26 +69,44 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
             <Text style={styles.heroCardPrice}>$249</Text>
           </View>
         </View>
-
-        <View style={[styles.heroCardFloat, styles.heroCardA]}>
-          <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=80' }}
-            style={styles.heroCardFloatImg}
-            resizeMode="cover"
-          />
-          <Text style={styles.heroCardFloatText}>Air Drift</Text>
-          <Text style={styles.heroCardFloatPrice}>$129</Text>
+        <View style={[styles.heroCardMain]}>
+          <View style={styles.heroImgWrap}>
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80' }}
+              style={styles.heroImg}
+              resizeMode="cover"
+            />
+          </View>
+          <View style={styles.heroCardTag}><Text style={styles.heroCardTagText}>Air Drift</Text></View>
+          <View style={styles.heroCardLabel}>
+            <Text style={styles.heroCardLabelText}>Air Drift</Text>
+            <Text style={styles.heroCardPrice}>$129</Text>
+          </View>
         </View>
-        <View style={[styles.heroCardFloat, styles.heroCardB]}>
-          <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=300&q=80' }}
-            style={styles.heroCardFloatImg}
-            resizeMode="cover"
-          />
-          <Text style={styles.heroCardFloatText}>Urban Core</Text>
-          <Text style={styles.heroCardFloatPrice}>$189</Text>
+        <View style={[styles.heroCardMain]}>
+          <View style={styles.heroImgWrap}>
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=600&q=80' }}
+              style={styles.heroImg}
+              resizeMode="cover"
+            />
+          </View>
+          <View style={styles.heroCardTag}><Text style={styles.heroCardTagText}>Urban Core</Text></View>
+          <View style={styles.heroCardLabel}>
+            <Text style={styles.heroCardLabelText}>Urban Core</Text>
+            <Text style={styles.heroCardPrice}>$189</Text>
+          </View>
         </View>
-      </View>
+      </ScrollView>
+      heroVisualScroll: {
+        marginTop: 24,
+        width: '100%',
+      },
+      heroVisualScrollContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+      },
     </View>
   );
 };
@@ -162,6 +185,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 24,
+  },
+  heroVisualScroll: {
+    marginTop: 24,
+    width: '100%',
+  },
+  heroVisualScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
   },
   heroCardMain: {
     backgroundColor: '#23232B',

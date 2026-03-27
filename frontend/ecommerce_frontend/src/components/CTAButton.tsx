@@ -74,7 +74,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
     } else {
       return {
         ...baseTextStyle,
-        color: 'white',
+        color: variant === 'primary' ? '#23232B' : 'white',
       };
     }
   };
