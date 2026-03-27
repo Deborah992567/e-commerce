@@ -448,8 +448,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0D0D12' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, marginBottom: 20 },
-  backBtn: { padding: 8 },
-  emojiBtn: { fontSize: 20, color: '#E8C97A' },
   title: { color: '#FFF', fontSize: 20, fontWeight: '700' },
   scrollContainer: { flex: 1, paddingHorizontal: 14 },
   section: { marginBottom: 24 },
