@@ -30,14 +30,18 @@ interface Product {
 
 interface FilterPanelProps {
   onFiltersChange?: (filters: FilterOptions) => void;
+  onApply?: (filters: FilterOptions) => void;
   onClose?: () => void;
   productCount?: number;
+  products?: Product[];
 }
 
 const FilterPanel: React.FC<FilterPanelProps> = ({
   onFiltersChange,
+  onApply,
   onClose,
   productCount = 0,
+  products,
 }) => {
   const insets = useSafeAreaInsets();
   const [filters, setFilters] = useState<FilterOptions>({
@@ -92,6 +96,32 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     const newFilters = { ...filters, inStock: !filters.inStock };
     setFilters(newFilters);
     onFiltersChange?.(newFilters);
+  };
+
+  const productsCount = useMemo(() => {
+    if (!products) {
+      return productCount;
+    }
+    return products.filter((product) => {
+      if (filters.categories.length > 0 && !filters.categories.includes(product.category)) {
+        return false;
+      }
+      if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
+        return false;
+      }
+      if (filters.ratings.length > 0 && !filters.ratings.includes(product.rating)) {
+        return false;
+      }
+      if (filters.inStock && !product.inStock) {
+        return false;
+      }
+      return true;
+    }).length;
+  }, [filters, products, productCount]);
+
+  const handleApply = () => {
+    onApply?.(filters);
+    onClose?.();
   };
 
   const handleReset = () => {
@@ -288,7 +318,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         </TouchableOpacity>
         <TouchableOpacity onPress={onClose} style={styles.applyBtn}>
           <Text style={styles.applyBtnText}>
-            Apply ({productCount} products)
+            Apply ({productsCount} products)
           </Text>
         </TouchableOpacity>
       </View>
