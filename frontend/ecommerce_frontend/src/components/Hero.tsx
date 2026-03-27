@@ -9,54 +9,36 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({ onShop }) => {
   return (
     <View style={styles.hero}>
-      <View style={styles.logoHeader}>
-        <View style={styles.logoBadge}>
-          <Text style={styles.logoBadgeText}>DC</Text>
-        </View>
-        <View style={styles.logoText}>
-          <Text style={styles.logoMainText}>DEZ COLLECTION</Text>
-          <Text style={styles.logoSubText}>Luxury Fashion</Text>
-        </View>
+      <View style={styles.temuStyleHeader}>
+        <Text style={styles.temuStyleTitle}>🛍️ DEZ COLLECTION</Text>
+        <Text style={styles.temuStyleSubtitle}>Shop. Save. Repeat.</Text>
       </View>
 
-      <View style={styles.heroContent}>
-        <View style={styles.heroEyebrow}>
-          <View style={styles.heroDot} />
-          <Text style={styles.heroEyebrowText}>New Season 2026</Text>
-        </View>
+      <View style={styles.temuUrgencyBanner}>
+        <Text style={styles.urgencyText}>⚡ Flash Sale — 70% OFF Today</Text>
+      </View>
 
-        <Text style={styles.heroTitle}>
-          <Text style={styles.heroTitleLine}>Wear the </Text>
-          <Text style={styles.heroTitleAccent}>Future</Text>
-          <Text style={[styles.heroTitleLine, styles.heroTitleLineSm]}> Today.</Text>
-        </Text>
+      <View style={styles.temuCTASection}>
+        <CTAButton 
+          label="🔥 Shop Now" 
+          onClick={onShop} 
+          variant="primary" 
+          color="#FF5722"
+          size="lg"
+        />
+      </View>
 
-        <Text style={styles.heroSub}>
-          Curated drops. Unmatched quality.{"\n"}
-          Pieces built for those who move differently.
-        </Text>
-
-        <View style={styles.heroActions}>
-          <CTAButton label="Shop Collection" onClick={onShop} variant="primary" icon="→" />
-          <CTAButton
-            label="Explore Lookbook"
-            variant="ghost"
-            onClick={() => Alert.alert('Coming Soon', 'The Lookbook feature is coming soon! Stay tuned for curated style inspiration.')}
-          />
-        </View>
-
-        <View style={styles.heroStats}>
-          {[
-            { n: "12K+", label: "Customers" },
-            { n: "4.9★", label: "Rating" },
-            { n: "200+", label: "Products" },
-          ].map((s) => (
-            <View style={styles.heroStat} key={s.label}>
-              <Text style={styles.heroStatN}>{s.n}</Text>
-              <Text style={styles.heroStatL}>{s.label}</Text>
-            </View>
-          ))}
-        </View>
+      <View style={styles.heroStats}>
+        {[
+          { n: "50K+", label: "Shoppers" },
+          { n: "4.8★", label: "Rated" },
+          { n: "1000+", label: "Deals" },
+        ].map((s) => (
+          <View style={styles.heroStat} key={s.label}>
+            <Text style={styles.heroStatN}>{s.n}</Text>
+            <Text style={styles.heroStatL}>{s.label}</Text>
+          </View>
+        ))}
       </View>
 
       <ScrollView
@@ -113,6 +95,41 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
 };
 
 const styles = StyleSheet.create({
+  temuStyleHeader: {
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingVertical: 12,
+  },
+  temuStyleTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#FF5722',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  temuStyleSubtitle: {
+    fontSize: 16,
+    color: '#A0A0A0',
+    fontWeight: '600',
+  },
+  temuUrgencyBanner: {
+    backgroundColor: '#FF5722',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  urgencyText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  temuCTASection: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
   logoHeader: {
     flexDirection: 'row',
     alignItems: 'center',
