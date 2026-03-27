@@ -98,20 +98,20 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
           </View>
         </View>
       </ScrollView>
-      heroVisualScroll: {
-        marginTop: 24,
-        width: '100%',
-      },
-      heroVisualScrollContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 8,
-      },
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  heroVisualScroll: {
+    marginTop: 24,
+    width: '100%',
+  },
+  heroVisualScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
   hero: {
     padding: 20,
     alignItems: 'center',
@@ -181,11 +181,7 @@ const styles = StyleSheet.create({
     color: '#A0A0A0',
     fontSize: 12,
   },
-  heroVisual: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 24,
-  },
+  // heroVisual: { ... } removed, replaced by heroVisualScroll/heroVisualScrollContent
   heroVisualScroll: {
     marginTop: 24,
     width: '100%',
