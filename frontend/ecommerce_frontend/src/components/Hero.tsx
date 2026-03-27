@@ -182,15 +182,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   // heroVisual: { ... } removed, replaced by heroVisualScroll/heroVisualScrollContent
-  heroVisualScroll: {
-    marginTop: 24,
-    width: '100%',
-  },
-  heroVisualScrollContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-  },
   heroCardMain: {
     backgroundColor: '#23232B',
     borderRadius: 16,
