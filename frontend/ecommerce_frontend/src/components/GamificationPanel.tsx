@@ -3,29 +3,29 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated } from 'react
 
 interface UserGamification {
   streakDays: number;
-  totalPoints: number;
+  totalCoins: number;
   unlockedBadges: string[];
   lastLoginDate: string;
 }
 
 interface DailyReward {
   day: number;
-  points: number;
+  coins: number;
   claimed: boolean;
 }
 
 const DAILY_REWARDS: DailyReward[] = [
-  { day: 1, points: 10, claimed: true },
-  { day: 2, points: 15, claimed: true },
-  { day: 3, points: 20, claimed: true },
-  { day: 4, points: 25, claimed: true },
-  { day: 5, points: 30, claimed: true },
-  { day: 6, points: 40, claimed: false },
-  { day: 7, points: 100, claimed: false },
+  { day: 1, coins: 10, claimed: true },
+  { day: 2, coins: 15, claimed: true },
+  { day: 3, coins: 20, claimed: true },
+  { day: 4, coins: 25, claimed: true },
+  { day: 5, coins: 30, claimed: true },
+  { day: 6, coins: 40, claimed: false },
+  { day: 7, coins: 100, claimed: false },
 ];
 
 interface GamificationPanelProps {
-  onClaimReward?: (points: number) => void;
+  onClaimReward?: (coins: number) => void;
 }
 
 const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) => {

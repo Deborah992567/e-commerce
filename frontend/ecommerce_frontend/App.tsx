@@ -21,6 +21,8 @@ import SpinToWin from './src/components/SpinToWin';
 import BottomTabNavigator from './src/components/BottomTabNavigator';
 import CTAButton from './src/components/CTAButton';
 import FlashDealsPanel from './src/components/FlashDealsPanel';
+import CoinsBalance from './src/components/CoinsBalance';
+import ReferralPanel from './src/components/ReferralPanel';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -105,6 +107,7 @@ function App(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'deals' | 'account'>('home');
   const [cartCount, setCartCount] = useState(0);
   const [notificationCount] = useState(0);
+  const [coins, setCoins] = useState(1850);
 
   const handleShopNow = () => {
     setActiveTab('shop');
@@ -124,6 +127,11 @@ function App(): React.ReactElement {
   const handleAddToCart = (id: number) => {
     setCartCount((prev) => prev + 1);
     console.log(`Add to cart: ${id}`);
+  };
+
+  const handleClaimReward = (rewardCoins: number) => {
+    setCoins((prev) => prev + rewardCoins);
+    console.log(`Claimed ${rewardCoins} coins`);
   };
 
   const renderTabContent = () => {
@@ -210,6 +218,10 @@ function App(): React.ReactElement {
               </View>
             </Section>
 
+            <Section delay={100} style={styles.sectionPad}>
+              <CoinsBalance coins={coins} />
+            </Section>
+
             <Divider delay={200} />
 
             <Section delay={300} style={styles.sectionPad}>
@@ -224,8 +236,8 @@ function App(): React.ReactElement {
 
             <Divider delay={800} />
 
-            <Section delay={900} style={styles.sectionPad}>
-              <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
+            <Section delay={600} style={styles.sectionPad}>
+              <GamificationPanel onClaimReward={handleClaimReward} />
             </Section>
           </ScrollView>
         );
