@@ -20,6 +20,7 @@ import GamificationPanel from './src/components/GamificationPanel';
 import SpinToWin from './src/components/SpinToWin';
 import BottomTabNavigator from './src/components/BottomTabNavigator';
 import CTAButton from './src/components/CTAButton';
+import FlashDealsPanel from './src/components/FlashDealsPanel';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -212,12 +213,18 @@ function App(): React.ReactElement {
             <Divider delay={200} />
 
             <Section delay={300} style={styles.sectionPad}>
-              <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
+              <FlashDealsPanel onFlashDealPress={(id) => console.log('Flash deal:', id)} />
             </Section>
 
             <Divider delay={500} />
 
             <Section delay={600} style={styles.sectionPad}>
+              <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
+            </Section>
+
+            <Divider delay={800} />
+
+            <Section delay={900} style={styles.sectionPad}>
               <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
             </Section>
           </ScrollView>
