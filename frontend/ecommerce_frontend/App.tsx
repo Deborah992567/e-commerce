@@ -97,7 +97,7 @@ const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void; onDe
 }) => (
   <View style={styles.ctaSection}>
     <CTAButton title="Shop Now" onPress={onShopNow} color="#E8C97A" size="lg" icon="→" />
-    <CTAButton title="View Cart" onPress={onViewCart} color="#C4A4F0" variant="outline" size="lg" icon="��" />
+    <CTAButton title="View Cart" onPress={onViewCart} color="#C4A4F0" variant="outline" size="lg" icon="🛒" />
     {onDeals && <CTAButton title="Deals" onPress={onDeals} color="#FF5722" variant="outline" size="lg" icon="⚡" />}
   </View>
 );
@@ -304,7 +304,7 @@ function App(): React.ReactElement {
       {renderTabContent()}
       <BottomTabNavigator
         activeTab={activeTab}
-        onTabChange={(tab) => setActiveTab(tab as 'home' | 'shop' | 'deals' | 'account')}
+        onTabChange={setActiveTab}
         cartCount={cartCount}
         notificationCount={notificationCount}
       />
