@@ -31,7 +31,7 @@ interface GamificationPanelProps {
 const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) => {
   const [gamification, setGamification] = useState<UserGamification>({
     streakDays: 5,
-    totalPoints: 1850,
+    totalCoins: 1850,
     unlockedBadges: ['first-purchase', 'spender-25k', 'reviewer-5'],
     lastLoginDate: new Date().toISOString().split('T')[0],
   });
@@ -57,16 +57,16 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
 
       Alert.alert(
         '🎉 Reward Claimed!',
-        `You earned ${reward.points} points!`,
+        `You earned ${reward.coins} coins!`,
         [
           {
             text: 'Great!',
             onPress: () => {
               setGamification({
                 ...gamification,
-                totalPoints: gamification.totalPoints + reward.points,
+                totalCoins: gamification.totalCoins + reward.coins,
               });
-              onClaimReward?.(reward.points);
+              onClaimReward?.(reward.coins);
             },
           },
         ]
@@ -99,7 +99,7 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
         <View style={styles.pointsCard}>
           <Text style={styles.pointsEmoji}>⭐</Text>
           <Text style={styles.pointsLabel}>Reward Points</Text>
-          <Text style={styles.pointsValue}>{gamification.totalPoints}</Text>
+          <Text style={styles.pointsValue}>{gamification.totalCoins}</Text>
           <Text style={styles.pointsSubtext}>Use to unlock deals</Text>
         </View>
       </View>
