@@ -98,9 +98,9 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
       <View style={styles.pointsSection}>
         <View style={styles.pointsCard}>
           <Text style={styles.pointsEmoji}>⭐</Text>
-          <Text style={styles.pointsLabel}>Reward Points</Text>
+          <Text style={styles.pointsLabel}>Reward Coins</Text>
           <Text style={styles.pointsValue}>{gamification.totalCoins}</Text>
-          <Text style={styles.pointsSubtext}>Use to unlock deals</Text>
+          <Text style={styles.pointsSubtext}>Use coins to unlock deals</Text>
         </View>
       </View>
 
@@ -120,7 +120,7 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
               disabled={reward.claimed}
             >
               <Text style={styles.rewardDay}>Day {reward.day}</Text>
-              <Text style={styles.rewardPoints}>{reward.points}pt</Text>
+              <Text style={styles.rewardPoints}>{reward.coins} coins</Text>
               {reward.claimed && (
                 <View style={styles.claimedCheckmark}>
                   <Text style={styles.checkmark}>✓</Text>
