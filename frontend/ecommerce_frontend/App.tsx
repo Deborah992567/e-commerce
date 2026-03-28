@@ -23,6 +23,7 @@ import CTAButton from './src/components/CTAButton';
 import FlashDealsPanel from './src/components/FlashDealsPanel';
 import ClearancePanel from './src/components/ClearancePanel';
 import CoinsBalance from './src/components/CoinsBalance';
+import ShippingIndicator from './src/components/ShippingIndicator';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -108,6 +109,7 @@ function App(): React.ReactElement {
   const [cartCount, setCartCount] = useState(0);
   const [notificationCount] = useState(0);
   const [coins, setCoins] = useState(1850);
+  const [cartTotal, setCartTotal] = useState(45);
 
   const handleShopNow = () => {
     setActiveTab('shop');
@@ -126,6 +128,7 @@ function App(): React.ReactElement {
 
   const handleAddToCart = (id: number) => {
     setCartCount((prev) => prev + 1);
+    setCartTotal((prev) => prev + 25); // Simulate adding $25 per item
     console.log(`Add to cart: ${id}`);
   };
 
@@ -196,6 +199,12 @@ function App(): React.ReactElement {
             <Divider delay={500} />
 
             <Section delay={600} style={styles.sectionPad}>
+              <ShippingIndicator cartTotal={cartTotal} minimumThreshold={50} />
+            </Section>
+
+            <Divider delay={700} />
+
+            <Section delay={800} style={styles.sectionPad}>
               <AnimatedCart count={cartCount} />
             </Section>
           </ScrollView>
@@ -304,7 +313,7 @@ function App(): React.ReactElement {
       {renderTabContent()}
       <BottomTabNavigator
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tab: string) => setActiveTab(tab as 'home' | 'shop' | 'deals' | 'account')}
         cartCount={cartCount}
         notificationCount={notificationCount}
       />
