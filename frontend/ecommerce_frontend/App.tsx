@@ -20,9 +20,8 @@ import GamificationPanel from './src/components/GamificationPanel';
 import SpinToWin from './src/components/SpinToWin';
 import BottomTabNavigator from './src/components/BottomTabNavigator';
 import CTAButton from './src/components/CTAButton';
-import FlashDealsPanel from './src/components/FlashDealsPanel';
 import CoinsBalance from './src/components/CoinsBalance';
-import ReferralPanel from './src/components/ReferralPanel';
+import FlashDealsPanel from './src/components/FlashDealsPanel';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -129,11 +128,6 @@ function App(): React.ReactElement {
     console.log(`Add to cart: ${id}`);
   };
 
-  const handleClaimReward = (rewardCoins: number) => {
-    setCoins((prev) => prev + rewardCoins);
-    console.log(`Claimed ${rewardCoins} coins`);
-  };
-
   const renderTabContent = () => {
     switch (activeTab) {
       case 'home':
@@ -218,10 +212,6 @@ function App(): React.ReactElement {
               </View>
             </Section>
 
-            <Section delay={100} style={styles.sectionPad}>
-              <CoinsBalance coins={coins} />
-            </Section>
-
             <Divider delay={200} />
 
             <Section delay={300} style={styles.sectionPad}>
@@ -236,8 +226,8 @@ function App(): React.ReactElement {
 
             <Divider delay={800} />
 
-            <Section delay={600} style={styles.sectionPad}>
-              <GamificationPanel onClaimReward={handleClaimReward} />
+            <Section delay={900} style={styles.sectionPad}>
+              <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
             </Section>
           </ScrollView>
         );
