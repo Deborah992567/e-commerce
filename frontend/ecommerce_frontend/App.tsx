@@ -128,6 +128,11 @@ function App(): React.ReactElement {
     console.log(`Add to cart: ${id}`);
   };
 
+  const handleClaimReward = (rewardCoins: number) => {
+    setCoins((prev) => prev + rewardCoins);
+    console.log(`Claimed ${rewardCoins} coins`);
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'home':
@@ -212,22 +217,26 @@ function App(): React.ReactElement {
               </View>
             </Section>
 
+            <Section delay={100} style={styles.sectionPad}>
+              <CoinsBalance coins={coins} />
+            </Section>
+
             <Divider delay={200} />
 
             <Section delay={300} style={styles.sectionPad}>
               <FlashDealsPanel onFlashDealPress={(id) => console.log('Flash deal:', id)} />
             </Section>
 
-            <Divider delay={500} />
+            <Divider delay={300} />
 
-            <Section delay={600} style={styles.sectionPad}>
+            <Section delay={400} style={styles.sectionPad}>
               <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
             </Section>
 
-            <Divider delay={800} />
+            <Divider delay={600} />
 
-            <Section delay={900} style={styles.sectionPad}>
-              <GamificationPanel onClaimReward={(points) => console.log('Reward claimed:', points)} />
+            <Section delay={700} style={styles.sectionPad}>
+              <GamificationPanel onClaimReward={handleClaimReward} />
             </Section>
           </ScrollView>
         );
