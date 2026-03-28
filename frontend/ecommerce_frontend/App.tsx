@@ -20,8 +20,9 @@ import GamificationPanel from './src/components/GamificationPanel';
 import SpinToWin from './src/components/SpinToWin';
 import BottomTabNavigator from './src/components/BottomTabNavigator';
 import CTAButton from './src/components/CTAButton';
-import CoinsBalance from './src/components/CoinsBalance';
 import FlashDealsPanel from './src/components/FlashDealsPanel';
+import ClearancePanel from './src/components/ClearancePanel';
+import CoinsBalance from './src/components/CoinsBalance';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -227,15 +228,21 @@ function App(): React.ReactElement {
               <FlashDealsPanel onFlashDealPress={(id) => console.log('Flash deal:', id)} />
             </Section>
 
-            <Divider delay={300} />
+            <Divider delay={500} />
 
-            <Section delay={400} style={styles.sectionPad}>
+            <Section delay={600} style={styles.sectionPad}>
+              <ClearancePanel onClearancePress={(id) => console.log('Clearance item:', id)} />
+            </Section>
+
+            <Divider delay={800} />
+
+            <Section delay={900} style={styles.sectionPad}>
               <SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} />
             </Section>
 
-            <Divider delay={600} />
+            <Divider delay={1100} />
 
-            <Section delay={700} style={styles.sectionPad}>
+            <Section delay={1200} style={styles.sectionPad}>
               <GamificationPanel onClaimReward={handleClaimReward} />
             </Section>
           </ScrollView>
