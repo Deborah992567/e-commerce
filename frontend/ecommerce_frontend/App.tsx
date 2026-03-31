@@ -289,7 +289,7 @@ function App(): React.ReactElement {
       {renderTabContent()}
       <BottomTabNavigator
         activeTab={activeTab}
-        onTabChange={(tab: string) => setActiveTab(tab as 'home' | 'shop' | 'deals' | 'account')}
+        onTabChange={(tab: string) => setActiveTab(tab as 'home' | 'shop' | 'cart' | 'deals' | 'account')}
         cartCount={cartCount}
         notificationCount={notificationCount}
       />
