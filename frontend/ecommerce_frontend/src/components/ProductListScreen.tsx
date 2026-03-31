@@ -367,7 +367,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = () => {
 
         {/* Products Grid */}
         <FlatList
-          data={SAMPLE_PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProductCard}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
@@ -514,6 +514,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#FFF',
     fontWeight: '600',
+  },
+  filterBtnActive: {
+    backgroundColor: '#E8C97A',
+    borderColor: '#E8C97A',
+  },
+  filterBtnTextActive: {
+    color: '#0D0D12',
+    fontWeight: '700',
   },
   productsHeader: {
     flexDirection: 'row',
