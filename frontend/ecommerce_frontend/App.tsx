@@ -24,6 +24,7 @@ import FlashDealsPanel from './src/components/FlashDealsPanel';
 import ClearancePanel from './src/components/ClearancePanel';
 import CoinsBalance from './src/components/CoinsBalance';
 import ShippingIndicator from './src/components/ShippingIndicator';
+import AliExpressProductGrid from './src/components/AliExpressProductGrid';
 
 interface SectionProps {
   children: React.ReactNode;
