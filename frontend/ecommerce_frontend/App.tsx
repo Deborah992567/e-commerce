@@ -246,7 +246,10 @@ function App(): React.ReactElement {
                 <Text style={styles.productsTitle}>Trending Products</Text>
                 <Text style={styles.productsCount}>1,234 items</Text>
               </View>
-              <FeaturedProducts onAddToCart={handleAddToCart} />
+              <AliExpressProductGrid
+                onAddToCart={handleAddToCart}
+                onProductPress={(id) => console.log('Product pressed:', id)}
+              />
             </Section>
 
             {/* Clearance Deals */}
