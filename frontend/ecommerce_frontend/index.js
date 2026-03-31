@@ -5,7 +5,7 @@
 import 'react-native-reanimated';
 import { AppRegistry } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import ScreenRouter from './src/components/ScreenRouter';
+import App from './App';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { CartProvider } from './src/contexts/CartContext';
 import { WishlistProvider } from './src/contexts/WishlistContext';
@@ -19,7 +19,7 @@ const AppWithProvider = () => (
       <CartProvider>
         <WishlistProvider>
           <NotificationProvider>
-            <ScreenRouter />
+            <App />
           </NotificationProvider>
         </WishlistProvider>
       </CartProvider>
