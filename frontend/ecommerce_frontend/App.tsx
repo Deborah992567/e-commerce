@@ -109,11 +109,10 @@ const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void; onDe
 
 function App(): React.ReactElement {
   const insets = useSafeAreaInsets();
+  const { totalItems } = useCart();
   const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'cart' | 'deals' | 'account'>('home');
-  const [cartCount, setCartCount] = useState(0);
   const [notificationCount] = useState(0);
   const [coins, setCoins] = useState(1850);
-  const [cartTotal, setCartTotal] = useState(45);
 
   const handleShopNow = () => {
     setActiveTab('shop');
@@ -165,7 +164,7 @@ function App(): React.ReactElement {
             <Divider delay={700} />
 
             <Section delay={800} style={styles.sectionPad}>
-              <AnimatedCart count={cartCount} />
+              <AnimatedCart count={totalItems} />
             </Section>
 
             <Divider delay={1000} />
@@ -178,7 +177,7 @@ function App(): React.ReactElement {
 
       case 'shop':
         return (
-          <ShopPage onAddToCart={handleAddToCart} cartCount={cartCount} />
+          <ShopPage onAddToCart={handleAddToCart} cartCount={totalItems} />
         );
 
       case 'cart':
@@ -290,7 +289,7 @@ function App(): React.ReactElement {
       <BottomTabNavigator
         activeTab={activeTab}
         onTabChange={(tab: string) => setActiveTab(tab as 'home' | 'shop' | 'cart' | 'deals' | 'account')}
-        cartCount={cartCount}
+        cartCount={totalItems}
         notificationCount={notificationCount}
       />
     </View>
