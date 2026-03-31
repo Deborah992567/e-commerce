@@ -6,4 +6,11 @@ export interface Product {
   oldPrice: number | null;
   badge: string | null;
   img: string;
+  rating?: number;
+  reviews?: number;
+  store?: string;
+  freeShipping?: boolean;
+  plusEligible?: boolean;
+  discount?: number;
+  sold?: number;
 }
