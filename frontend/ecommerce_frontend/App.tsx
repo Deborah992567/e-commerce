@@ -107,7 +107,7 @@ const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void; onDe
 
 function App(): React.ReactElement {
   const insets = useSafeAreaInsets();
-  const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'deals' | 'account'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'cart' | 'deals' | 'account'>('home');
   const [cartCount, setCartCount] = useState(0);
   const [notificationCount] = useState(0);
   const [coins, setCoins] = useState(1850);

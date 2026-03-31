@@ -11,6 +11,7 @@ interface TabBarProps {
 const TABS = [
   { id: 'home', label: 'Home', icon: '🏠', badge: null },
   { id: 'shop', label: 'Shop', icon: '🛍️', badge: null },
+  { id: 'cart', label: 'Cart', icon: '🛒', badge: null },
   { id: 'deals', label: 'Deals', icon: '⚡', badge: null },
   { id: 'account', label: 'Account', icon: '👤', badge: null },
 ];
