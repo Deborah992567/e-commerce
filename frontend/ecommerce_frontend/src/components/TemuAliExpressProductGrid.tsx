@@ -11,7 +11,6 @@ const SAMPLE_PRODUCTS: Product[] = [
   {
     id: 1,
     name: 'Wireless Bluetooth Headphones Noise Cancelling Over-Ear',
-    category: 'Electronics',
     price: 29.99,
     oldPrice: 59.99,
     badge: 'Hot Sale',
@@ -150,7 +149,7 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (id: number) => voi
   return (
     <TouchableOpacity style={styles.productCard} onPress={() => onProductPress(product.id)} activeOpacity={0.9}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: product.image }} style={styles.productImage} />
+        <Image source={{ uri: product.img }} style={styles.productImage} />
         {product.discount && product.discount > 0 && (
           <View style={styles.discountBadge}>
             <Text style={styles.discountText}>-{product.discount}%</Text>
