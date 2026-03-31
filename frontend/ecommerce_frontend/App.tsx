@@ -27,6 +27,7 @@ import ShippingIndicator from './src/components/ShippingIndicator';
 import TemuAliExpressProductGrid from './src/components/TemuAliExpressProductGrid';
 import ShopPage from './src/components/ShopPage';
 import CartScreen from './src/components/CartScreen';
+import ProductDetailScreen from './src/components/ProductDetailScreen';
 import { useCart } from './src/contexts/CartContext';
 
 interface SectionProps {
@@ -110,7 +111,8 @@ const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void; onDe
 function App(): React.ReactElement {
   const insets = useSafeAreaInsets();
   const { totalItems } = useCart();
-  const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'cart' | 'deals' | 'account'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'cart' | 'productDetail' | 'deals' | 'account'>('home');
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [notificationCount] = useState(0);
   const [coins, setCoins] = useState(1850);
 
@@ -132,6 +134,11 @@ function App(): React.ReactElement {
   const handleAddToCart = (product: any) => {
     // This will be handled by CartContext in the components
     console.log(`Add to cart: ${product.id}`);
+  };
+
+  const handleGoToProductDetail = (product: any) => {
+    setSelectedProduct(product);
+    setActiveTab('productDetail');
   };
 
   const handleClaimReward = (rewardCoins: number) => {

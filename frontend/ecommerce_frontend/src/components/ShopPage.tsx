@@ -7,6 +7,7 @@ import { Product } from '../types';
 interface ShopPageProps {
   onAddToCart: (product: Product) => void;
   cartCount: number;
+  onProductPress?: (product: Product) => void;
 }
 
 const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount }) => {
