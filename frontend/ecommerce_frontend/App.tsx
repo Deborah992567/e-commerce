@@ -27,6 +27,7 @@ import ShippingIndicator from './src/components/ShippingIndicator';
 import TemuAliExpressProductGrid from './src/components/TemuAliExpressProductGrid';
 import ShopPage from './src/components/ShopPage';
 import CartScreen from './src/components/CartScreen';
+import { useCart } from './src/contexts/CartContext';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -129,10 +130,9 @@ function App(): React.ReactElement {
     console.log('View cart pressed!');
   };
 
-  const handleAddToCart = (id: number) => {
-    setCartCount((prev) => prev + 1);
-    setCartTotal((prev) => prev + 25); // Simulate adding $25 per item
-    console.log(`Add to cart: ${id}`);
+  const handleAddToCart = (product: any) => {
+    // This will be handled by CartContext in the components
+    console.log(`Add to cart: ${product.id}`);
   };
 
   const handleClaimReward = (rewardCoins: number) => {
