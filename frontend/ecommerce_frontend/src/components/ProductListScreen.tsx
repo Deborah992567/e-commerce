@@ -361,8 +361,10 @@ const ProductListScreen: React.FC<ProductListScreenProps> = () => {
 
         {/* Products Header */}
         <View style={styles.productsHeader}>
-          <Text style={styles.productsTitle}>Trending Now</Text>
-          <Text style={styles.productsCount}>1,234+ items</Text>
+          <Text style={styles.productsTitle}>
+            {selectedCategory === 'All' ? 'Trending Now' : selectedCategory}
+          </Text>
+          <Text style={styles.productsCount}>{filteredProducts.length} items</Text>
         </View>
 
         {/* Products Grid */}
