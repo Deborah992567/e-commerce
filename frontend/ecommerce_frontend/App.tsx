@@ -219,10 +219,32 @@ function App(): React.ReactElement {
               </ScrollView>
             </Section>
 
+            {/* Filters & Sort */}
+            <Section delay={250} style={styles.sectionPad}>
+              <View style={styles.filtersContainer}>
+                <View style={styles.filterItem}>
+                  <Text style={styles.filterText}>📊 Sort</Text>
+                </View>
+                <View style={styles.filterItem}>
+                  <Text style={styles.filterText}>💰 Price</Text>
+                </View>
+                <View style={styles.filterItem}>
+                  <Text style={styles.filterText}>⭐ Rating</Text>
+                </View>
+                <View style={styles.filterItem}>
+                  <Text style={styles.filterText}>🔥 Deals</Text>
+                </View>
+              </View>
+            </Section>
+
             <Divider delay={300} />
 
             {/* Products */}
             <Section delay={400} style={styles.sectionPad}>
+              <View style={styles.productsHeader}>
+                <Text style={styles.productsTitle}>Trending Products</Text>
+                <Text style={styles.productsCount}>1,234 items</Text>
+              </View>
               <FeaturedProducts onAddToCart={handleAddToCart} />
             </Section>
 
@@ -481,6 +503,41 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   clearanceSubtitle: {
+    fontSize: 14,
+    color: '#A0A0A0',
+  },
+  filtersContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  filterItem: {
+    backgroundColor: '#23232B',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#2D2D38',
+  },
+  filterText: {
+    fontSize: 12,
+    color: '#FFF',
+    fontWeight: '500',
+  },
+  productsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  productsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  productsCount: {
     fontSize: 14,
     color: '#A0A0A0',
   },
