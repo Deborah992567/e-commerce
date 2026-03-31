@@ -176,100 +176,96 @@ function App(): React.ReactElement {
 
       case 'shop':
         return (
-          <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={[
-              styles.scrollContent,
-              { paddingTop: insets.top, paddingBottom: insets.bottom + 100 },
-            ]}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Search Bar */}
-            <Section delay={0} style={styles.sectionPad}>
-              <View style={styles.searchContainer}>
-                <Text style={styles.searchPlaceholder}>🔍 Search products...</Text>
-              </View>
-            </Section>
-
-            {/* Free Shipping Banner */}
-            <Section delay={100} style={styles.sectionPad}>
-              <ShippingIndicator cartTotal={cartTotal} minimumThreshold={50} />
-            </Section>
-
-            {/* Categories */}
-            <Section delay={200} style={styles.sectionPad}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
-                <View style={styles.categoryItem}>
-                  <Text style={styles.categoryText}>All</Text>
+          <View style={styles.shopContainer}>
+            <View style={styles.shopHeader}>
+              <Text style={styles.shopTitle}>🛍️ Shop</Text>
+              <View style={styles.headerRight}>
+                <View style={styles.headerIcon}>
+                  <Text style={styles.headerIconText}>❤️</Text>
                 </View>
-                <View style={styles.categoryItem}>
-                  <Text style={styles.categoryText}>Fashion</Text>
-                </View>
-                <View style={styles.categoryItem}>
-                  <Text style={styles.categoryText}>Electronics</Text>
-                </View>
-                <View style={styles.categoryItem}>
-                  <Text style={styles.categoryText}>Home</Text>
-                </View>
-                <View style={styles.categoryItem}>
-                  <Text style={styles.categoryText}>Beauty</Text>
-                </View>
-                <View style={styles.categoryItem}>
-                  <Text style={styles.categoryText}>Sports</Text>
-                </View>
-              </ScrollView>
-            </Section>
-
-            {/* Filters & Sort */}
-            <Section delay={250} style={styles.sectionPad}>
-              <View style={styles.filtersContainer}>
-                <View style={styles.filterItem}>
-                  <Text style={styles.filterText}>📊 Sort</Text>
-                </View>
-                <View style={styles.filterItem}>
-                  <Text style={styles.filterText}>💰 Price</Text>
-                </View>
-                <View style={styles.filterItem}>
-                  <Text style={styles.filterText}>⭐ Rating</Text>
-                </View>
-                <View style={styles.filterItem}>
-                  <Text style={styles.filterText}>🔥 Deals</Text>
+                <View style={styles.headerIcon}>
+                  <Text style={styles.headerIconText}>🔔</Text>
                 </View>
               </View>
-            </Section>
+            </View>
 
-            <Divider delay={300} />
+            <ScrollView
+              style={styles.scroll}
+              contentContainerStyle={[
+                styles.scrollContent,
+                { paddingTop: 8, paddingBottom: insets.bottom + 100 },
+              ]}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Search Bar */}
+              <Section delay={0} style={styles.sectionPad}>
+                <View style={styles.searchContainer}>
+                  <Text style={styles.searchPlaceholder}>🔍 Search products...</Text>
+                </View>
+              </Section>
 
-            {/* Products */}
-            <Section delay={400} style={styles.sectionPad}>
-              <View style={styles.productsHeader}>
-                <Text style={styles.productsTitle}>Trending Products</Text>
-                <Text style={styles.productsCount}>1,234 items</Text>
-              </View>
-              <TemuAliExpressProductGrid
-                onAddToCart={handleAddToCart}
-                onProductPress={(id: number) => console.log('Product pressed:', id)}
-              />
-            </Section>
+              {/* Free Shipping Banner */}
+              <Section delay={100} style={styles.sectionPad}>
+                <ShippingIndicator cartTotal={cartCount * 25} minimumThreshold={50} />
+              </Section>
 
-            {/* Clearance Deals */}
-            <Divider delay={600} />
+              {/* Categories */}
+              <Section delay={200} style={styles.sectionPad}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
+                  <View style={styles.categoryItem}>
+                    <Text style={styles.categoryText}>All</Text>
+                  </View>
+                  <View style={styles.categoryItem}>
+                    <Text style={styles.categoryText}>Fashion</Text>
+                  </View>
+                  <View style={styles.categoryItem}>
+                    <Text style={styles.categoryText}>Electronics</Text>
+                  </View>
+                  <View style={styles.categoryItem}>
+                    <Text style={styles.categoryText}>Home</Text>
+                  </View>
+                  <View style={styles.categoryItem}>
+                    <Text style={styles.categoryText}>Beauty</Text>
+                  </View>
+                  <View style={styles.categoryItem}>
+                    <Text style={styles.categoryText}>Sports</Text>
+                  </View>
+                </ScrollView>
+              </Section>
 
-            <Section delay={700} style={styles.sectionPad}>
-              <View style={styles.clearanceHeader}>
-                <Text style={styles.clearanceTitle}>🔥 Clearance Deals</Text>
-                <Text style={styles.clearanceSubtitle}>Up to 80% off</Text>
-              </View>
-              <ClearancePanel onClearancePress={(id) => console.log('Clearance item:', id)} />
-            </Section>
+              {/* Filters & Sort */}
+              <Section delay={250} style={styles.sectionPad}>
+                <View style={styles.filtersContainer}>
+                  <View style={styles.filterItem}>
+                    <Text style={styles.filterText}>📊 Sort</Text>
+                  </View>
+                  <View style={styles.filterItem}>
+                    <Text style={styles.filterText}>💰 Price</Text>
+                  </View>
+                  <View style={styles.filterItem}>
+                    <Text style={styles.filterText}>⭐ Rating</Text>
+                  </View>
+                  <View style={styles.filterItem}>
+                    <Text style={styles.filterText}>🔥 Deals</Text>
+                  </View>
+                </View>
+              </Section>
 
-            <Divider delay={900} />
+              <Divider delay={300} />
 
-            {/* Cart Summary */}
-            <Section delay={1000} style={styles.sectionPad}>
-              <AnimatedCart count={cartCount} />
-            </Section>
-          </ScrollView>
+              {/* Products Grid */}
+              <Section delay={400} style={styles.sectionPad}>
+                <View style={styles.productsHeader}>
+                  <Text style={styles.productsTitle}>Trending Products</Text>
+                  <Text style={styles.productsCount}>1,234 items</Text>
+                </View>
+                <TemuAliExpressProductGrid
+                  onAddToCart={handleAddToCart}
+                  onProductPress={(id: number) => console.log('Product pressed:', id)}
+                />
+              </Section>
+            </ScrollView>
+          </View>
         );
 
       case 'deals':
@@ -509,6 +505,42 @@ const styles = StyleSheet.create({
   clearanceSubtitle: {
     fontSize: 14,
     color: '#A0A0A0',
+  },
+  shopContainer: {
+    flex: 1,
+    backgroundColor: '#0D0D12',
+  },
+  shopHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: '#0D0D12',
+    borderBottomWidth: 1,
+    borderBottomColor: '#2D2D38',
+  },
+  shopTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  headerIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#23232B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#2D2D38',
+  },
+  headerIconText: {
+    fontSize: 18,
   },
   filtersContainer: {
     flexDirection: 'row',
