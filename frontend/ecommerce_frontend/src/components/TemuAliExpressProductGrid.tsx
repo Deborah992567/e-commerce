@@ -1,21 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  store: string;
-  freeShipping: boolean;
-  plusEligible: boolean;
-  discount?: number;
-  sold: number;
-  badge?: string;
-}
+import { Product } from '../types';
 
 interface TemuAliExpressProductGridProps {
   onAddToCart: (product: Product) => void;
