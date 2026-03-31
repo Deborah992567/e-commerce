@@ -7,7 +7,7 @@ import { Product } from '../types';
 interface ShopPageProps {
   onAddToCart: (product: Product) => void;
   cartCount: number;
-  onProductPress?: (product: Product) => void;
+  onProductPress: (product: Product) => void;
 }
 
 const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPress }) => {
@@ -98,7 +98,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
         {/* Products Grid */}
         <TemuAliExpressProductGrid
           onAddToCart={onAddToCart}
-          onProductPress={(id: number) => console.log('Product:', id)}
+          onProductPress={onProductPress}
         />
       </ScrollView>
     </View>

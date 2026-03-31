@@ -110,7 +110,7 @@ const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void; onDe
 
 function App(): React.ReactElement {
   const insets = useSafeAreaInsets();
-  const { totalItems } = useCart();
+  const { totalItems, addToCart } = useCart();
   const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'cart' | 'productDetail' | 'deals' | 'account'>('home');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [notificationCount] = useState(0);
@@ -132,7 +132,7 @@ function App(): React.ReactElement {
   };
 
   const handleAddToCart = (product: any) => {
-    // This will be handled by CartContext in the components
+    addToCart(product);
     console.log(`Add to cart: ${product.id}`);
   };
 
@@ -184,12 +184,20 @@ function App(): React.ReactElement {
 
       case 'shop':
         return (
-          <ShopPage onAddToCart={handleAddToCart} cartCount={totalItems} />
+          <ShopPage onAddToCart={handleAddToCart} cartCount={totalItems} onProductPress={handleGoToProductDetail} />
         );
 
       case 'cart':
         return (
           <CartScreen onBack={() => setActiveTab('shop')} onCheckout={() => setActiveTab('shop')} />
+        );
+
+      case 'productDetail':
+        return (
+          <ProductDetailScreen 
+            product={selectedProduct} 
+            onBack={() => setActiveTab('shop')} 
+          />
         );
 
       case 'deals':
