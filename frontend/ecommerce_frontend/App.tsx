@@ -183,28 +183,64 @@ function App(): React.ReactElement {
             ]}
             showsVerticalScrollIndicator={false}
           >
+            {/* Search Bar */}
             <Section delay={0} style={styles.sectionPad}>
-              <View style={styles.tabHeaderContainer}>
-                <Text style={styles.tabHeaderTitle}>🛍️ Shop All Products</Text>
-                <Text style={styles.tabHeaderSubtitle}>Browse our full collection</Text>
+              <View style={styles.searchContainer}>
+                <Text style={styles.searchPlaceholder}>🔍 Search products...</Text>
               </View>
             </Section>
 
-            <Divider delay={200} />
-
-            <Section delay={300} style={styles.sectionPad}>
-              <FeaturedProducts onAddToCart={handleAddToCart} />
-            </Section>
-
-            <Divider delay={500} />
-
-            <Section delay={600} style={styles.sectionPad}>
+            {/* Free Shipping Banner */}
+            <Section delay={100} style={styles.sectionPad}>
               <ShippingIndicator cartTotal={cartTotal} minimumThreshold={50} />
             </Section>
 
-            <Divider delay={700} />
+            {/* Categories */}
+            <Section delay={200} style={styles.sectionPad}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
+                <View style={styles.categoryItem}>
+                  <Text style={styles.categoryText}>All</Text>
+                </View>
+                <View style={styles.categoryItem}>
+                  <Text style={styles.categoryText}>Fashion</Text>
+                </View>
+                <View style={styles.categoryItem}>
+                  <Text style={styles.categoryText}>Electronics</Text>
+                </View>
+                <View style={styles.categoryItem}>
+                  <Text style={styles.categoryText}>Home</Text>
+                </View>
+                <View style={styles.categoryItem}>
+                  <Text style={styles.categoryText}>Beauty</Text>
+                </View>
+                <View style={styles.categoryItem}>
+                  <Text style={styles.categoryText}>Sports</Text>
+                </View>
+              </ScrollView>
+            </Section>
 
-            <Section delay={800} style={styles.sectionPad}>
+            <Divider delay={300} />
+
+            {/* Products */}
+            <Section delay={400} style={styles.sectionPad}>
+              <FeaturedProducts onAddToCart={handleAddToCart} />
+            </Section>
+
+            {/* Clearance Deals */}
+            <Divider delay={600} />
+
+            <Section delay={700} style={styles.sectionPad}>
+              <View style={styles.clearanceHeader}>
+                <Text style={styles.clearanceTitle}>🔥 Clearance Deals</Text>
+                <Text style={styles.clearanceSubtitle}>Up to 80% off</Text>
+              </View>
+              <ClearancePanel onClearancePress={(id) => console.log('Clearance item:', id)} />
+            </Section>
+
+            <Divider delay={900} />
+
+            {/* Cart Summary */}
+            <Section delay={1000} style={styles.sectionPad}>
               <AnimatedCart count={cartCount} />
             </Section>
           </ScrollView>
@@ -403,6 +439,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#2D2D38',
+  },
+  searchContainer: {
+    backgroundColor: '#23232B',
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 20,
+    borderWidth: 1,
+    borderColor: '#2D2D38',
+  },
+  searchPlaceholder: {
+    fontSize: 16,
+    color: '#A0A0A0',
+    textAlign: 'center',
+  },
+  categoriesContainer: {
+    paddingHorizontal: 20,
+  },
+  categoryItem: {
+    backgroundColor: '#23232B',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#2D2D38',
+  },
+  categoryText: {
+    fontSize: 14,
+    color: '#FFF',
+    fontWeight: '500',
+  },
+  clearanceHeader: {
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  clearanceTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 4,
+  },
+  clearanceSubtitle: {
+    fontSize: 14,
+    color: '#A0A0A0',
   },
 });
 
