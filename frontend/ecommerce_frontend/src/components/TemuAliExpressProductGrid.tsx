@@ -18,7 +18,7 @@ interface Product {
 }
 
 interface TemuAliExpressProductGridProps {
-  onAddToCart: (id: number) => void;
+  onAddToCart: (product: Product) => void;
   onProductPress: (id: number) => void;
 }
 
@@ -212,7 +212,7 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (id: number) => voi
           <Text style={styles.soldText}>{product.sold} sold</Text>
           <TouchableOpacity
             style={styles.addToCartButton}
-            onPress={() => onAddToCart(product.id)}
+            onPress={() => onAddToCart(product)}
           >
             <Text style={styles.addToCartText}>Add</Text>
           </TouchableOpacity>

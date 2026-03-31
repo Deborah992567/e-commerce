@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TemuAliExpressProductGrid from './TemuAliExpressProductGrid';
+import { Product } from '../types';
 
 interface ShopPageProps {
-  onAddToCart: (id: number) => void;
+  onAddToCart: (product: Product) => void;
   cartCount: number;
 }
 
