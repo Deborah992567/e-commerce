@@ -26,6 +26,7 @@ import CoinsBalance from './src/components/CoinsBalance';
 import ShippingIndicator from './src/components/ShippingIndicator';
 import TemuAliExpressProductGrid from './src/components/TemuAliExpressProductGrid';
 import ShopPage from './src/components/ShopPage';
+import CartScreen from './src/components/CartScreen';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -178,6 +179,11 @@ function App(): React.ReactElement {
       case 'shop':
         return (
           <ShopPage onAddToCart={handleAddToCart} cartCount={cartCount} />
+        );
+
+      case 'cart':
+        return (
+          <CartScreen onBack={() => setActiveTab('shop')} onCheckout={() => setActiveTab('shop')} />
         );
 
       case 'deals':
