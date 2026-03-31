@@ -144,7 +144,7 @@ const BottomTabNavigator: React.FC<TabBarProps> = ({
         {TABS.map((tab) => {
           let badgeCount: number | undefined;
           
-          if (tab.id === 'shop') {
+          if (tab.id === 'cart') {
             badgeCount = cartCount > 0 ? cartCount : undefined;
           } else if (tab.id === 'account') {
             badgeCount = notificationCount > 0 ? notificationCount : undefined;
