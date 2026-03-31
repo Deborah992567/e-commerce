@@ -137,7 +137,13 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
 ];
 
-const ProductListScreen: React.FC<ProductListScreenProps> = () => {
+const ProductListScreen: React.FC<ProductListScreenProps> = ({
+  onBack,
+  onGoToProductDetail,
+  onGoToProfile,
+  onGoToCart,
+  onLogout
+}) => {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState<'relevant' | 'price-low' | 'price-high' | 'rating' | 'newest'>('relevant');
@@ -201,7 +207,11 @@ const ProductListScreen: React.FC<ProductListScreenProps> = () => {
   };
 
   const renderProductCard = ({ item }: { item: Product }) => (
-    <TouchableOpacity style={styles.productCard} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.productCard}
+      activeOpacity={0.7}
+      onPress={() => onGoToProductDetail && onGoToProductDetail(item)}
+    >
       {/* Image Container */}
       <View style={styles.imageContainer}>
         <Image source={{ uri: item.image }} style={styles.productImage} />
