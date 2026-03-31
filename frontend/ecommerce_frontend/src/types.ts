@@ -4,7 +4,7 @@ export interface Product {
   category?: string;
   price: number;
   oldPrice: number | null;
-  badge: string | null;
+  badge?: string | null;
   img: string;
   rating?: number;
   reviews?: number;

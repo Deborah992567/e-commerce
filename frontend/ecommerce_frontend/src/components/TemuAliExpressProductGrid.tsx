@@ -173,7 +173,7 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (id: number) => voi
         </Text>
 
         <View style={styles.ratingContainer}>
-          <Text style={styles.ratingStars}>{renderStars(product.rating)}</Text>
+          <Text style={styles.ratingStars}>{renderStars(product.rating || 0)}</Text>
           <Text style={styles.ratingText}>({product.reviews})</Text>
         </View>
 
