@@ -124,7 +124,7 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
 ];
 
-const ProductCard: React.FC<{ product: Product; onAddToCart: (id: number) => void; onProductPress: (id: number) => void }> = ({
+const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) => void; onProductPress: (id: number) => void }> = ({
   product,
   onAddToCart,
   onProductPress,
