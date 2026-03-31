@@ -25,6 +25,7 @@ import ClearancePanel from './src/components/ClearancePanel';
 import CoinsBalance from './src/components/CoinsBalance';
 import ShippingIndicator from './src/components/ShippingIndicator';
 import TemuAliExpressProductGrid from './src/components/TemuAliExpressProductGrid';
+import ShopPage from './src/components/ShopPage';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -176,96 +177,7 @@ function App(): React.ReactElement {
 
       case 'shop':
         return (
-          <View style={styles.shopContainer}>
-            <View style={styles.shopHeader}>
-              <Text style={styles.shopTitle}>🛍️ Shop</Text>
-              <View style={styles.headerRight}>
-                <View style={styles.headerIcon}>
-                  <Text style={styles.headerIconText}>❤️</Text>
-                </View>
-                <View style={styles.headerIcon}>
-                  <Text style={styles.headerIconText}>🔔</Text>
-                </View>
-              </View>
-            </View>
-
-            <ScrollView
-              style={styles.scroll}
-              contentContainerStyle={[
-                styles.scrollContent,
-                { paddingTop: 8, paddingBottom: insets.bottom + 100 },
-              ]}
-              showsVerticalScrollIndicator={false}
-            >
-              {/* Search Bar */}
-              <Section delay={0} style={styles.sectionPad}>
-                <View style={styles.searchContainer}>
-                  <Text style={styles.searchPlaceholder}>🔍 Search products...</Text>
-                </View>
-              </Section>
-
-              {/* Free Shipping Banner */}
-              <Section delay={100} style={styles.sectionPad}>
-                <ShippingIndicator cartTotal={cartCount * 25} minimumThreshold={50} />
-              </Section>
-
-              {/* Categories */}
-              <Section delay={200} style={styles.sectionPad}>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
-                  <View style={styles.categoryItem}>
-                    <Text style={styles.categoryText}>All</Text>
-                  </View>
-                  <View style={styles.categoryItem}>
-                    <Text style={styles.categoryText}>Fashion</Text>
-                  </View>
-                  <View style={styles.categoryItem}>
-                    <Text style={styles.categoryText}>Electronics</Text>
-                  </View>
-                  <View style={styles.categoryItem}>
-                    <Text style={styles.categoryText}>Home</Text>
-                  </View>
-                  <View style={styles.categoryItem}>
-                    <Text style={styles.categoryText}>Beauty</Text>
-                  </View>
-                  <View style={styles.categoryItem}>
-                    <Text style={styles.categoryText}>Sports</Text>
-                  </View>
-                </ScrollView>
-              </Section>
-
-              {/* Filters & Sort */}
-              <Section delay={250} style={styles.sectionPad}>
-                <View style={styles.filtersContainer}>
-                  <View style={styles.filterItem}>
-                    <Text style={styles.filterText}>📊 Sort</Text>
-                  </View>
-                  <View style={styles.filterItem}>
-                    <Text style={styles.filterText}>💰 Price</Text>
-                  </View>
-                  <View style={styles.filterItem}>
-                    <Text style={styles.filterText}>⭐ Rating</Text>
-                  </View>
-                  <View style={styles.filterItem}>
-                    <Text style={styles.filterText}>🔥 Deals</Text>
-                  </View>
-                </View>
-              </Section>
-
-              <Divider delay={300} />
-
-              {/* Products Grid */}
-              <Section delay={400} style={styles.sectionPad}>
-                <View style={styles.productsHeader}>
-                  <Text style={styles.productsTitle}>Trending Products</Text>
-                  <Text style={styles.productsCount}>1,234 items</Text>
-                </View>
-                <TemuAliExpressProductGrid
-                  onAddToCart={handleAddToCart}
-                  onProductPress={(id: number) => console.log('Product pressed:', id)}
-                />
-              </Section>
-            </ScrollView>
-          </View>
+          <ShopPage onAddToCart={handleAddToCart} cartCount={cartCount} />
         );
 
       case 'deals':
