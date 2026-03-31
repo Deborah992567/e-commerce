@@ -24,7 +24,7 @@ import FlashDealsPanel from './src/components/FlashDealsPanel';
 import ClearancePanel from './src/components/ClearancePanel';
 import CoinsBalance from './src/components/CoinsBalance';
 import ShippingIndicator from './src/components/ShippingIndicator';
-import AliExpressProductGrid from './src/components/AliExpressProductGrid';
+import TemuAliExpressProductGrid from './src/components/TemuAliExpressProductGrid';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -246,9 +246,9 @@ function App(): React.ReactElement {
                 <Text style={styles.productsTitle}>Trending Products</Text>
                 <Text style={styles.productsCount}>1,234 items</Text>
               </View>
-              <AliExpressProductGrid
+              <TemuAliExpressProductGrid
                 onAddToCart={handleAddToCart}
-                onProductPress={(id) => console.log('Product pressed:', id)}
+                onProductPress={(id: number) => console.log('Product pressed:', id)}
               />
             </Section>
 
