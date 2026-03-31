@@ -38,6 +38,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     soldCount: 15200,
     discount: 57,
     badge: 'Hot Sale',
+    category: 'Electronics',
   },
   {
     id: 2,
@@ -51,6 +52,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     soldCount: 28900,
     discount: 58,
     badge: 'Choice',
+    category: 'Fashion',
   },
   {
     id: 3,
@@ -64,6 +66,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     soldCount: 31200,
     discount: 55,
     badge: 'Hot Sale',
+    category: 'Electronics',
   },
   {
     id: 4,
@@ -76,6 +79,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     storeName: 'Gadget Store',
     soldCount: 9430,
     discount: 60,
+    category: 'Electronics',
   },
   {
     id: 5,
@@ -89,6 +93,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     soldCount: 18750,
     discount: 57,
     badge: 'Choice',
+    category: 'Home',
   },
   {
     id: 6,
@@ -101,6 +106,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     storeName: 'Protective Gear',
     soldCount: 12340,
     discount: 56,
+    category: 'Electronics',
   },
   {
     id: 7,
@@ -114,6 +120,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     soldCount: 21890,
     discount: 57,
     badge: 'Hot Sale',
+    category: 'Electronics',
   },
   {
     id: 8,
@@ -126,14 +133,67 @@ const SAMPLE_PRODUCTS: Product[] = [
     storeName: 'Tech Essentials',
     soldCount: 5430,
     discount: 67,
+    category: 'Electronics',
   },
 ];
 
 const ProductListScreen: React.FC<ProductListScreenProps> = () => {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [sortBy, setSortBy] = useState<'relevant' | 'price-low' | 'price-high' | 'rating' | 'newest'>('relevant');
+  const [filterBy, setFilterBy] = useState<'all' | 'price' | 'rating' | 'hot'>('all');
 
   const categories = ['All', 'Fashion', 'Electronics', 'Home', 'Beauty', 'Sports', 'Food', 'Toys'];
+
+  // Filter and sort products
+  const getFilteredProducts = () => {
+    let filtered = SAMPLE_PRODUCTS;
+
+    // Category filter
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(product => product.category === selectedCategory);
+    }
+
+    // Additional filters
+    switch (filterBy) {
+      case 'price':
+        filtered = filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'rating':
+        filtered = filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'hot':
+        filtered = filtered.sort((a, b) => b.soldCount - a.soldCount);
+        break;
+      default:
+        // Sort by relevance (default)
+        filtered = filtered.sort((a, b) => b.soldCount - a.soldCount);
+        break;
+    }
+
+    // Sort by selected option
+    switch (sortBy) {
+      case 'price-low':
+        filtered = [...filtered].sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered = [...filtered].sort((a, b) => b.price - a.price);
+        break;
+      case 'rating':
+        filtered = [...filtered].sort((a, b) => b.rating - a.rating);
+        break;
+      case 'newest':
+        // For demo, sort by ID (higher ID = newer)
+        filtered = [...filtered].sort((a, b) => b.id - a.id);
+        break;
+      default:
+        break;
+    }
+
+    return filtered;
+  };
+
+  const filteredProducts = getFilteredProducts();
 
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
@@ -267,17 +327,35 @@ const ProductListScreen: React.FC<ProductListScreenProps> = () => {
 
         {/* Filters */}
         <View style={styles.filters}>
-          <TouchableOpacity style={styles.filterBtn} activeOpacity={0.7}>
-            <Text style={styles.filterBtnText}>📊 Sort</Text>
+          <TouchableOpacity
+            style={[styles.filterBtn, sortBy !== 'relevant' && styles.filterBtnActive]}
+            activeOpacity={0.7}
+            onPress={() => setSortBy(sortBy === 'relevant' ? 'price-low' : 'relevant')}
+          >
+            <Text style={[styles.filterBtnText, sortBy !== 'relevant' && styles.filterBtnTextActive]}>
+              📊 {sortBy === 'price-low' ? 'Price ↑' : sortBy === 'price-high' ? 'Price ↓' : 'Sort'}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterBtn} activeOpacity={0.7}>
-            <Text style={styles.filterBtnText}>💰 Price</Text>
+          <TouchableOpacity
+            style={[styles.filterBtn, filterBy === 'price' && styles.filterBtnActive]}
+            activeOpacity={0.7}
+            onPress={() => setFilterBy(filterBy === 'price' ? 'all' : 'price')}
+          >
+            <Text style={[styles.filterBtnText, filterBy === 'price' && styles.filterBtnTextActive]}>💰 Price</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterBtn} activeOpacity={0.7}>
-            <Text style={styles.filterBtnText}>⭐ Rating</Text>
+          <TouchableOpacity
+            style={[styles.filterBtn, filterBy === 'rating' && styles.filterBtnActive]}
+            activeOpacity={0.7}
+            onPress={() => setFilterBy(filterBy === 'rating' ? 'all' : 'rating')}
+          >
+            <Text style={[styles.filterBtnText, filterBy === 'rating' && styles.filterBtnTextActive]}>⭐ Rating</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterBtn} activeOpacity={0.7}>
-            <Text style={styles.filterBtnText}>🔥 Hot</Text>
+          <TouchableOpacity
+            style={[styles.filterBtn, filterBy === 'hot' && styles.filterBtnActive]}
+            activeOpacity={0.7}
+            onPress={() => setFilterBy(filterBy === 'hot' ? 'all' : 'hot')}
+          >
+            <Text style={[styles.filterBtnText, filterBy === 'hot' && styles.filterBtnTextActive]}>🔥 Hot</Text>
           </TouchableOpacity>
         </View>
 
