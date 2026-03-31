@@ -4,7 +4,7 @@ import { Product } from '../types';
 
 interface TemuAliExpressProductGridProps {
   onAddToCart: (product: Product) => void;
-  onProductPress: (id: number) => void;
+  onProductPress: (product: Product) => void;
 }
 
 const SAMPLE_PRODUCTS: Product[] = [
@@ -124,7 +124,7 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
 ];
 
-const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) => void; onProductPress: (id: number) => void }> = ({
+const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) => void; onProductPress: (product: Product) => void }> = ({
   product,
   onAddToCart,
   onProductPress,
@@ -147,7 +147,7 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) 
   };
 
   return (
-    <TouchableOpacity style={styles.productCard} onPress={() => onProductPress(product.id)} activeOpacity={0.9}>
+    <TouchableOpacity style={styles.productCard} onPress={() => onProductPress(product)} activeOpacity={0.9}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: product.img }} style={styles.productImage} />
         {product.discount && product.discount > 0 && (

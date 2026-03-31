@@ -10,7 +10,7 @@ interface ShopPageProps {
   onProductPress?: (product: Product) => void;
 }
 
-const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount }) => {
+const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPress }) => {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState('All');
 
