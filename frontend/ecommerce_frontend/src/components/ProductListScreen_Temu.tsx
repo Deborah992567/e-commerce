@@ -18,7 +18,8 @@ interface Product {
 
 interface ProductListScreenProps {
   onBack?: () => void;
-  onGoToProductDetail?: (product: any) => void;
+  onGoToProductDetail?: (product: Product) => void;
+  onAddToCart?: (product: Product) => void;
   onGoToProfile?: () => void;
   onGoToCart?: () => void;
   onLogout?: () => void;
@@ -128,7 +129,7 @@ const SAMPLE_PRODUCTS: Product[] = [
   },
 ];
 
-const ProductListScreen: React.FC<ProductListScreenProps> = () => {
+const ProductListScreen: React.FC<ProductListScreenProps> = ({ onGoToProductDetail, onAddToCart }) => {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -140,7 +141,11 @@ const ProductListScreen: React.FC<ProductListScreenProps> = () => {
   };
 
   const renderProductCard = ({ item }: { item: Product }) => (
-    <TouchableOpacity style={styles.productCard} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.productCard}
+      activeOpacity={0.7}
+      onPress={() => onGoToProductDetail?.(item)}
+    >
       {/* Image Container */}
       <View style={styles.imageContainer}>
         <Image source={{ uri: item.image }} style={styles.productImage} />
@@ -195,7 +200,11 @@ const ProductListScreen: React.FC<ProductListScreenProps> = () => {
         <Text style={styles.soldCount}>🔥 {item.soldCount.toLocaleString()} sold</Text>
 
         {/* Add to Cart Button */}
-        <TouchableOpacity style={styles.addToCartBtn} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.addToCartBtn}
+          activeOpacity={0.8}
+          onPress={() => onAddToCart?.(item)}
+        >
           <Text style={styles.addToCartText}>Add to Cart</Text>
         </TouchableOpacity>
       </View>

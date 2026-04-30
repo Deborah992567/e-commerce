@@ -32,11 +32,38 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin, onGoTo
   }, []);
 
   const handleSignup = () => {
+    // Validate all fields are filled
+    if (!name.trim()) {
+      Alert.alert('Error', 'Please enter your full name');
+      return;
+    }
+    if (!email.trim()) {
+      Alert.alert('Error', 'Please enter your email address');
+      return;
+    }
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+    if (!password.trim()) {
+      Alert.alert('Error', 'Please enter a password');
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      return;
+    }
+    if (!confirmPassword.trim()) {
+      Alert.alert('Error', 'Please confirm your password');
+      return;
+    }
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match!');
       return;
     }
-    // Replace with real signup logic
+    // Signup successful
     Alert.alert('Signup Successful', `Welcome, ${name}!`);
     if (onGoToProductList) {
       onGoToProductList();
@@ -70,6 +97,7 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin, onGoTo
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
+        textContentType="emailAddress"
       />
       <TextInput
         style={styles.input}
