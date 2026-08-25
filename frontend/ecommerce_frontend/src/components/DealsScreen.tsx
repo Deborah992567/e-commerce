@@ -2,12 +2,27 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import SpinToWin from './SpinToWin';
 import GamificationPanel from './GamificationPanel';
+import FlashDealsPanel from './FlashDealsPanel';
+import ClearancePanel from './ClearancePanel';
+import { FireIcon, TrophyIcon, ClockIcon, TagIcon } from './Icons';
 
 const DealsScreen = () => (
-  <ScrollView style={styles.root} contentContainerStyle={styles.content}>
+  <ScrollView style={styles.root} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
     <View style={styles.header}>
-      <Text style={styles.title}>⚡ DEALS & REWARDS</Text>
+      <View style={styles.headerRow}>
+        <FireIcon size={28} color="#FF5722" />
+        <Text style={styles.title}>DEALS & REWARDS</Text>
+        <FireIcon size={28} color="#FF5722" />
+      </View>
       <Text style={styles.subtitle}>Spin, streaks, badges & refer to earn all in one place</Text>
+    </View>
+
+    <View style={styles.section}>
+      <FlashDealsPanel onFlashDealPress={(id) => console.log('Flash deal:', id)} />
+    </View>
+
+    <View style={styles.section}>
+      <ClearancePanel onClearancePress={(id) => console.log('Clearance:', id)} />
     </View>
 
     <View style={styles.section}>
@@ -30,14 +45,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   header: {
-    marginBottom: 16,
+    marginBottom: 20,
     alignItems: 'center',
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 8,
+  },
   title: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 8,
   },
   subtitle: {
     color: '#A0A0A0',
