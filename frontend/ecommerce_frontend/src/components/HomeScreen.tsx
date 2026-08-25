@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { StatusBar, StyleSheet, ScrollView, View, Animated, Easing } from 'react-native';
+import { StatusBar, StyleSheet, ScrollView, View, Animated, Easing, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Hero from './Hero';
@@ -8,6 +8,7 @@ import FeaturedProducts from './FeaturedProducts';
 import GamificationPanel from './GamificationPanel';
 import SpinToWin from './SpinToWin';
 import CTAButton from './CTAButton';
+import { HomeIcon, ShopIcon, CartIcon, FireIcon, TagIcon, TruckIcon } from './Icons';
 
 interface HomeScreenProps {
   onShopNow?: () => void;
@@ -20,19 +21,8 @@ const Section: React.FC<{ children: React.ReactNode; delay?: number; style?: obj
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 700,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 700,
-        delay,
-        useNativeDriver: true,
-      }),
+      Animated.timing(translateY, { toValue: 0, duration: 700, delay, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(opacity, { toValue: 1, duration: 700, delay, useNativeDriver: true }),
     ]).start();
   }, [delay, opacity, translateY]);
 
@@ -49,19 +39,8 @@ const Divider: React.FC<{ delay?: number }> = ({ delay = 0 }) => {
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(scaleX, {
-        toValue: 1,
-        duration: 600,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 400,
-        delay,
-        useNativeDriver: true,
-      }),
+      Animated.timing(scaleX, { toValue: 1, duration: 600, delay, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(opacity, { toValue: 1, duration: 400, delay, useNativeDriver: true }),
     ]).start();
   }, [delay, opacity, scaleX]);
 
@@ -74,23 +53,8 @@ const Divider: React.FC<{ delay?: number }> = ({ delay = 0 }) => {
   );
 };
 
-const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void }> = ({ onShopNow, onViewCart }) => (
-  <View style={styles.ctaSection}>
-    <CTAButton title="Shop Now" onPress={onShopNow} color="#E8C97A" size="lg" icon="→" />
-    <CTAButton title="View Cart" onPress={onViewCart} color="#C4A4F0" variant="outline" size="lg" icon="🛒" />
-  </View>
-);
-
 const HomeScreen: React.FC<HomeScreenProps> = ({ onShopNow, onViewCart }) => {
   const insets = useSafeAreaInsets();
-
-  const shopNowHandler = () => {
-    if (onShopNow) onShopNow();
-  };
-
-  const viewCartHandler = () => {
-    if (onViewCart) onViewCart();
-  };
 
   const handleAddToCart = (id: number) => {
     console.log(`Add to cart: ${id}`);
@@ -106,19 +70,35 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onShopNow, onViewCart }) => {
         showsVerticalScrollIndicator={false}
       >
         <Section delay={0}>
-          <Hero onShop={shopNowHandler} />
+          <Hero onShop={onShopNow} />
         </Section>
 
         <Divider delay={400} />
 
         <Section delay={500} style={styles.sectionPad}>
-          <CTASection onShopNow={shopNowHandler} onViewCart={viewCartHandler} />
+          <View style={styles.ctaSection}>
+            <CTAButton title="Shop Now" onPress={onShopNow || (() => {})} color="#FF5722" size="lg" />
+            <CTAButton title="View Cart" onPress={onViewCart || (() => {})} color="#4ECDC4" variant="outline" size="lg" />
+          </View>
         </Section>
 
         <Divider delay={700} />
 
         <Section delay={800} style={styles.sectionPad}>
-          <AnimatedCart count={0} />
+          <View style={styles.infoBar}>
+            <View style={styles.infoItem}>
+              <TruckIcon size={20} color="#4ECDC4" />
+              <Text style={styles.infoText}>Free Shipping</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <FireIcon size={20} color="#FF5722" />
+              <Text style={styles.infoText}>Hot Deals</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <TagIcon size={20} color="#FFD700" />
+              <Text style={styles.infoText}>Best Prices</Text>
+            </View>
+          </View>
         </Section>
 
         <Divider delay={1000} />
@@ -126,10 +106,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onShopNow, onViewCart }) => {
         <Section delay={1100} style={styles.sectionPad}>
           <FeaturedProducts onAddToCart={handleAddToCart} />
         </Section>
-
-        <Divider delay={1200} />
-
-        <Divider delay={1500} />
       </ScrollView>
     </View>
   );
@@ -160,14 +136,13 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 1,
     backgroundColor: '#ffffff08',
-    transformOrigin: 'left',
   },
   dividerDiamond: {
     width: 5,
     height: 5,
-    backgroundColor: '#E8C97A40',
+    backgroundColor: '#FF572240',
     borderWidth: 1,
-    borderColor: '#E8C97A80',
+    borderColor: '#FF572280',
     transform: [{ rotate: '45deg' }],
   },
   ctaSection: {
@@ -177,6 +152,27 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 20,
     paddingVertical: 16,
+  },
+  infoBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: '#23232B',
+    marginHorizontal: 20,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#2D2D38',
+  },
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  infoText: {
+    color: '#A0A0A0',
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
 
