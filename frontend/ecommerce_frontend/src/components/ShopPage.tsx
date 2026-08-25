@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TemuAliExpressProductGrid from './TemuAliExpressProductGrid';
 import { Product } from '../types';
+import { SearchIcon, HeartIcon, BellIcon, TruckIcon, SortIcon, FilterIcon, FireIcon, StarIcon, TagIcon } from './Icons';
 
 interface ShopPageProps {
   onAddToCart: (product: Product) => void;
@@ -18,42 +19,38 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>🛍️ Shop</Text>
+        <Text style={styles.headerTitle}>Shop</Text>
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.iconBtn}>
-            <Text style={styles.iconText}>❤️</Text>
+            <HeartIcon size={20} color="#FF2D55" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconBtn}>
-            <Text style={styles.iconText}>🔔</Text>
+            <BellIcon size={20} color="#4ECDC4" />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Search Bar */}
       <View style={styles.searchSection}>
         <TouchableOpacity style={styles.searchBar}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <SearchIcon size={16} color="#888" />
           <Text style={styles.searchPlaceholder}>Search products</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Main Content */}
       <ScrollView
         style={styles.content}
         contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Banner */}
         <View style={styles.banner}>
+          <TruckIcon size={28} color="#FFF" />
           <View style={styles.bannerContent}>
-            <Text style={styles.bannerTitle}>🚚 Free Shipping</Text>
+            <Text style={styles.bannerTitle}>Free Shipping</Text>
             <Text style={styles.bannerSubtitle}>on orders over $50</Text>
           </View>
         </View>
 
-        {/* Category Tabs */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -73,29 +70,30 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
           ))}
         </ScrollView>
 
-        {/* Filters */}
         <View style={styles.filters}>
           <TouchableOpacity style={styles.filterBtn}>
-            <Text style={styles.filterBtnText}>📊 Sort</Text>
+            <SortIcon size={14} color="#FFF" />
+            <Text style={styles.filterBtnText}>Sort</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.filterBtn}>
-            <Text style={styles.filterBtnText}>💰 Price</Text>
+            <TagIcon size={14} color="#FFF" />
+            <Text style={styles.filterBtnText}>Price</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.filterBtn}>
-            <Text style={styles.filterBtnText}>⭐ Rating</Text>
+            <StarIcon size={14} color="#FFD700" filled />
+            <Text style={styles.filterBtnText}>Rating</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.filterBtn}>
-            <Text style={styles.filterBtnText}>🔥 Hot</Text>
+            <FireIcon size={14} color="#FF5722" />
+            <Text style={styles.filterBtnText}>Hot</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Products Header */}
         <View style={styles.productsHeader}>
           <Text style={styles.productsTitle}>Trending Now</Text>
           <Text style={styles.productsCount}>1,234+ items</Text>
         </View>
 
-        {/* Products Grid */}
         <TemuAliExpressProductGrid
           onAddToCart={onAddToCart}
           onProductPress={onProductPress}
@@ -138,9 +136,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#2D2D38',
   },
-  iconText: {
-    fontSize: 18,
-  },
   searchSection: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -156,10 +151,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderWidth: 1,
     borderColor: '#2D2D38',
-  },
-  searchIcon: {
-    fontSize: 16,
-    marginRight: 8,
+    gap: 8,
   },
   searchPlaceholder: {
     fontSize: 14,
@@ -172,22 +164,24 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 12,
     marginBottom: 16,
-    backgroundColor: 'linear-gradient(135deg, #FF5722 0%, #FF9800 100%)',
+    backgroundColor: '#FF5722',
     borderRadius: 12,
     padding: 16,
-    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   bannerContent: {
-    paddingVertical: 8,
+    flex: 1,
   },
   bannerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFF',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   bannerSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#FFF',
     opacity: 0.9,
   },
@@ -207,8 +201,8 @@ const styles = StyleSheet.create({
     borderColor: '#2D2D38',
   },
   categoryTabActive: {
-    backgroundColor: '#E8C97A',
-    borderColor: '#E8C97A',
+    backgroundColor: '#FF5722',
+    borderColor: '#FF5722',
   },
   categoryTabText: {
     fontSize: 13,
@@ -216,7 +210,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   categoryTabTextActive: {
-    color: '#0D0D12',
+    color: '#FFF',
     fontWeight: 'bold',
   },
   filters: {
@@ -227,6 +221,7 @@ const styles = StyleSheet.create({
   },
   filterBtn: {
     flex: 1,
+    flexDirection: 'row',
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 8,
@@ -234,6 +229,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#2D2D38',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
   },
   filterBtnText: {
     fontSize: 11,
