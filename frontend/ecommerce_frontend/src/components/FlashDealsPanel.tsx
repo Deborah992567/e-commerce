@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { ClockIcon, FireIcon, TagIcon } from './Icons';
 
 interface FlashDeal {
   id: string;
@@ -8,7 +9,7 @@ interface FlashDeal {
   dealPrice: number;
   discount: number;
   image: string;
-  timeLeft: number; // in seconds
+  timeLeft: number;
   stock: number;
 }
 
@@ -55,45 +56,35 @@ const FLASH_DEALS_DATA: FlashDeal[] = [
   },
 ];
 
-interface FlashDealCardProps {
-  deal: FlashDeal;
-  timeLeft: number;
-}
-
-const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, timeLeft }) => {
+const FlashDealCard: React.FC<{ deal: FlashDeal; timeLeft: number }> = ({ deal, timeLeft }) => {
   const hours = Math.floor(timeLeft / 3600);
   const minutes = Math.floor((timeLeft % 3600) / 60);
-  
   const isLowStock = deal.stock <= 10;
-  
+
   return (
     <View style={styles.flashCard}>
       <View style={styles.flashImageContainer}>
-        <Image
-          source={{ uri: deal.image }}
-          style={styles.flashImage}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: deal.image }} style={styles.flashImage} resizeMode="cover" />
         <View style={styles.flashDiscountBadge}>
+          <TagIcon size={10} color="#FFF" />
           <Text style={styles.flashDiscountText}>-{deal.discount}%</Text>
         </View>
         {isLowStock && (
           <View style={styles.flashStockAlert}>
-            <Text style={styles.flashStockText}>🔥 {deal.stock} left</Text>
+            <FireIcon size={10} color="#FFF" />
+            <Text style={styles.flashStockText}>{deal.stock} left</Text>
           </View>
         )}
       </View>
-      
       <View style={styles.flashContent}>
         <Text style={styles.flashTitle} numberOfLines={2}>{deal.title}</Text>
-        
         <View style={styles.flashPriceRow}>
           <Text style={styles.flashOriginalPrice}>₦{deal.originalPrice}</Text>
           <Text style={styles.flashDealPrice}>₦{deal.dealPrice}</Text>
         </View>
-        
         <View style={styles.flashTimerContainer}>
-          <Text style={styles.flashTimerText}>⏱️ {hours}h {minutes}m</Text>
+          <ClockIcon size={12} color="#0D0D12" />
+          <Text style={styles.flashTimerText}>{hours}h {minutes}m</Text>
         </View>
       </View>
     </View>
@@ -105,30 +96,23 @@ interface FlashDealsPanelProps {
 }
 
 const FlashDealsPanel: React.FC<FlashDealsPanelProps> = ({ onFlashDealPress }) => {
-  const [deals, setDeals] = useState(FLASH_DEALS_DATA);
+  const [deals] = useState(FLASH_DEALS_DATA);
   const [currentTimes, setCurrentTimes] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
-    // Initialize time left for each deal
     const initialTimes: { [key: string]: number } = {};
-    deals.forEach((deal) => {
-      initialTimes[deal.id] = deal.timeLeft;
-    });
+    deals.forEach((deal) => { initialTimes[deal.id] = deal.timeLeft; });
     setCurrentTimes(initialTimes);
   }, [deals]);
 
   useEffect(() => {
-    // Update countdown timer every minute
     const interval = setInterval(() => {
       setCurrentTimes((prev) => {
         const updated = { ...prev };
-        Object.keys(updated).forEach((key) => {
-          updated[key] = Math.max(0, updated[key] - 60);
-        });
+        Object.keys(updated).forEach((key) => { updated[key] = Math.max(0, updated[key] - 60); });
         return updated;
       });
-    }, 60000); // Update every 60 seconds (1 minute)
-
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -136,12 +120,13 @@ const FlashDealsPanel: React.FC<FlashDealsPanelProps> = ({ onFlashDealPress }) =
     <View style={styles.flashDealsContainer}>
       <View style={styles.flashDealsHeader}>
         <View style={styles.flashDealsTitle}>
-          <Text style={styles.flashHeaderEmoji}>⚡</Text>
+          <FireIcon size={20} color="#FF5722" />
           <Text style={styles.flashHeaderText}>Flash Deals</Text>
         </View>
-        <Text style={styles.flashDealsViewAll}>View All →</Text>
+        <TouchableOpacity>
+          <Text style={styles.flashDealsViewAll}>View All</Text>
+        </TouchableOpacity>
       </View>
-
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -149,11 +134,9 @@ const FlashDealsPanel: React.FC<FlashDealsPanelProps> = ({ onFlashDealPress }) =
         style={styles.flashDealsScrollContainer}
       >
         {deals.map((deal) => (
-          <FlashDealCard
-            key={deal.id}
-            deal={deal}
-            timeLeft={currentTimes[deal.id] || deal.timeLeft}
-          />
+          <TouchableOpacity key={deal.id} activeOpacity={0.9} onPress={() => onFlashDealPress?.(deal.id)}>
+            <FlashDealCard deal={deal} timeLeft={currentTimes[deal.id] || deal.timeLeft} />
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
@@ -162,24 +145,20 @@ const FlashDealsPanel: React.FC<FlashDealsPanelProps> = ({ onFlashDealPress }) =
 
 const styles = StyleSheet.create({
   flashDealsContainer: {
-    marginVertical: 24,
-    paddingHorizontal: 0,
+    marginVertical: 20,
     width: '100%',
   },
   flashDealsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    marginBottom: 16,
+    paddingHorizontal: 4,
+    marginBottom: 14,
   },
   flashDealsTitle: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  flashHeaderEmoji: {
-    fontSize: 24,
   },
   flashHeaderText: {
     fontSize: 20,
@@ -195,7 +174,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   flashDealsScroll: {
-    paddingHorizontal: 20,
     gap: 12,
   },
   flashCard: {
@@ -209,7 +187,7 @@ const styles = StyleSheet.create({
   flashImageContainer: {
     position: 'relative',
     width: '100%',
-    height: 140,
+    height: 130,
     overflow: 'hidden',
   },
   flashImage: {
@@ -223,12 +201,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF5722',
     borderRadius: 8,
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   flashDiscountText: {
     color: '#FFF',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 12,
   },
   flashStockAlert: {
     position: 'absolute',
@@ -237,32 +218,35 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF2D55',
     borderRadius: 8,
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   flashStockText: {
     color: '#FFF',
     fontWeight: 'bold',
-    fontSize: 12,
+    fontSize: 11,
   },
   flashContent: {
     padding: 12,
   },
   flashTitle: {
     color: '#FFF',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     marginBottom: 8,
-    height: 36,
+    height: 34,
   },
   flashPriceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
     marginBottom: 8,
   },
   flashOriginalPrice: {
     color: '#808080',
-    fontSize: 12,
+    fontSize: 11,
     textDecorationLine: 'line-through',
   },
   flashDealPrice: {
@@ -275,12 +259,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingVertical: 4,
     paddingHorizontal: 8,
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
   },
   flashTimerText: {
     color: '#0D0D12',
     fontWeight: 'bold',
-    fontSize: 12,
+    fontSize: 11,
   },
 });
 
