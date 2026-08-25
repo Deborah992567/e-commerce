@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, Easing } from 'react-native';
+import { ClockIcon, CoinsIcon } from './Icons';
 
 interface SpinPrize {
   id: string;
@@ -10,11 +11,11 @@ interface SpinPrize {
 
 const SPIN_PRIZES: SpinPrize[] = [
   { id: 'spin-1', label: '10% OFF', discount: '10%', color: '#FF5722' },
-  { id: 'spin-2', label: 'Free Ship', discount: 'FREE', color: '#E8C97A' },
+  { id: 'spin-2', label: 'Free Ship', discount: 'FREE', color: '#FFD700' },
   { id: 'spin-3', label: '20% OFF', discount: '20%', color: '#FF2D55' },
-  { id: 'spin-4', label: '₦500 Credit', discount: '₦500', color: '#4ECDC4' },
+  { id: 'spin-4', label: '₦500', discount: '₦500', color: '#4ECDC4' },
   { id: 'spin-5', label: '50% OFF', discount: '50%', color: '#A78BFA' },
-  { id: 'spin-6', label: '₦1000 Credit', discount: '₦1000', color: '#34D399' },
+  { id: 'spin-6', label: '₦1000', discount: '₦1000', color: '#34D399' },
 ];
 
 interface SpinToWinProps {
@@ -24,44 +25,51 @@ interface SpinToWinProps {
 const SpinToWin: React.FC<SpinToWinProps> = ({ onPrizeWon }) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinCount, setSpinCount] = useState(2);
-  const [rotateAnim] = useState(new Animated.Value(0));
+  const rotateAnim = useRef(new Animated.Value(0)).current;
   const [selectedPrizeIndex, setSelectedPrizeIndex] = useState(0);
+  const glowAnim = useRef(new Animated.Value(0.5)).current;
+
+  useEffect(() => {
+    if (!isSpinning) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowAnim, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+          Animated.timing(glowAnim, { toValue: 0.5, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        ])
+      ).start();
+    }
+  }, [isSpinning, glowAnim]);
 
   const handleSpin = () => {
     if (spinCount <= 0) {
       Alert.alert('No Spins Left', 'Come back tomorrow for free spins!');
       return;
     }
-
     if (isSpinning) return;
 
     setIsSpinning(true);
     const randomPrizeIndex = Math.floor(Math.random() * SPIN_PRIZES.length);
     const rotations = 5 + randomPrizeIndex / SPIN_PRIZES.length;
-    const finalRotation = rotations * 360;
 
     Animated.timing(rotateAnim, {
-      toValue: finalRotation,
+      toValue: rotations * 360,
       duration: 3000,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start(() => {
       setSelectedPrizeIndex(randomPrizeIndex);
       const wonPrize = SPIN_PRIZES[randomPrizeIndex];
-
       Alert.alert(
-        '🎉 You Won!',
-        `${wonPrize.label}\n\nCongratulations! You've unlocked ${wonPrize.discount}`,
-        [
-          {
-            text: 'Awesome!',
-            onPress: () => {
-              setSpinCount(spinCount - 1);
-              setIsSpinning(false);
-              onPrizeWon?.(wonPrize);
-            },
+        'You Won!',
+        `${wonPrize.label}\nCongratulations! You've unlocked ${wonPrize.discount}`,
+        [{
+          text: 'Awesome!',
+          onPress: () => {
+            setSpinCount(spinCount - 1);
+            setIsSpinning(false);
+            onPrizeWon?.(wonPrize);
           },
-        ]
+        }]
       );
     });
   };
@@ -74,9 +82,12 @@ const SpinToWin: React.FC<SpinToWinProps> = ({ onPrizeWon }) => {
   return (
     <View style={styles.spinContainer}>
       <View style={styles.spinHeader}>
-        <Text style={styles.spinTitle}>🎡 Spin to Win</Text>
+        <View style={styles.spinTitleRow}>
+          <CoinsIcon size={22} color="#FFD700" />
+          <Text style={styles.spinTitle}>Spin to Win</Text>
+        </View>
         <View style={styles.spinCountBadge}>
-          <Text style={styles.spinCountText}>{spinCount} Spins Left</Text>
+          <Text style={styles.spinCountText}>{spinCount} Spins</Text>
         </View>
       </View>
 
@@ -86,62 +97,39 @@ const SpinToWin: React.FC<SpinToWinProps> = ({ onPrizeWon }) => {
 
       <View style={styles.wheelContainer}>
         <View style={styles.wheelBackground}>
-          {/* Spinner Pointer */}
           <View style={styles.spinnerPointer} />
-
-          {/* Rotating Wheel */}
-          <Animated.View
-            style={[
-              styles.wheel,
-              {
-                transform: [{ rotateZ: spinRotation }],
-              },
-            ]}
-          >
+          <Animated.View style={[styles.wheel, { transform: [{ rotateZ: spinRotation }] }]}>
             {SPIN_PRIZES.map((prize, index) => {
               const angle = (index / SPIN_PRIZES.length) * 360;
-              const isSelected = index === selectedPrizeIndex;
-
               return (
-                <View
-                  key={prize.id}
-                  style={[
-                    styles.wheelSegment,
-                    {
-                      backgroundColor: prize.color,
-                      transform: [{ rotateZ: `${angle}deg` }],
-                    },
-                    isSelected && styles.wheelSegmentSelected,
-                  ]}
-                >
+                <View key={prize.id} style={[styles.wheelSegment, { backgroundColor: prize.color, transform: [{ rotateZ: `${angle}deg` }] }]}>
                   <Text style={styles.wheelLabel}>{prize.label}</Text>
                   <Text style={styles.wheelDiscount}>{prize.discount}</Text>
                 </View>
               );
             })}
           </Animated.View>
-
-          {/* Center Circle */}
           <View style={styles.wheelCenter}>
             <Text style={styles.wheelCenterText}>SPIN</Text>
           </View>
         </View>
       </View>
 
-      <TouchableOpacity
-        style={[styles.spinButton, isSpinning && styles.spinButtonDisabled]}
-        onPress={handleSpin}
-        disabled={isSpinning || spinCount <= 0}
-      >
-        <Text style={styles.spinButtonText}>
-          {isSpinning ? 'Spinning...' : 'Tap to Spin'}
-        </Text>
-      </TouchableOpacity>
+      <Animated.View style={{ opacity: glowAnim }}>
+        <TouchableOpacity
+          style={[styles.spinButton, (isSpinning || spinCount <= 0) && styles.spinButtonDisabled]}
+          onPress={handleSpin}
+          disabled={isSpinning || spinCount <= 0}
+        >
+          <Text style={styles.spinButtonText}>
+            {isSpinning ? 'Spinning...' : 'Tap to Spin'}
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
 
       <View style={styles.spinFooter}>
-        <Text style={styles.spinFooterText}>
-          ⏰ Free spin resets daily at midnight
-        </Text>
+        <ClockIcon size={12} color="#808080" />
+        <Text style={styles.spinFooterText}>Free spin resets daily at midnight</Text>
       </View>
     </View>
   );
@@ -152,13 +140,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 24,
     backgroundColor: '#0D0D12',
-    marginVertical: 24,
   },
   spinHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
+  },
+  spinTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   spinTitle: {
     fontSize: 20,
@@ -192,7 +184,7 @@ const styles = StyleSheet.create({
     borderRadius: 140,
     backgroundColor: '#23232B',
     borderWidth: 3,
-    borderColor: '#E8C97A',
+    borderColor: '#FFD700',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -224,11 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     paddingBottom: 20,
-    transform: [{ rotateZ: '0deg' }],
     transformOrigin: '130px 130px',
-  },
-  wheelSegmentSelected: {
-    opacity: 1.0,
   },
   wheelLabel: {
     color: '#FFF',
@@ -256,6 +244,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     fontSize: 16,
+    letterSpacing: 1,
   },
   spinButton: {
     backgroundColor: '#FF5722',
@@ -276,6 +265,8 @@ const styles = StyleSheet.create({
   spinFooter: {
     marginTop: 12,
     alignItems: 'center',
+    flexDirection: 'row',
+    gap: 4,
   },
   spinFooterText: {
     color: '#808080',
