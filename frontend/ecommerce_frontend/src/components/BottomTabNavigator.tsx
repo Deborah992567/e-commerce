@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { HomeIcon, ShopIcon, CartIcon, DealsIcon, UserIcon } from './Icons';
 
 interface TabBarProps {
   activeTab: string;
@@ -8,22 +9,24 @@ interface TabBarProps {
   notificationCount?: number;
 }
 
-const TABS = [
-  { id: 'home', label: 'Home', icon: '🏠', badge: null },
-  { id: 'shop', label: 'Shop', icon: '🛍️', badge: null },
-  { id: 'cart', label: 'Cart', icon: '🛒', badge: null },
-  { id: 'deals', label: 'Deals', icon: '⚡', badge: null },
-  { id: 'account', label: 'Account', icon: '👤', badge: null },
-];
-
 interface TabItemProps {
-  tab: (typeof TABS)[0];
+  id: string;
+  label: string;
+  icon: React.FC<{ size?: number; color?: string }>;
   isActive: boolean;
   onPress: () => void;
   badge?: number;
 }
 
-const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onPress, badge }) => {
+const TABS = [
+  { id: 'home', label: 'Home', icon: HomeIcon },
+  { id: 'shop', label: 'Shop', icon: ShopIcon },
+  { id: 'cart', label: 'Cart', icon: CartIcon },
+  { id: 'deals', label: 'Deals', icon: DealsIcon },
+  { id: 'account', label: 'Account', icon: UserIcon },
+];
+
+const TabItem: React.FC<TabItemProps> = ({ id, label, icon: Icon, isActive, onPress, badge }) => {
   const [scaleAnim] = useState(new Animated.Value(1));
   const [colorAnim] = useState(new Animated.Value(isActive ? 1 : 0));
 
@@ -38,7 +41,7 @@ const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onPress, badge }) => {
   const handlePress = () => {
     Animated.sequence([
       Animated.timing(scaleAnim, {
-        toValue: 1.15,
+        toValue: 1.2,
         duration: 100,
         useNativeDriver: true,
       }),
@@ -62,39 +65,19 @@ const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onPress, badge }) => {
   });
 
   return (
-    <TouchableOpacity
-      style={styles.tabItem}
-      onPress={handlePress}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={styles.tabItem} onPress={handlePress} activeOpacity={0.7}>
       <View style={styles.iconContainer}>
-        <Animated.Text
-          style={[
-            styles.tabIcon,
-            {
-              transform: [{ scale: scaleAnim }],
-            },
-          ]}
-        >
-          {tab.icon}
-        </Animated.Text>
+        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+          <Icon size={24} color={isActive ? '#FF5722' : '#808080'} />
+        </Animated.View>
         {badge !== undefined && badge > 0 && (
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>
-              {badge > 99 ? '99+' : badge}
-            </Text>
+            <Text style={styles.badgeText}>{badge > 99 ? '99+' : badge}</Text>
           </View>
         )}
       </View>
-      <Animated.Text
-        style={[
-          styles.tabLabel,
-          {
-            color: labelColor,
-          },
-        ]}
-      >
-        {tab.label}
+      <Animated.Text style={[styles.tabLabel, { color: labelColor }]}>
+        {label}
       </Animated.Text>
     </TouchableOpacity>
   );
@@ -111,17 +94,11 @@ const BottomTabNavigator: React.FC<TabBarProps> = ({
   useEffect(() => {
     const activeIndex = TABS.findIndex((t) => t.id === activeTab);
     Animated.timing(underlineX, {
-      toValue: activeIndex * (100 / TABS.length),
+      toValue: activeIndex,
       duration: 300,
       useNativeDriver: false,
     }).start();
   }, [activeTab, underlineX]);
-
-  const tabWidth = 100 / TABS.length;
-  const underlineWidth = underlineX.interpolate({
-    inputRange: [0, 100],
-    outputRange: ['0%', '100%'],
-  });
 
   return (
     <View style={styles.bottomTabContainer}>
@@ -131,29 +108,27 @@ const BottomTabNavigator: React.FC<TabBarProps> = ({
             styles.underline,
             {
               left: underlineX.interpolate({
-                inputRange: [0, 100],
-                outputRange: [0, 300],
+                inputRange: [0, 4],
+                outputRange: ['0%', '25%'],
               }),
-              width: 100,
             },
           ]}
         />
       </View>
-
       <View style={styles.tabsContainer}>
         {TABS.map((tab) => {
           let badgeCount: number | undefined;
-          
           if (tab.id === 'cart') {
             badgeCount = cartCount > 0 ? cartCount : undefined;
           } else if (tab.id === 'account') {
             badgeCount = notificationCount > 0 ? notificationCount : undefined;
           }
-
           return (
             <TabItem
               key={tab.id}
-              tab={tab}
+              id={tab.id}
+              label={tab.label}
+              icon={tab.icon}
               isActive={activeTab === tab.id}
               onPress={() => onTabChange(tab.id)}
               badge={badgeCount}
@@ -171,7 +146,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#0D0D12',
     borderTopWidth: 1,
     borderTopColor: '#23232B',
-    paddingBottom: 0,
   },
   underlineTrack: {
     height: 3,
@@ -182,6 +156,7 @@ const styles = StyleSheet.create({
   underline: {
     height: 3,
     backgroundColor: '#FF5722',
+    width: '20%',
     position: 'absolute',
     top: 0,
   },
@@ -200,9 +175,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'relative',
     marginBottom: 4,
-  },
-  tabIcon: {
-    fontSize: 24,
   },
   badge: {
     position: 'absolute',
