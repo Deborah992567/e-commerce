@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { TruckIcon, CheckIcon } from './Icons';
 
 interface ShippingIndicatorProps {
   cartTotal: number;
@@ -10,20 +11,41 @@ const ShippingIndicator: React.FC<ShippingIndicatorProps> = ({ cartTotal, minimu
   const remainingAmount = Math.max(0, minimumThreshold - cartTotal);
   const progressPercentage = Math.min((cartTotal / minimumThreshold) * 100, 100);
   const qualifiesForFreeShipping = cartTotal >= minimumThreshold;
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(progressAnim, {
+      toValue: progressPercentage,
+      duration: 800,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }, [progressAnim, progressPercentage]);
+
+  const animatedWidth = progressAnim.interpolate({
+    inputRange: [0, 100],
+    outputRange: ['0%', '100%'],
+  });
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>🚚 Free Shipping</Text>
+        <View style={styles.titleRow}>
+          <TruckIcon size={18} color="#4CAF50" />
+          <Text style={styles.title}>Free Shipping</Text>
+        </View>
         {qualifiesForFreeShipping ? (
-          <Text style={styles.qualifiedText}>✓ You qualify!</Text>
+          <View style={styles.qualifiedRow}>
+            <CheckIcon size={14} color="#4CAF50" />
+            <Text style={styles.qualifiedText}>You qualify!</Text>
+          </View>
         ) : (
           <Text style={styles.remainingText}>Add ${remainingAmount.toFixed(2)} more</Text>
         )}
       </View>
 
       <View style={styles.progressBar}>
-        <View style={[styles.progressFill, { width: `${progressPercentage}%` }]} />
+        <Animated.View style={[styles.progressFill, { width: animatedWidth }]} />
       </View>
 
       <View style={styles.footer}>
@@ -34,6 +56,7 @@ const ShippingIndicator: React.FC<ShippingIndicatorProps> = ({ cartTotal, minimu
 
       {qualifiesForFreeShipping && (
         <View style={styles.badge}>
+          <TruckIcon size={14} color="#4CAF50" />
           <Text style={styles.badgeText}>Free Shipping Applied</Text>
         </View>
       )}
@@ -55,10 +78,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   title: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#FFF',
+  },
+  qualifiedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   qualifiedText: {
     fontSize: 12,
@@ -67,7 +100,7 @@ const styles = StyleSheet.create({
   },
   remainingText: {
     fontSize: 12,
-    color: '#E8C97A',
+    color: '#FF5722',
     fontWeight: 'bold',
   },
   progressBar: {
@@ -79,7 +112,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#E8C97A',
+    backgroundColor: '#FF5722',
     borderRadius: 4,
   },
   footer: {
@@ -108,6 +141,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#4CAF50',
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
   },
   badgeText: {
     fontSize: 12,
