@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated } from 'react-native';
+import { FireIcon, CoinsIcon, TrophyIcon, GiftIcon, UsersIcon, CheckIcon } from './Icons';
 
 interface UserGamification {
   streakDays: number;
   totalCoins: number;
   unlockedBadges: string[];
-  lastLoginDate: string;
 }
 
 interface DailyReward {
@@ -33,80 +33,72 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
     streakDays: 5,
     totalCoins: 1850,
     unlockedBadges: ['first-purchase', 'spender-25k', 'reviewer-5'],
-    lastLoginDate: new Date().toISOString().split('T')[0],
   });
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const streakPulse = useRef(new Animated.Value(1)).current;
 
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [scaleAnim] = useState(new Animated.Value(1));
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(streakPulse, { toValue: 1.05, duration: 1000, useNativeDriver: true }),
+        Animated.timing(streakPulse, { toValue: 1, duration: 1000, useNativeDriver: true }),
+      ])
+    ).start();
+  }, [streakPulse]);
 
   const handleDayPress = (day: number) => {
     const reward = DAILY_REWARDS.find((r) => r.day === day);
     if (reward && !reward.claimed) {
       Animated.sequence([
-        Animated.timing(scaleAnim, {
-          toValue: 1.1,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 1,
-          duration: 100,
-          useNativeDriver: true,
-        }),
+        Animated.timing(scaleAnim, { toValue: 1.1, duration: 100, useNativeDriver: true }),
+        Animated.timing(scaleAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
       ]).start();
 
       Alert.alert(
-        '🎉 Reward Claimed!',
+        'Reward Claimed!',
         `You earned ${reward.coins} coins!`,
-        [
-          {
-            text: 'Great!',
-            onPress: () => {
-              setGamification({
-                ...gamification,
-                totalCoins: gamification.totalCoins + reward.coins,
-              });
-              onClaimReward?.(reward.coins);
-            },
+        [{
+          text: 'Great!',
+          onPress: () => {
+            setGamification({ ...gamification, totalCoins: gamification.totalCoins + reward.coins });
+            onClaimReward?.(reward.coins);
           },
-        ]
+        }]
       );
     }
   };
 
   const BADGES = [
-    { id: 'first-purchase', emoji: '🛍️', label: 'First Buy', color: '#FF5722' },
-    { id: 'spender-25k', emoji: '💰', label: '25K Club', color: '#E8C97A' },
-    { id: 'reviewer-5', emoji: '⭐', label: '5-Star Rev', color: '#4ECDC4' },
+    { id: 'first-purchase', label: 'First Buy', color: '#FF5722', icon: <GiftIcon size={28} color="#FF5722" /> },
+    { id: 'spender-25k', label: '25K Club', color: '#FFD700', icon: <CoinsIcon size={28} color="#FFD700" /> },
+    { id: 'reviewer-5', label: '5-Star Rev', color: '#4ECDC4', icon: <TrophyIcon size={28} color="#4ECDC4" /> },
   ];
 
   return (
     <View style={styles.gamificationContainer}>
-      {/* Streak Section */}
-      <View style={styles.streakSection}>
-        <View style={styles.streakCard}>
-          <Text style={styles.streakEmoji}>🔥</Text>
-          <View style={styles.streakContent}>
-            <Text style={styles.streakLabel}>Daily Streak</Text>
-            <Text style={styles.streakValue}>{gamification.streakDays} Days</Text>
-            <Text style={styles.streakSubtext}>Login tomorrow to continue!</Text>
-          </View>
+      <Animated.View style={[styles.streakCard, { transform: [{ scale: streakPulse }] }]}>
+        <View style={styles.streakIconWrap}>
+          <FireIcon size={36} color="#FFF" />
         </View>
+        <View style={styles.streakContent}>
+          <Text style={styles.streakLabel}>Daily Streak</Text>
+          <Text style={styles.streakValue}>{gamification.streakDays} Days</Text>
+          <Text style={styles.streakSubtext}>Login tomorrow to continue!</Text>
+        </View>
+      </Animated.View>
+
+      <View style={styles.pointsCard}>
+        <CoinsIcon size={32} color="#FFD700" />
+        <Text style={styles.pointsLabel}>Reward Coins</Text>
+        <Text style={styles.pointsValue}>{gamification.totalCoins}</Text>
+        <Text style={styles.pointsSubtext}>Use coins to unlock deals</Text>
       </View>
 
-      {/* Points Display */}
-      <View style={styles.pointsSection}>
-        <View style={styles.pointsCard}>
-          <Text style={styles.pointsEmoji}>⭐</Text>
-          <Text style={styles.pointsLabel}>Reward Coins</Text>
-          <Text style={styles.pointsValue}>{gamification.totalCoins}</Text>
-          <Text style={styles.pointsSubtext}>Use coins to unlock deals</Text>
-        </View>
-      </View>
-
-      {/* Daily Login Rewards */}
       <View style={styles.dailyRewardsSection}>
-        <Text style={styles.sectionTitle}>📅 Daily Login Rewards</Text>
+        <View style={styles.sectionTitleRow}>
+          <GiftIcon size={18} color="#4ECDC4" />
+          <Text style={styles.sectionTitle}>Daily Login Rewards</Text>
+        </View>
         <View style={styles.rewardsGrid}>
           {DAILY_REWARDS.map((reward) => (
             <TouchableOpacity
@@ -120,10 +112,11 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
               disabled={reward.claimed}
             >
               <Text style={styles.rewardDay}>Day {reward.day}</Text>
-              <Text style={styles.rewardPoints}>{reward.coins} coins</Text>
+              <Text style={styles.rewardPoints}>{reward.coins}</Text>
+              <CoinsIcon size={14} color={reward.claimed ? '#4ECDC4' : '#FF5722'} />
               {reward.claimed && (
                 <View style={styles.claimedCheckmark}>
-                  <Text style={styles.checkmark}>✓</Text>
+                  <CheckIcon size={12} color="#FFF" />
                 </View>
               )}
               {!reward.claimed && (
@@ -134,9 +127,11 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
         </View>
       </View>
 
-      {/* Unlocked Badges */}
       <View style={styles.badgesSection}>
-        <Text style={styles.sectionTitle}>🏆 Unlocked Badges</Text>
+        <View style={styles.sectionTitleRow}>
+          <TrophyIcon size={18} color="#FFD700" />
+          <Text style={styles.sectionTitle}>Unlocked Badges</Text>
+        </View>
         <View style={styles.badgesContainer}>
           {BADGES.map((badge) => (
             <View
@@ -144,29 +139,26 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
               style={[
                 styles.badge,
                 gamification.unlockedBadges.includes(badge.id)
-                  ? styles.badgeUnlocked
+                  ? [styles.badgeUnlocked, { borderColor: badge.color }]
                   : styles.badgeLocked,
               ]}
             >
-              <Text style={styles.badgeEmoji}>{badge.emoji}</Text>
+              {badge.icon}
               <Text style={styles.badgeLabel}>{badge.label}</Text>
             </View>
           ))}
         </View>
       </View>
 
-      {/* Referral Section */}
-      <View style={styles.referralSection}>
-        <View style={styles.referralCard}>
-          <Text style={styles.referralEmoji}>👥</Text>
-          <View style={styles.referralContent}>
-            <Text style={styles.referralLabel}>Refer & Earn</Text>
-            <Text style={styles.referralSubtext}>Get ₦500 per friend</Text>
-          </View>
-          <TouchableOpacity style={styles.referralButton}>
-            <Text style={styles.referralButtonText}>Share</Text>
-          </TouchableOpacity>
+      <View style={styles.referralCard}>
+        <UsersIcon size={32} color="#FFF" />
+        <View style={styles.referralContent}>
+          <Text style={styles.referralLabel}>Refer & Earn</Text>
+          <Text style={styles.referralSubtext}>Get ₦500 per friend</Text>
         </View>
+        <TouchableOpacity style={styles.referralButton}>
+          <Text style={styles.referralButtonText}>Share</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -178,9 +170,6 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     gap: 16,
   },
-  streakSection: {
-    width: '100%',
-  },
   streakCard: {
     backgroundColor: '#FF5722',
     borderRadius: 16,
@@ -189,8 +178,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
   },
-  streakEmoji: {
-    fontSize: 48,
+  streakIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   streakContent: {
     flex: 1,
@@ -212,31 +206,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     opacity: 0.8,
   },
-  pointsSection: {
-    width: '100%',
-  },
   pointsCard: {
     backgroundColor: '#23232B',
     borderRadius: 16,
     padding: 20,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#E8C97A',
-  },
-  pointsEmoji: {
-    fontSize: 40,
-    marginBottom: 8,
+    borderColor: '#FFD70030',
+    gap: 6,
   },
   pointsLabel: {
     color: '#A0A0A0',
     fontSize: 14,
-    marginBottom: 8,
+    fontWeight: '500',
   },
   pointsValue: {
-    color: '#E8C97A',
+    color: '#FFD700',
     fontSize: 36,
     fontWeight: 'bold',
-    marginBottom: 4,
   },
   pointsSubtext: {
     color: '#808080',
@@ -245,11 +232,16 @@ const styles = StyleSheet.create({
   dailyRewardsSection: {
     width: '100%',
   },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
   sectionTitle: {
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 12,
   },
   rewardsGrid: {
     flexDirection: 'row',
@@ -266,6 +258,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#3D3D48',
+    gap: 4,
   },
   rewardBoxClaimed: {
     backgroundColor: '#1A1A1F',
@@ -279,9 +272,8 @@ const styles = StyleSheet.create({
   },
   rewardDay: {
     color: '#A0A0A0',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
-    marginBottom: 4,
   },
   rewardPoints: {
     color: '#FF5722',
@@ -298,11 +290,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#4ECDC4',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  checkmark: {
-    color: '#0D0D12',
-    fontWeight: 'bold',
-    fontSize: 12,
   },
   claimText: {
     position: 'absolute',
@@ -328,28 +315,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#3D3D48',
+    gap: 8,
   },
   badgeUnlocked: {
     backgroundColor: '#23232B',
-    borderColor: '#E8C97A',
     borderWidth: 2,
   },
   badgeLocked: {
     opacity: 0.5,
   },
-  badgeEmoji: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
   badgeLabel: {
     color: '#FFF',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     textAlign: 'center',
-  },
-  referralSection: {
-    width: '100%',
-    marginTop: 8,
   },
   referralCard: {
     backgroundColor: '#4ECDC4',
@@ -358,9 +337,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-  },
-  referralEmoji: {
-    fontSize: 40,
   },
   referralContent: {
     flex: 1,
