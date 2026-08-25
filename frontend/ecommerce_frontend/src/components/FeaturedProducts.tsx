@@ -1,53 +1,13 @@
-
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import CTAButton from './CTAButton';
+import { StarIcon, TagIcon, FireIcon, ClockIcon, HeartIcon } from './Icons';
 
 const PRODUCTS = [
-  {
-    id: 1,
-    name: 'Phantom Runner',
-    category: 'Footwear',
-    price: 219,
-    oldPrice: 279,
-    badge: 'Best Seller',
-    img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',
-    color: '#FF6B35',
-    stock: 5,
-    discount: 21,
-  },
-  {
-    id: 2,
-    name: 'Void Jacket',
-    category: 'Outerwear',
-    price: 389,
-    badge: 'New',
-    img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80',
-    color: '#4ECDC4',
-    stock: 12,
-    discount: 0,
-  },
-  {
-    id: 3,
-    name: 'Eclipse Watch',
-    category: 'Accessories',
-    price: 549,
-    badge: 'Limited',
-    img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80',
-    color: '#C9B8FF',
-    stock: 2,
-    discount: 15,
-  },
-  {
-    id: 4,
-    name: 'Core Tee',
-    category: 'Apparel',
-    price: 79,
-    img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80',
-    color: '#FFE66D',
-    stock: 50,
-    discount: 0,
-  },
+  { id: 1, name: 'Phantom Runner', category: 'Footwear', price: 219, oldPrice: 279, badge: 'Best Seller', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80', color: '#FF6B35', stock: 5, discount: 21 },
+  { id: 2, name: 'Void Jacket', category: 'Outerwear', price: 389, badge: 'New', img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80', color: '#4ECDC4', stock: 12, discount: 0 },
+  { id: 3, name: 'Eclipse Watch', category: 'Accessories', price: 549, badge: 'Limited', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80', color: '#C9B8FF', stock: 2, discount: 15 },
+  { id: 4, name: 'Core Tee', category: 'Apparel', price: 79, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80', color: '#FFE66D', stock: 50, discount: 0 },
 ];
 
 const FILTERS = ['All', 'Recently Viewed', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
@@ -60,47 +20,8 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
   const [active, setActive] = useState('All');
   const [added, setAdded] = useState<number[]>([]);
   const [recentlyViewed, setRecentlyViewed] = useState<number[]>([]);
-  const [timeLeft, setTimeLeft] = useState<{ [key: number]: string }>({});
 
-  // Countdown timer effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const newTimeLeft: { [key: number]: string } = {};
-      
-      PRODUCTS.forEach((p) => {
-        const endTime = now + (p.stock * 1000 * 3600); // Mock countdown
-        const diff = endTime - now;
-        const hours = Math.floor(diff / (1000 * 3600));
-        const mins = Math.floor((diff % (1000 * 3600)) / (1000 * 60));
-        newTimeLeft[p.id] = hours > 0 ? `${hours}h ${mins}m` : `${mins}m left`;
-      });
-      
-      setTimeLeft(newTimeLeft);
-    }, 60000); // Update every minute
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const filtered =
-    active === 'All'
-      ? PRODUCTS
-      : active === 'Recently Viewed'
-      ? PRODUCTS.filter((p) => recentlyViewed.includes(p.id))
-      : PRODUCTS.filter((p) => p.category === active);
-
-  const addRecentlyViewed = (id: number) => {
-    setRecentlyViewed((prev) => {
-      const normalized = [id, ...prev.filter((x) => x !== id)];
-      return normalized.slice(0, 6);
-    });
-  };
-
-  const handleViewProduct = (id: number, name: string) => {
-    addRecentlyViewed(id);
-    Alert.alert('Product View', `${name} was added to Recently Viewed. Product detail is coming soon!`);
-    setActive('Recently Viewed');
-  };
+  const filtered = active === 'All' ? PRODUCTS : active === 'Recently Viewed' ? PRODUCTS.filter((p) => recentlyViewed.includes(p.id)) : PRODUCTS.filter((p) => p.category === active);
 
   const handleAdd = (id: number) => {
     setAdded((prev) => [...prev, id]);
@@ -115,44 +36,41 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
           <Text style={styles.fpEyebrow}>— Featured</Text>
           <Text style={styles.fpTitle}>This Season's <Text style={styles.fpTitleEm}>Icons</Text></Text>
         </View>
-        <ScrollView
-          style={styles.fpFilters}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.fpFiltersContent}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.fpFilters} contentContainerStyle={styles.fpFiltersContent}>
           {FILTERS.map((f) => (
-            <TouchableOpacity
-              key={f}
-              style={[styles.fpFilter, active === f && styles.fpFilterActive]}
-              onPress={() => setActive(f)}
-            >
+            <TouchableOpacity key={f} style={[styles.fpFilter, active === f && styles.fpFilterActive]} onPress={() => setActive(f)}>
               <Text style={[styles.fpFilterText, active === f && styles.fpFilterTextActive]}>{f}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
 
-        <View style={styles.fpGrid}>
-        {filtered.map((p, i) => (
-          <TouchableOpacity
-            style={[styles.fpCard, { borderColor: p.color }]}
-            key={p.id}
-            activeOpacity={0.85}
-            onPress={() => handleViewProduct(p.id, p.name)}
-          >
+      <View style={styles.fpGrid}>
+        {filtered.map((p) => (
+          <TouchableOpacity style={[styles.fpCard, { borderColor: p.color + '40' }]} key={p.id} activeOpacity={0.85}>
             <View style={styles.fpImgWrap}>
               <Image source={{ uri: p.img }} style={styles.fpImg} />
-              {p.badge && <View style={styles.fpBadge}><Text style={styles.fpBadgeText}>{p.badge}</Text></View>}
-              {p.discount > 0 && <View style={styles.fpDiscountBadge}><Text style={styles.fpDiscountText}>-{p.discount}%</Text></View>}
-              {p.stock <= 5 && <View style={styles.fpLimitedBadge}><Text style={styles.fpLimitedText}>🔥 Only {p.stock} left</Text></View>}
-              {p.stock > 5 && <View style={styles.fpTimerBadge}><Text style={styles.fpTimerText}>⏱️ {timeLeft[p.id] || 'Loading...'}</Text></View>}
+              {p.badge && (
+                <View style={styles.fpBadge}>
+                  {p.badge === 'Best Seller' ? <FireIcon size={10} color="#FFF" /> : <StarIcon size={10} color="#FFF" filled />}
+                  <Text style={styles.fpBadgeText}>{p.badge}</Text>
+                </View>
+              )}
+              {p.discount > 0 && (
+                <View style={styles.fpDiscountBadge}>
+                  <TagIcon size={8} color="#FFF" />
+                  <Text style={styles.fpDiscountText}>-{p.discount}%</Text>
+                </View>
+              )}
+              {p.stock <= 5 && (
+                <View style={styles.fpLimitedBadge}>
+                  <FireIcon size={8} color="#FFF" />
+                  <Text style={styles.fpLimitedText}>Only {p.stock} left</Text>
+                </View>
+              )}
               <View style={styles.fpHoverActions}>
-                <TouchableOpacity
-                  style={styles.fpQuick}
-                  onPress={() => Alert.alert('Coming Soon', 'Wishlist feature is coming soon! Save your favorite items for later.')}
-                >
-                  <Text style={styles.fpQuickText}>♡ Wishlist</Text>
+                <TouchableOpacity style={styles.fpQuick}>
+                  <HeartIcon size={14} color="#FF2D55" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -166,10 +84,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
                   <Text style={styles.fpPrice}>₦{p.price}</Text>
                   {p.oldPrice && <Text style={styles.fpOld}>₦{p.oldPrice}</Text>}
                 </View>
-                <TouchableOpacity
-                  style={[styles.fpAdd, added.includes(p.id) && styles.fpAddDone]}
-                  onPress={() => handleAdd(p.id)}
-                >
+                <TouchableOpacity style={[styles.fpAdd, added.includes(p.id) && styles.fpAddDone]} onPress={() => handleAdd(p.id)}>
                   <Text style={styles.fpAddText}>{added.includes(p.id) ? '✓' : '+'}</Text>
                 </TouchableOpacity>
               </View>
@@ -177,12 +92,6 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
           </TouchableOpacity>
         ))}
       </View>
-
-        {active === 'Recently Viewed' && filtered.length === 0 && (
-          <View style={styles.fpEmpty}> 
-            <Text style={styles.fpEmptyText}>No recently viewed items yet — tap a product to begin.</Text>
-          </View>
-        )}
 
       <View style={styles.fpCta}>
         <CTAButton label="View All Products" variant="ghost" icon="→" />
@@ -193,217 +102,41 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
 };
 
 const styles = StyleSheet.create({
-  fp: {
-    padding: 20,
-  },
-  fpHeader: {
-    marginBottom: 20,
-  },
-  fpTitleWrap: {
-    marginBottom: 8,
-  },
-  fpEyebrow: {
-    color: '#E8C97A',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  fpTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  fpTitleEm: {
-    color: '#E8C97A',
-    fontStyle: 'italic',
-  },
-  fpFilters: {
-    flexDirection: 'row',
-    marginTop: 8,
-  },
-  fpFiltersContent: {
-    alignItems: 'center',
-    paddingRight: 8,
-  },
-  fpFilter: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: '#23232B',
-    marginRight: 8,
-  },
-  fpFilterActive: {
-    backgroundColor: '#E8C97A',
-  },
-  fpFilterText: {
-    color: 'white',
-    fontWeight: '600',
-  },
-  fpFilterTextActive: {
-    color: '#23232B',
-  },
-  fpGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  fpCard: {
-    width: '48%',
-    backgroundColor: '#18181F',
-    borderRadius: 16,
-    borderWidth: 2,
-    marginBottom: 16,
-    padding: 12,
-  },
-  fpImgWrap: {
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 8,
-    position: 'relative',
-  },
-  fpImg: {
-    width: '100%',
-    height: 120,
-    borderRadius: 12,
-  },
-  fpBadge: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    backgroundColor: '#E8C97A',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  fpBadgeText: {
-    color: '#23232B',
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  fpDiscountBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#FF5722',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  fpDiscountText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  fpLimitedBadge: {
-    position: 'absolute',
-    bottom: 8,
-    left: 8,
-    backgroundColor: '#FF5722',
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-  },
-  fpLimitedText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 11,
-  },
-  fpTimerBadge: {
-    position: 'absolute',
-    bottom: 8,
-    left: 8,
-    backgroundColor: '#4ECDC4',
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-  },
-  fpTimerText: {
-    color: '#0D0D12',
-    fontWeight: 'bold',
-    fontSize: 11,
-  },
-  fpHoverActions: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-  },
-  fpQuick: {
-    backgroundColor: '#23232B',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  fpQuickText: {
-    color: '#E8C97A',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  fpInfo: {
-    marginTop: 8,
-  },
-  fpCat: {
-    color: '#A0A0A0',
-    fontSize: 12,
-    marginBottom: 2,
-  },
-  fpEmpty: {
-    marginTop: 16,
-    backgroundColor: '#17171f',
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-  },
-  fpEmptyText: {
-    color: '#B3B3C2',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  fpName: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  fpBottom: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-  fpPrices: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  fpPrice: {
-    color: '#E8C97A',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginRight: 8,
-  },
-  fpOld: {
-    color: '#A0A0A0',
-    fontSize: 14,
-    textDecorationLine: 'line-through',
-  },
-  fpAdd: {
-    backgroundColor: '#E8C97A',
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-  fpAddDone: {
-    backgroundColor: '#4ECDC4',
-  },
-  fpAddText: {
-    color: '#23232B',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  fpCta: {
-    marginTop: 24,
-    alignItems: 'center',
-    marginBottom: 32,
-  },
+  fp: { padding: 20 },
+  fpHeader: { marginBottom: 20 },
+  fpTitleWrap: { marginBottom: 8 },
+  fpEyebrow: { color: '#FF5722', fontSize: 14, fontWeight: '600', marginBottom: 4 },
+  fpTitle: { fontSize: 24, fontWeight: 'bold', color: 'white' },
+  fpTitleEm: { color: '#FF5722', fontStyle: 'italic' },
+  fpFilters: { flexDirection: 'row', marginTop: 8 },
+  fpFiltersContent: { alignItems: 'center', paddingRight: 8 },
+  fpFilter: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 18, backgroundColor: '#23232B', marginRight: 8, borderWidth: 1, borderColor: '#2D2D38' },
+  fpFilterActive: { backgroundColor: '#FF5722', borderColor: '#FF5722' },
+  fpFilterText: { color: 'white', fontWeight: '600', fontSize: 13 },
+  fpFilterTextActive: { color: '#FFF' },
+  fpGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  fpCard: { width: '48%', backgroundColor: '#18181F', borderRadius: 16, borderWidth: 1, marginBottom: 16, padding: 12 },
+  fpImgWrap: { borderRadius: 12, overflow: 'hidden', marginBottom: 8, position: 'relative' },
+  fpImg: { width: '100%', height: 120, borderRadius: 12 },
+  fpBadge: { position: 'absolute', top: 8, left: 8, backgroundColor: '#FF5722', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, flexDirection: 'row', alignItems: 'center', gap: 3 },
+  fpBadgeText: { color: '#FFF', fontWeight: 'bold', fontSize: 11 },
+  fpDiscountBadge: { position: 'absolute', top: 8, right: 8, backgroundColor: '#FF2D55', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, flexDirection: 'row', alignItems: 'center', gap: 3 },
+  fpDiscountText: { color: '#FFF', fontWeight: 'bold', fontSize: 11 },
+  fpLimitedBadge: { position: 'absolute', bottom: 8, left: 8, backgroundColor: '#FF5722', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3, flexDirection: 'row', alignItems: 'center', gap: 3 },
+  fpLimitedText: { color: '#FFF', fontWeight: 'bold', fontSize: 10 },
+  fpHoverActions: { position: 'absolute', bottom: 8, right: 8 },
+  fpQuick: { backgroundColor: '#23232B', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: '#2D2D38' },
+  fpInfo: { marginTop: 8 },
+  fpCat: { color: '#A0A0A0', fontSize: 12, marginBottom: 2 },
+  fpName: { color: 'white', fontSize: 15, fontWeight: 'bold', marginBottom: 4 },
+  fpBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
+  fpPrices: { flexDirection: 'row', alignItems: 'center' },
+  fpPrice: { color: '#FF5722', fontWeight: 'bold', fontSize: 16, marginRight: 8 },
+  fpOld: { color: '#A0A0A0', fontSize: 14, textDecorationLine: 'line-through' },
+  fpAdd: { backgroundColor: '#FF5722', borderRadius: 16, paddingHorizontal: 12, paddingVertical: 4 },
+  fpAddDone: { backgroundColor: '#4ECDC4' },
+  fpAddText: { color: '#FFF', fontWeight: 'bold', fontSize: 16 },
+  fpCta: { marginTop: 24, alignItems: 'center', marginBottom: 32 },
 });
 
 export default FeaturedProducts;
