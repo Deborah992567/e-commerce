@@ -1,5 +1,6 @@
-import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { TouchableOpacity, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { ChevronRightIcon } from './Icons';
 
 interface CTAButtonProps {
   label?: string;
@@ -24,67 +25,64 @@ const CTAButton: React.FC<CTAButtonProps> = ({
 }) => {
   const buttonText = label || title;
   const buttonOnPress = onPress || onClick;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const getButtonStyle = (): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'row',
-      paddingHorizontal: size === 'sm' ? 12 : size === 'lg' ? 24 : 16,
-      paddingVertical: size === 'sm' ? 8 : size === 'lg' ? 16 : 12,
-    };
-
-    if (variant === 'outline') {
-      return {
-        ...baseStyle,
-        borderWidth: 2,
-        borderColor: color || '#7B1FA2',
-        backgroundColor: 'transparent',
-      };
-    } else if (variant === 'ghost') {
-      return {
-        ...baseStyle,
-        backgroundColor: 'transparent',
-      };
-    } else {
-      return {
-        ...baseStyle,
-        backgroundColor: color || '#7B1FA2',
-      };
-    }
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, { toValue: 0.95, useNativeDriver: true, friction: 4 }).start();
   };
 
-  const getTextStyle = (): TextStyle => {
-    const baseTextStyle: TextStyle = {
-      fontSize: size === 'sm' ? 14 : size === 'lg' ? 18 : 16,
-      fontWeight: '600',
-    };
-
-    if (variant === 'outline') {
-      return {
-        ...baseTextStyle,
-        color: color || '#7B1FA2',
-      };
-    } else if (variant === 'ghost') {
-      return {
-        ...baseTextStyle,
-        color: '#7B1FA2',
-      };
-    } else {
-      return {
-        ...baseTextStyle,
-        color: variant === 'primary' ? '#23232B' : 'white',
-      };
-    }
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, friction: 4 }).start();
   };
+
+  const isPrimary = variant === 'primary';
+  const bgColor = isPrimary ? (color || '#FF5722') : 'transparent';
+  const borderColor = color || '#FF5722';
+
+  const sizeStyles = {
+    sm: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8 },
+    md: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10 },
+    lg: { paddingHorizontal: 28, paddingVertical: 16, borderRadius: 14 },
+  };
+
+  const fontSize = size === 'sm' ? 13 : size === 'lg' ? 17 : 15;
 
   return (
-    <TouchableOpacity style={getButtonStyle()} onPress={buttonOnPress}>
-      <Text style={getTextStyle()}>{buttonText}</Text>
-      {icon && <Text style={[getTextStyle(), { marginLeft: 8 }]}>{icon}</Text>}
-    </TouchableOpacity>
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <TouchableOpacity
+        style={[
+          styles.button,
+          sizeStyles[size],
+          {
+            backgroundColor: bgColor,
+            borderWidth: isPrimary ? 0 : 2,
+            borderColor: borderColor,
+          },
+        ]}
+        onPress={buttonOnPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={0.8}
+      >
+        <Text style={[styles.text, { color: isPrimary ? '#FFF' : color || '#FF5722', fontSize }]}>
+          {buttonText}
+        </Text>
+        {icon && <Text style={[styles.text, { color: isPrimary ? '#FFF' : color || '#FF5722', fontSize, marginLeft: 6 }]}>{icon}</Text>}
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+});
 
 export default CTAButton;
