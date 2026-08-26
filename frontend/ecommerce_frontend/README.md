@@ -1,97 +1,190 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Dez Collection — E-Commerce App
 
-# Getting Started
+A Temu-style e-commerce mobile app built with React Native, featuring a dark theme, SVG icon library, rich animations, and gamification features.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Features
 
-## Step 1: Start Metro
+- **Product Catalog** — Browse products with filters, search, categories, and sort options
+- **Shopping Cart** — Add/remove items, quantity management, persistent storage via AsyncStorage
+- **Checkout Flow** — Address selection, payment methods, order confirmation
+- **User Authentication** — Login/signup with mock auth (admin + customer roles)
+- **Gamification** — Spin-to-win wheel, daily streaks, badges, referral rewards
+- **Wishlist** — Save and manage favorite products with sort/filter
+- **Order Management** — Order history, detail tracking, delivery status timeline
+- **Notifications** — Push notification preferences, in-app notification management
+- **Admin Dashboard** — User stats, product management, recent orders overview
+- **Reviews System** — View and write product reviews with star ratings
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Tech Stack
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| React Native | 0.84.1 | Core framework |
+| TypeScript | 5.8.3 | Type safety |
+| React | 19.2.3 | UI library |
+| react-native-svg | 15.15.3 | Custom SVG icon library (30+ icons) |
+| react-native-safe-area-context | 5.5.2 | Safe area handling |
+| AsyncStorage | 3.0.1 | Persistent storage (cart, wishlist) |
 
-```sh
-# Using npm
+## Project Structure
+
+```
+frontend/ecommerce_frontend/
+├── App.tsx                          # Root component with tab navigation
+├── index.js                         # Entry point with provider wrappers
+├── src/
+│   ├── components/
+│   │   ├── Icons.tsx                # 30+ SVG icon components
+│   │   ├── BottomTabNavigator.tsx   # 5-tab bottom navigation
+│   │   ├── Hero.tsx                 # Landing hero section
+│   │   ├── ShopPage.tsx             # Full shop page with search/filters
+│   │   ├── CartScreen.tsx           # Shopping cart view
+│   │   ├── ProductDetailScreen.tsx  # Product detail with specs
+│   │   ├── CheckoutScreen.tsx       # Checkout flow
+│   │   ├── FeaturedProducts.tsx     # Product grid with category filters
+│   │   ├── HomeScreen.tsx           # Home tab layout
+│   │   ├── DealsScreen.tsx          # Deals & rewards hub
+│   │   ├── ProfileScreen.tsx        # User profile & settings
+│   │   ├── LoginScreen.tsx          # Login with typewriter animation
+│   │   ├── SignupScreen.tsx         # Registration form
+│   │   ├── ForgotPasswordScreen.tsx # Password reset flow
+│   │   ├── DashboardScreen.tsx      # Admin dashboard
+│   │   ├── OrderHistoryScreen.tsx   # Past orders list
+│   │   ├── OrderDetailScreen.tsx    # Order detail with tracking
+│   │   ├── OrderSuccessScreen.tsx   # Post-checkout confirmation
+│   │   ├── WishlistScreen.tsx       # Saved products
+│   │   ├── ReviewsScreen.tsx        # Product reviews
+│   │   ├── ReferralScreen.tsx       # Referral program
+│   │   ├── FilterPanel.tsx          # Advanced filter modal
+│   │   ├── ProductListScreen.tsx    # Temu-style product listing
+│   │   ├── TemuAliExpressProductGrid.tsx  # Product card grid
+│   │   ├── RecommendationsPanel.tsx # AI recommendations
+│   │   ├── PushNotificationsManager.tsx   # Notification settings
+│   │   │
+│   │   │   # ── Animation Components ──
+│   │   ├── AnimatedCard.tsx         # Spring scale + fade entrance
+│   │   ├── AnimatedBadge.tsx        # Pulsing badge
+│   │   ├── AnimatedStar.tsx         # Spin + spring star
+│   │   ├── AnimatedPriceTag.tsx     # Price with discount badge
+│   │   ├── AnimatedAvatar.tsx       # Avatar with online pulse
+│   │   ├── AnimatedCart.tsx         # Animated cart with badge
+│   │   ├── AnimatedHeader.tsx       # Fade-in header
+│   │   ├── BouncyText.tsx           # Bouncing text entrance
+│   │   ├── CounterAnimation.tsx     # Animated number counter
+│   │   ├── FadeInView.tsx           # Directional fade-in
+│   │   ├── FloatingAction.tsx       # Floating action button
+│   │   ├── GradientBanner.tsx       # Shimmer banner
+│   │   ├── GradientText.tsx         # Gradient-style text
+│   │   ├── NotificationDot.tsx      # Pulsing notification dot
+│   │   ├── ProgressBar.tsx          # Animated progress bar
+│   │   ├── Pulse.tsx                # Pulsing scale wrapper
+│   │   ├── Shimmer.tsx              # Shimmer loading effect
+│   │   ├── SkeletonLoader.tsx       # Skeleton placeholders
+│   │   ├── SwipeableCard.tsx        # Pan-gesture swipeable
+│   │   ├── WavyDivider.tsx          # Animated section divider
+│   │   │
+│   │   │   # ── Utility Components ──
+│   │   ├── CTAButton.tsx            # Universal CTA button
+│   │   ├── ErrorBoundary.tsx        # Error boundary with retry
+│   │   ├── EmptyState.tsx           # Empty state placeholder
+│   │   ├── LoadingOverlay.tsx       # Full-screen loading
+│   │   ├── PullToRefresh.tsx        # Pull-to-refresh wrapper
+│   │   ├── Toast.tsx                # Toast notifications
+│   │   ├── FlashDealsPanel.tsx      # Flash deal cards
+│   │   ├── ClearancePanel.tsx       # Clearance sale cards
+│   │   ├── CoinsBalance.tsx         # Coin balance display
+│   │   ├── GamificationPanel.tsx    # Streaks, badges, rewards
+│   │   ├── SpinToWin.tsx            # Prize wheel
+│   │   ├── ShippingIndicator.tsx    # Free shipping progress
+│   │   └── Hero.tsx                 # Landing hero section
+│   │
+│   ├── contexts/
+│   │   ├── AuthContext.tsx           # Auth state (mock users)
+│   │   ├── CartContext.tsx           # Cart state (AsyncStorage)
+│   │   ├── WishlistContext.tsx       # Wishlist state (AsyncStorage)
+│   │   └── NotificationContext.tsx   # Notification settings
+│   │
+│   └── types.ts                     # Shared TypeScript types
+```
+
+## Dark Theme Colors
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| Background | `#0D0D12` | Screen background |
+| Card | `#23232B` | Card backgrounds |
+| Border | `#2D2D38` | Card borders, dividers |
+| Accent | `#FF5722` | Primary actions, highlights |
+| Success | `#4ECDC4` | Positive states, confirmations |
+| Error | `#FF2D55` | Errors, warnings |
+| Gold | `#FFD700` | Stars, ratings |
+| Muted | `#A0A0A0` | Secondary text |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 22.11.0
+- React Native CLI setup ([guide](https://reactnative.dev/docs/set-up-your-environment))
+- Xcode (iOS) / Android Studio (Android)
+
+### Installation
+
+```bash
+cd frontend/ecommerce_frontend
+npm install
+```
+
+### Running
+
+```bash
+# Start Metro bundler
 npm start
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+# Run on iOS
 npm run ios
 
-# OR using Yarn
-yarn ios
+# Run on Android
+npm run android
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Mock Credentials
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@ecommerce.com | admin123 |
+| Customer | user1@ecommerce.com | user123 |
 
-## Step 3: Modify your app
+## SVG Icon Library
 
-Now that you have successfully run the app, let's make changes!
+The app includes 30+ custom SVG icons in `Icons.tsx` built with `react-native-svg`:
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+`HomeIcon` · `ShopIcon` · `CartIcon` · `DealsIcon` · `UserIcon` · `HeartIcon` · `BellIcon` · `SearchIcon` · `StarIcon` · `FireIcon` · `TruckIcon` · `TagIcon` · `ClockIcon` · `TrophyIcon` · `GiftIcon` · `CheckIcon` · `MailIcon` · `ShieldIcon` · `PackageIcon` · `MinusIcon` · `PlusIcon` · `TrashIcon` · `FilterIcon` · `SortIcon` · `ChevronLeftIcon` · `ChevronRightIcon` · `TrendingUpIcon` · `UsersIcon` · `CoinsIcon` · `CartBagIcon` · `PhoneIcon` · `HelpIcon` · `ScaleIcon` · `LogOutIcon` · `CreditCardIcon` · `DealsIcon`
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## Animation Library
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+| Component | Animation Type | Use Case |
+|-----------|---------------|----------|
+| `AnimatedCard` | Spring scale + fade | Product card entrance |
+| `AnimatedBadge` | Pulsing scale | Status badges |
+| `AnimatedStar` | Spin + spring | Star ratings |
+| `AnimatedPriceTag` | Spring scale + opacity | Price display |
+| `AnimatedAvatar` | Spring + pulse ring | User avatars |
+| `BouncyText` | Spring bounce | Headers, labels |
+| `CounterAnimation` | Easing count | Stats, numbers |
+| `FadeInView` | Directional slide-in | Section entrance |
+| `FloatingAction` | Spring + float idle | FAB button |
+| `GradientBanner` | Shimmer sweep | Promo banners |
+| `NotificationDot` | Spring + pulse | Badge dots |
+| `ProgressBar` | Easing fill | Progress indicators |
+| `Pulse` | Looping scale | Attention grabber |
+| `Shimmer` | Linear sweep | Loading skeletons |
+| `SkeletonLoader` | Opacity pulse | Placeholder loading |
+| `SwipeableCard` | Pan gesture | Swipe actions |
+| `WavyDivider` | TranslateX loop | Section dividers |
+| `Toast` | Spring + fade | Notifications |
+| `LoadingOverlay` | Spin + fade | Full-screen loading |
 
-## Congratulations! :tada:
+## License
 
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Private — Dez Collection © 2026
