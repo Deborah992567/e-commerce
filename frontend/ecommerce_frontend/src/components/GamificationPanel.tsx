@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated } from 'react-native';
 import { FireIcon, CoinsIcon, TrophyIcon, GiftIcon, UsersIcon, CheckIcon } from './Icons';
+import AnimatedBadge from './AnimatedBadge';
+import CounterAnimation from './CounterAnimation';
 
 interface UserGamification {
   streakDays: number;
@@ -82,7 +84,7 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
         </View>
         <View style={styles.streakContent}>
           <Text style={styles.streakLabel}>Daily Streak</Text>
-          <Text style={styles.streakValue}>{gamification.streakDays} Days</Text>
+            <Text style={styles.streakValue}><CounterAnimation to={gamification.streakDays} duration={800} suffix=" Days" /></Text>
           <Text style={styles.streakSubtext}>Login tomorrow to continue!</Text>
         </View>
       </Animated.View>
@@ -90,7 +92,7 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ onClaimReward }) 
       <View style={styles.pointsCard}>
         <CoinsIcon size={32} color="#FFD700" />
         <Text style={styles.pointsLabel}>Reward Coins</Text>
-        <Text style={styles.pointsValue}>{gamification.totalCoins}</Text>
+        <Text style={styles.pointsValue}><CounterAnimation to={gamification.totalCoins} duration={1200} /></Text>
         <Text style={styles.pointsSubtext}>Use coins to unlock deals</Text>
       </View>
 
