@@ -8,6 +8,8 @@ import {
   Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ChevronLeftIcon, CheckIcon, PackageIcon, ClockIcon, TruckIcon, TagIcon, MailIcon } from './Icons';
+import ProgressBar from './ProgressBar';
 
 interface OrderItem {
   id: number;
@@ -104,7 +106,7 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
     <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <ChevronLeftIcon size={24} color="#FF5722" />
         </TouchableOpacity>
         <Text style={styles.title}>Order Details</Text>
         <View style={styles.headerSpacer} />
@@ -122,11 +124,9 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
               <Text style={styles.orderDate}>{order.date}</Text>
             </View>
             <View style={styles.statusBadge}>
-              <Text style={styles.statusIcon}>
-                {order.status === 'delivered' && '✓'}
-                {order.status === 'shipped' && '📦'}
-                {order.status === 'pending' && '⏳'}
-              </Text>
+              {order.status === 'delivered' && <CheckIcon size={14} color="#FFF" />}
+              {order.status === 'shipped' && <PackageIcon size={14} color="#FFF" />}
+              {order.status === 'pending' && <ClockIcon size={14} color="#FFF" />}
               <Text style={styles.statusText}>
                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
               </Text>
@@ -134,9 +134,12 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
           </View>
 
           {order.estimatedDelivery && (
-            <Text style={styles.estimatedDelivery}>
-              🚚 {order.estimatedDelivery}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 }}>
+              <TruckIcon size={14} color="#FF5722" />
+              <Text style={styles.estimatedDelivery}>
+                {order.estimatedDelivery}
+              </Text>
+            </View>
           )}
         </View>
 
