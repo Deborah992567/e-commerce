@@ -94,7 +94,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
       </View>
 
       <View style={styles.fpCta}>
-        <CTAButton label="View All Products" variant="ghost" icon="→" />
+        <CTAButton title="View All Products" variant="ghost" icon="→" />
         <View style={{ height: 32 }} />
       </View>
     </View>

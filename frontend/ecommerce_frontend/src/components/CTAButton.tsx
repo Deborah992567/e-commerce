@@ -1,30 +1,23 @@
-import React, { useRef, useEffect } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Animated, Easing } from 'react-native';
-import { ChevronRightIcon } from './Icons';
+import React, { useRef } from 'react';
+import { TouchableOpacity, Text, StyleSheet, Animated } from 'react-native';
 
 interface CTAButtonProps {
-  label?: string;
-  title?: string;
-  onClick?: () => void;
+  title: string;
   onPress?: () => void;
-  variant?: "primary" | "ghost" | "outline";
+  variant?: 'primary' | 'ghost' | 'outline';
   icon?: string;
   color?: string;
   size?: 'sm' | 'md' | 'lg';
 }
 
 const CTAButton: React.FC<CTAButtonProps> = ({
-  label,
   title,
-  onClick,
   onPress,
-  variant = "primary",
+  variant = 'primary',
   icon,
   color,
-  size = 'md'
+  size = 'md',
 }) => {
-  const buttonText = label || title;
-  const buttonOnPress = onPress || onClick;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -56,16 +49,16 @@ const CTAButton: React.FC<CTAButtonProps> = ({
           {
             backgroundColor: bgColor,
             borderWidth: isPrimary ? 0 : 2,
-            borderColor: borderColor,
+            borderColor,
           },
         ]}
-        onPress={buttonOnPress}
+        onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={0.8}
       >
         <Text style={[styles.text, { color: isPrimary ? '#FFF' : color || '#FF5722', fontSize }]}>
-          {buttonText}
+          {title}
         </Text>
         {icon && <Text style={[styles.text, { color: isPrimary ? '#FFF' : color || '#FF5722', fontSize, marginLeft: 6 }]}>{icon}</Text>}
       </TouchableOpacity>
