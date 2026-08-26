@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StarIcon, CheckIcon, ChevronLeftIcon, HeartIcon } from './Icons';
 
 interface Review {
   id: string;
@@ -44,7 +45,6 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
     content: '',
   });
 
-  // Mock reviews data
   const mockReviews: Review[] = [
     {
       id: '1',
@@ -143,15 +143,12 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
     return (
       <View style={styles.ratingStars}>
         {[1, 2, 3, 4, 5].map((star) => (
-          <Text
+          <StarIcon
             key={star}
-            style={[
-              styles.star,
-              star <= rating ? styles.starFilled : styles.starEmpty,
-            ]}
-          >
-            ★
-          </Text>
+            size={16}
+            color={star <= rating ? '#FF5722' : '#3A3A48'}
+            filled={star <= rating}
+          />
         ))}
       </View>
     );
@@ -161,7 +158,7 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
     <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onClose} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <ChevronLeftIcon size={24} color="#FF5722" />
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1}>
           Reviews & Ratings
@@ -169,7 +166,6 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
         <View style={styles.headerSpacer} />
       </View>
 
-      {/* Rating Summary */}
       <View style={styles.ratingSection}>
         <View style={styles.ratingCard}>
           <Text style={styles.averageRating}>{averageRating.toFixed(1)}</Text>
@@ -179,7 +175,6 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
           </Text>
         </View>
 
-        {/* Rating Distribution */}
         <View style={styles.distributionContainer}>
           {[5, 4, 3, 2, 1].map((rating) => (
             <TouchableOpacity
@@ -192,7 +187,10 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
                 filterRating === rating && styles.distributionRowActive,
               ]}
             >
-              <Text style={styles.distributionLabel}>{rating}★</Text>
+              <View style={styles.distributionLabelRow}>
+                <Text style={styles.distributionLabel}>{rating}</Text>
+                <StarIcon size={12} color="#FF5722" filled />
+              </View>
               <View style={styles.barContainer}>
                 <View
                   style={[
@@ -215,70 +213,41 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
         </View>
       </View>
 
-      {/* Sort & Write Review */}
       <View style={styles.actionBar}>
         <View style={styles.sortContainer}>
-          <TouchableOpacity
-            onPress={() => setSortBy('recent')}
-            style={[
-              styles.sortBtn,
-              sortBy === 'recent' && styles.sortBtnActive,
-            ]}
-          >
-            <Text
+          {(['recent', 'helpful', 'rating'] as const).map((option) => (
+            <TouchableOpacity
+              key={option}
+              onPress={() => setSortBy(option)}
               style={[
-                styles.sortText,
-                sortBy === 'recent' && styles.sortTextActive,
+                styles.sortBtn,
+                sortBy === option && styles.sortBtnActive,
               ]}
             >
-              Recent
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setSortBy('helpful')}
-            style={[
-              styles.sortBtn,
-              sortBy === 'helpful' && styles.sortBtnActive,
-            ]}
-          >
-            <Text
-              style={[
-                styles.sortText,
-                sortBy === 'helpful' && styles.sortTextActive,
-              ]}
-            >
-              Helpful
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setSortBy('rating')}
-            style={[
-              styles.sortBtn,
-              sortBy === 'rating' && styles.sortBtnActive,
-            ]}
-          >
-            <Text
-              style={[
-                styles.sortText,
-                sortBy === 'rating' && styles.sortTextActive,
-              ]}
-            >
-              Highest
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.sortText,
+                  sortBy === option && styles.sortTextActive,
+                ]}
+              >
+                {option === 'recent'
+                  ? 'Recent'
+                  : option === 'helpful'
+                  ? 'Helpful'
+                  : 'Highest'}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         <TouchableOpacity
           onPress={() => setShowWriteReview(true)}
           style={styles.writeBtn}
         >
-          <Text style={styles.writeBtnText}>✍️ Write Review</Text>
+          <Text style={styles.writeBtnText}>Write Review</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Reviews List */}
       <FlatList
         data={sortedReviews}
         keyExtractor={(item) => item.id}
@@ -289,7 +258,10 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
               <View style={styles.reviewAuthor}>
                 <Text style={styles.authorName}>{item.author}</Text>
                 {item.verified && (
-                  <Text style={styles.verifiedBadge}>✓ Verified</Text>
+                  <View style={styles.verifiedRow}>
+                    <CheckIcon size={14} color="#FF5722" />
+                    <Text style={styles.verifiedBadge}>Verified</Text>
+                  </View>
                 )}
               </View>
               {renderRatingStar(item.rating)}
@@ -304,7 +276,8 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
                 style={styles.helpfulBtn}
                 onPress={() => Alert.alert('Coming Soon', 'Helpful voting feature is coming soon!')}
               >
-                <Text style={styles.helpfulText}>👍 Helpful ({item.helpful})</Text>
+                <HeartIcon size={14} color="#FF5722" />
+                <Text style={styles.helpfulText}>Helpful ({item.helpful})</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.reportBtn}
@@ -317,7 +290,6 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
         )}
       />
 
-      {/* Write Review Modal */}
       <Modal
         visible={showWriteReview}
         transparent
@@ -331,7 +303,7 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
                 onPress={() => setShowWriteReview(false)}
                 style={styles.modalBackBtn}
               >
-                <Text style={styles.modalBackText}>←</Text>
+                <ChevronLeftIcon size={24} color="#FF5722" />
               </TouchableOpacity>
               <Text style={styles.modalTitle}>Write a Review</Text>
               <View style={styles.headerSpacer} />
@@ -343,7 +315,6 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
             >
               <Text style={styles.productName}>{productName}</Text>
 
-              {/* Rating Selection */}
               <View style={styles.formSection}>
                 <Text style={styles.formLabel}>Your Rating</Text>
                 <View style={styles.ratingSelector}>
@@ -354,28 +325,22 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
                         setNewReview({ ...newReview, rating: star })
                       }
                     >
-                      <Text
-                        style={[
-                          styles.selectStar,
-                          star <= newReview.rating
-                            ? styles.selectStarActive
-                            : styles.selectStarInactive,
-                        ]}
-                      >
-                        ★
-                      </Text>
+                      <StarIcon
+                        size={32}
+                        color={star <= newReview.rating ? '#FF5722' : '#3A3A48'}
+                        filled={star <= newReview.rating}
+                      />
                     </TouchableOpacity>
                   ))}
                 </View>
               </View>
 
-              {/* Title */}
               <View style={styles.formSection}>
                 <Text style={styles.formLabel}>Review Title</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Summarize your experience"
-                  placeholderTextColor="#707080"
+                  placeholderTextColor="#5A5A6A"
                   value={newReview.title}
                   onChangeText={(text) =>
                     setNewReview({ ...newReview, title: text })
@@ -383,13 +348,12 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
                 />
               </View>
 
-              {/* Content */}
               <View style={styles.formSection}>
                 <Text style={styles.formLabel}>Your Review</Text>
                 <TextInput
                   style={[styles.input, styles.textArea]}
                   placeholder="Share your experience with this product"
-                  placeholderTextColor="#707080"
+                  placeholderTextColor="#5A5A6A"
                   multiline
                   numberOfLines={6}
                   value={newReview.content}
@@ -434,17 +398,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1F1F2A',
+    borderBottomColor: '#23232B',
   },
   backBtn: {
     padding: 8,
   },
-  backText: {
-    fontSize: 24,
-    color: '#E8C97A',
-  },
   title: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '700',
     flex: 1,
@@ -456,7 +416,7 @@ const styles = StyleSheet.create({
   ratingSection: {
     paddingHorizontal: 14,
     paddingVertical: 16,
-    backgroundColor: '#18181F',
+    backgroundColor: '#23232B',
     marginHorizontal: 14,
     marginTop: 12,
     borderRadius: 12,
@@ -466,7 +426,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   averageRating: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontSize: 48,
     fontWeight: '700',
     lineHeight: 52,
@@ -476,17 +436,8 @@ const styles = StyleSheet.create({
     gap: 4,
     marginVertical: 8,
   },
-  star: {
-    fontSize: 20,
-  },
-  starFilled: {
-    color: '#E8C97A',
-  },
-  starEmpty: {
-    color: '#A0A0A0',
-  },
   reviewCount: {
-    color: '#A0A0A0',
+    color: '#707080',
     fontSize: 14,
     marginTop: 8,
   },
@@ -500,29 +451,35 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   distributionRowActive: {
-    backgroundColor: '#2A2A35',
+    backgroundColor: '#302926',
     paddingHorizontal: 8,
     borderRadius: 6,
   },
+  distributionLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    width: 30,
+  },
   distributionLabel: {
-    color: '#A0A0A0',
+    color: '#707080',
     fontSize: 12,
     fontWeight: '600',
-    width: 30,
   },
   barContainer: {
     flex: 1,
     height: 6,
-    backgroundColor: '#2A2A35',
+    backgroundColor: '#30303C',
     borderRadius: 3,
     overflow: 'hidden',
   },
   bar: {
     height: '100%',
-    backgroundColor: '#E8C97A',
+    backgroundColor: '#FF5722',
+    borderRadius: 3,
   },
   distributionCount: {
-    color: '#A0A0A0',
+    color: '#707080',
     fontSize: 12,
     fontWeight: '600',
     width: 25,
@@ -532,7 +489,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1F1F2A',
+    borderBottomColor: '#23232B',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
@@ -546,27 +503,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#18181F',
+    backgroundColor: '#23232B',
   },
   sortBtnActive: {
-    backgroundColor: '#E8C97A',
+    backgroundColor: '#FF5722',
   },
   sortText: {
-    color: '#A0A0A0',
+    color: '#707080',
     fontSize: 12,
     fontWeight: '600',
   },
   sortTextActive: {
-    color: '#000',
+    color: '#FFFFFF',
   },
   writeBtn: {
-    backgroundColor: '#E8C97A',
+    backgroundColor: '#FF5722',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
   },
   writeBtnText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -576,7 +533,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   reviewCard: {
-    backgroundColor: '#18181F',
+    backgroundColor: '#23232B',
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -591,29 +548,35 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   authorName: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 2,
   },
+  verifiedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
   verifiedBadge: {
-    color: '#4CAF50',
+    color: '#FF5722',
     fontSize: 12,
     fontWeight: '600',
   },
   reviewTitle: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 4,
   },
   reviewDate: {
-    color: '#A0A0A0',
+    color: '#707080',
     fontSize: 12,
     marginBottom: 8,
   },
   reviewContent: {
-    color: '#C0C0C8',
+    color: '#A0A0B0',
     fontSize: 13,
     lineHeight: 18,
     marginBottom: 10,
@@ -624,31 +587,34 @@ const styles = StyleSheet.create({
   },
   helpfulBtn: {
     flex: 1,
+    flexDirection: 'row',
     paddingVertical: 8,
     paddingHorizontal: 10,
-    backgroundColor: '#2A2A35',
+    backgroundColor: '#302926',
     borderRadius: 6,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   helpfulText: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontSize: 12,
     fontWeight: '600',
   },
   reportBtn: {
     paddingVertical: 8,
     paddingHorizontal: 10,
-    backgroundColor: '#2A2A35',
+    backgroundColor: '#30303C',
     borderRadius: 6,
+    justifyContent: 'center',
   },
   reportText: {
-    color: '#A0A0A0',
+    color: '#707080',
     fontSize: 12,
   },
-  // Modal styles
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
   modalContent: {
     flex: 1,
@@ -661,17 +627,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1F1F2A',
+    borderBottomColor: '#23232B',
   },
   modalBackBtn: {
     padding: 8,
   },
-  modalBackText: {
-    fontSize: 24,
-    color: '#E8C97A',
-  },
   modalTitle: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '700',
     flex: 1,
@@ -682,7 +644,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   productName: {
-    color: '#A0A0A0',
+    color: '#707080',
     fontSize: 14,
     marginBottom: 20,
   },
@@ -690,7 +652,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   formLabel: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 10,
@@ -699,23 +661,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  selectStar: {
-    fontSize: 32,
-  },
-  selectStarActive: {
-    color: '#E8C97A',
-  },
-  selectStarInactive: {
-    color: '#A0A0A0',
-  },
   input: {
-    backgroundColor: '#18181F',
+    backgroundColor: '#23232B',
     borderWidth: 1,
-    borderColor: '#2A2A35',
+    borderColor: '#30303C',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 14,
   },
   textArea: {
@@ -733,11 +686,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E8C97A',
+    borderColor: '#FF5722',
     alignItems: 'center',
   },
   cancelBtnText: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -745,11 +698,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: '#E8C97A',
+    backgroundColor: '#FF5722',
     alignItems: 'center',
   },
   submitBtnText: {
-    color: '#000',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
   },
