@@ -26,13 +26,13 @@ const RippleEffect: React.FC<RippleEffectProps> = ({
   onPress,
 }) => {
   const [ripples, setRipples] = useState<Ripple[]>([]);
-  const counter = useRef(0);
+  const counterRef = useRef(0);
 
   const handlePressIn = useCallback(
     (event: GestureResponderEvent) => {
       const { locationX, locationY } = event.nativeEvent;
       const anim = new Animated.Value(0);
-      const key = counter.current++;
+      const key = counterRef.current++;
 
       setRipples((prev) => [...prev, { key, x: locationX, y: locationY, anim }]);
 
@@ -57,6 +57,7 @@ const RippleEffect: React.FC<RippleEffectProps> = ({
       {ripples.map((ripple) => (
         <Animated.View
           key={ripple.key}
+          pointerEvents="none"
           style={[
             styles.ripple,
             {
