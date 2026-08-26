@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TemuAliExpressProductGrid from './TemuAliExpressProductGrid';
+import AnimatedCard from './AnimatedCard';
 import { Product } from '../types';
 import { SearchIcon, HeartIcon, BellIcon, TruckIcon, SortIcon, FilterIcon, FireIcon, StarIcon, TagIcon } from './Icons';
 
@@ -94,10 +95,12 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
           <Text style={styles.productsCount}>1,234+ items</Text>
         </View>
 
-        <TemuAliExpressProductGrid
-          onAddToCart={onAddToCart}
-          onProductPress={onProductPress}
-        />
+        <AnimatedCard delay={200}>
+          <TemuAliExpressProductGrid
+            onAddToCart={onAddToCart}
+            onProductPress={onProductPress}
+          />
+        </AnimatedCard>
       </ScrollView>
     </View>
   );
