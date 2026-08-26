@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Alert, TouchableOpacity, Dimensions } from 'react-native';
-import CTAButton from './CTAButton';
+import { UsersIcon, PackageIcon, TagIcon, ShieldIcon, TrophyIcon, MailIcon, TrendingUpIcon, LogOutIcon, TruckIcon, UserIcon, ChevronLeftIcon } from './Icons';
 import { useAuth } from '../contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
@@ -21,7 +21,6 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
   const { user, logout } = useAuth();
 
   useEffect(() => {
-    // Simulate loading dashboard data
     const timer = setTimeout(() => {
       setStats({
         total_users: 1250,
@@ -65,13 +64,16 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
         <Text style={styles.title}>Admin Dashboard</Text>
         <Text style={styles.welcomeText}>Welcome back, {user?.email}!</Text>
         <Text style={styles.subtitle}>Here's your business overview</Text>
-        <Text style={styles.demoNote}>⚠️ Demo Mode - Using mock data</Text>
+        <View style={styles.demoNoteContainer}>
+          <ShieldIcon size={14} color="#FFC107" />
+          <Text style={styles.demoNote}>Demo Mode - Using mock data</Text>
+        </View>
       </View>
       
       <View style={styles.statsContainer}>
         <View style={styles.statCard}>
           <View style={styles.statIcon}>
-            <Text style={styles.iconText}>👥</Text>
+            <UsersIcon size={24} color="#FFFFFF" />
           </View>
           <Text style={styles.statNumber}>{stats?.total_users || 0}</Text>
           <Text style={styles.statLabel}>Total Users</Text>
@@ -80,7 +82,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
         
         <View style={styles.statCard}>
           <View style={styles.statIcon}>
-            <Text style={styles.iconText}>📦</Text>
+            <PackageIcon size={24} color="#FFFFFF" />
           </View>
           <Text style={styles.statNumber}>{stats?.total_orders || 0}</Text>
           <Text style={styles.statLabel}>Total Orders</Text>
@@ -89,7 +91,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
         
         <View style={styles.statCard}>
           <View style={styles.statIcon}>
-            <Text style={styles.iconText}>💎</Text>
+            <TagIcon size={24} color="#FFFFFF" />
           </View>
           <Text style={styles.statNumber}>{stats?.total_products || 0}</Text>
           <Text style={styles.statLabel}>Total Products</Text>
@@ -111,13 +113,17 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
         
         <View style={styles.actionRow}>
           <TouchableOpacity style={styles.actionCard} onPress={() => Alert.alert('Products', 'Product management coming soon')}>
-            <Text style={styles.actionIcon}>📝</Text>
+            <View style={styles.actionIconContainer}>
+              <TagIcon size={28} color="#FF5722" />
+            </View>
             <Text style={styles.actionTitle}>Manage Products</Text>
             <Text style={styles.actionDesc}>Add, edit, or remove products</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.actionCard} onPress={() => Alert.alert('Orders', 'Order management coming soon')}>
-            <Text style={styles.actionIcon}>🚚</Text>
+            <View style={styles.actionIconContainer}>
+              <TruckIcon size={28} color="#FF5722" />
+            </View>
             <Text style={styles.actionTitle}>View Orders</Text>
             <Text style={styles.actionDesc}>Track and manage orders</Text>
           </TouchableOpacity>
@@ -125,13 +131,17 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
 
         <View style={styles.actionRow}>
           <TouchableOpacity style={styles.actionCard} onPress={() => Alert.alert('Users', 'User management coming soon')}>
-            <Text style={styles.actionIcon}>👤</Text>
+            <View style={styles.actionIconContainer}>
+              <UserIcon size={28} color="#FF5722" />
+            </View>
             <Text style={styles.actionTitle}>User Management</Text>
             <Text style={styles.actionDesc}>Manage user accounts</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.actionCard} onPress={() => Alert.alert('Analytics', 'Analytics coming soon')}>
-            <Text style={styles.actionIcon}>📊</Text>
+            <View style={styles.actionIconContainer}>
+              <TrendingUpIcon size={28} color="#FF5722" />
+            </View>
             <Text style={styles.actionTitle}>Analytics</Text>
             <Text style={styles.actionDesc}>View detailed reports</Text>
           </TouchableOpacity>
@@ -140,12 +150,14 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>🚪 Logout</Text>
+          <LogOutIcon size={18} color="#FFFFFF" />
+          <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-        <Text style={styles.backText}>← Back to Main</Text>
+        <ChevronLeftIcon size={18} color="#FF5722" />
+        <Text style={styles.backText}>Back to Main</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -154,29 +166,23 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#18181F',
+    backgroundColor: '#0D0D12',
   },
   header: {
     paddingTop: 60,
     paddingHorizontal: 24,
     paddingBottom: 16,
   },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
   welcomeText: {
     fontSize: 16,
-    color: '#E8C97A',
-    fontWeight: '600',
+    color: '#A0A0A0',
+    fontWeight: '500',
     marginBottom: 4,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#7B1FA2',
+    color: '#FF5722',
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -186,27 +192,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
   },
+  demoNoteContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
   demoNote: {
     fontSize: 14,
     color: '#FFC107',
-    textAlign: 'center',
     fontStyle: 'italic',
+    marginLeft: 6,
   },
   loadingCard: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#18181F',
+    backgroundColor: '#0D0D12',
   },
   loadingText: {
     fontSize: 18,
-    color: '#7B1FA2',
+    color: '#FF5722',
     marginBottom: 16,
   },
   loadingIndicator: {
     width: 40,
     height: 4,
-    backgroundColor: '#7B1FA2',
+    backgroundColor: '#FF5722',
     borderRadius: 2,
   },
   statsContainer: {
@@ -221,9 +233,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 6,
-    shadowColor: '#7B1FA2',
+    borderWidth: 1,
+    borderColor: '#2D2D38',
+    shadowColor: '#FF5722',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 4,
   },
@@ -231,23 +245,20 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#7B1FA2',
+    backgroundColor: '#FF5722',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
-  iconText: {
-    fontSize: 24,
-  },
   statNumber: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#E8C97A',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: '#A0A0A0',
     fontWeight: '600',
     marginBottom: 4,
   },
@@ -257,12 +268,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   revenueCard: {
-    backgroundColor: '#7B1FA2',
+    backgroundColor: '#23232B',
     marginHorizontal: 16,
     marginBottom: 24,
     borderRadius: 16,
     padding: 24,
-    shadowColor: '#7B1FA2',
+    borderWidth: 1,
+    borderColor: '#2D2D38',
+    shadowColor: '#FF5722',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
@@ -270,32 +283,31 @@ const styles = StyleSheet.create({
   },
   revenueTitle: {
     fontSize: 18,
-    color: '#FFFFFF',
+    color: '#A0A0A0',
     fontWeight: '600',
     marginBottom: 8,
   },
   revenueAmount: {
     fontSize: 36,
     fontWeight: 'bold',
-    color: '#E8C97A',
+    color: '#FF5722',
     marginBottom: 4,
   },
   revenueSubtext: {
     fontSize: 14,
-    color: '#FFFFFF',
-    opacity: 0.9,
+    color: '#4CAF50',
     marginBottom: 16,
   },
   revenueBar: {
     height: 6,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: '#2D2D38',
     borderRadius: 3,
     overflow: 'hidden',
   },
   revenueProgress: {
     width: '75%',
     height: '100%',
-    backgroundColor: '#E8C97A',
+    backgroundColor: '#FF5722',
     borderRadius: 3,
   },
   actionsContainer: {
@@ -320,14 +332,21 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 6,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#2D2D38',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,
   },
-  actionIcon: {
-    fontSize: 32,
+  actionIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#2D2D38',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 12,
   },
   actionTitle: {
@@ -344,15 +363,18 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     alignSelf: 'center',
     marginBottom: 40,
     paddingVertical: 12,
     paddingHorizontal: 24,
   },
   backText: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontSize: 16,
     fontWeight: '600',
+    marginLeft: 4,
   },
   footer: {
     marginTop: 20,
@@ -360,10 +382,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FF4444',
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 12,
+    gap: 8,
     shadowColor: '#FF4444',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,

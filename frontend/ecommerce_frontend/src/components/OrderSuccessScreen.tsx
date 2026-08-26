@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CTAButton from './CTAButton';
+import { CheckIcon, ClockIcon, MailIcon, GiftIcon } from './Icons';
 
 interface OrderSuccessScreenProps {
   onContinueShopping?: () => void;
@@ -24,7 +25,12 @@ const OrderSuccessScreen: React.FC<OrderSuccessScreenProps> = ({
       <View style={styles.content}>
         {/* Success Icon */}
         <View style={styles.iconContainer}>
-          <Text style={styles.successIcon}>🎉</Text>
+          <View style={styles.iconCircle}>
+            <CheckIcon size={48} color="#4ECDC4" />
+          </View>
+          <View style={styles.giftBadge}>
+            <GiftIcon size={18} color="#FF5722" />
+          </View>
         </View>
 
         {/* Success Message */}
@@ -41,16 +47,23 @@ const OrderSuccessScreen: React.FC<OrderSuccessScreenProps> = ({
         {/* Order Details */}
         <View style={styles.detailsContainer}>
           <View style={styles.detailRow}>
+            <ClockIcon size={18} color="#4ECDC4" />
             <Text style={styles.detailLabel}>Estimated Delivery</Text>
             <Text style={styles.detailValue}>3-5 Business Days</Text>
           </View>
 
+          <View style={styles.divider} />
+
           <View style={styles.detailRow}>
+            <MailIcon size={18} color="#FF5722" />
             <Text style={styles.detailLabel}>Tracking</Text>
             <Text style={styles.detailValue}>Email updates will be sent</Text>
           </View>
 
+          <View style={styles.divider} />
+
           <View style={styles.detailRow}>
+            <GiftIcon size={18} color="#E8C97A" />
             <Text style={styles.detailLabel}>Support</Text>
             <Text style={styles.detailValue}>support@ecommerce.com</Text>
           </View>
@@ -88,17 +101,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   iconContainer: {
-    marginBottom: 24,
+    marginBottom: 28,
+    position: 'relative',
   },
-  successIcon: {
-    fontSize: 80,
+  iconCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: '#1A2E2A',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#4ECDC4',
+  },
+  giftBadge: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#23232B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FF5722',
   },
   messageContainer: {
     alignItems: 'center',
     marginBottom: 32,
   },
   title: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',
@@ -112,12 +146,12 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   orderNumber: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontSize: 18,
     fontWeight: '700',
   },
   detailsContainer: {
-    backgroundColor: '#18181F',
+    backgroundColor: '#23232B',
     borderRadius: 12,
     padding: 20,
     width: '100%',
@@ -125,21 +159,26 @@ const styles = StyleSheet.create({
   },
   detailRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
   },
   detailLabel: {
     color: '#A0A0A0',
     fontSize: 14,
+    marginLeft: 12,
   },
   detailValue: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
     textAlign: 'right',
     flex: 1,
     marginLeft: 16,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#2A2A35',
+    marginVertical: 4,
   },
   buttonContainer: {
     width: '100%',
@@ -149,11 +188,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#E8C97A',
+    borderColor: '#FF5722',
     borderRadius: 10,
   },
   viewOrdersText: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontSize: 16,
     fontWeight: '600',
   },
