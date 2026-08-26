@@ -185,6 +185,122 @@ The app includes 30+ custom SVG icons in `Icons.tsx` built with `react-native-sv
 | `Toast` | Spring + fade | Notifications |
 | `LoadingOverlay` | Spin + fade | Full-screen loading |
 
+## All Components
+
+Every file in `src/components/` (91 total):
+
+### Core Screens
+
+| File | Description |
+|------|-------------|
+| `HomeScreen.tsx` | Main home tab layout with sections |
+| `ShopPage.tsx` | Full shop page with search and filters |
+| `CartScreen.tsx` | Shopping cart view |
+| `ProductDetailScreen.tsx` | Product detail page with specs and images |
+| `ProductListScreen.tsx` | Temu-style product listing |
+| `CheckoutScreen.tsx` | Checkout flow |
+| `ProfileScreen.tsx` | User profile and settings |
+| `LoginScreen.tsx` | Login with typewriter animation |
+| `SignupScreen.tsx` | Registration form |
+| `ForgotPasswordScreen.tsx` | Password reset flow |
+| `DashboardScreen.tsx` | Admin dashboard |
+| `OrderHistoryScreen.tsx` | Past orders list |
+| `OrderDetailScreen.tsx` | Order detail with tracking |
+| `OrderSuccessScreen.tsx` | Post-checkout confirmation |
+| `WishlistScreen.tsx` | Saved products |
+| `ReviewsScreen.tsx` | Product reviews listing and submission |
+| `ReferralScreen.tsx` | Referral program |
+| `DealsScreen.tsx` | Deals and rewards hub |
+| `Hero.tsx` | Landing hero section |
+| `BottomTabNavigator.tsx` | 5-tab bottom navigation |
+| `Icons.tsx` | 30+ SVG icon components |
+
+### Animation Components
+
+| File | Description |
+|------|-------------|
+| `AnimatedCard.tsx` | Spring scale and fade entrance |
+| `AnimatedBadge.tsx` | Pulsing badge |
+| `AnimatedStar.tsx` | Spin and spring star |
+| `AnimatedPriceTag.tsx` | Price with discount badge animation |
+| `AnimatedAvatar.tsx` | Avatar with online pulse ring |
+| `AnimatedCart.tsx` | Animated cart icon with badge |
+| `AnimatedHeader.tsx` | Fade-in header |
+| `BouncyText.tsx` | Bouncing text entrance animation |
+| `CounterAnimation.tsx` | Animated number counter |
+| `FadeInView.tsx` | Directional fade-in wrapper |
+| `FloatingAction.tsx` | Floating action button |
+| `GradientBanner.tsx` | Shimmer gradient banner |
+| `GradientText.tsx` | Gradient-style text |
+| `NotificationDot.tsx` | Pulsing notification dot |
+| `ProgressBar.tsx` | Animated progress bar |
+| `Pulse.tsx` | Pulsing scale wrapper |
+| `Shimmer.tsx` | Shimmer loading effect |
+| `SkeletonLoader.tsx` | Skeleton placeholder loading |
+| `SwipeableCard.tsx` | Pan-gesture swipeable card |
+| `WavyDivider.tsx` | Animated wavy section divider |
+
+### UI Components
+
+| File | Description |
+|------|-------------|
+| `Badge.tsx` | Reusable badge with color and size variants |
+| `ProductCard.tsx` | Product card with image, price, and actions |
+| `CartItem.tsx` | Cart item row with quantity controls |
+| `OrderCard.tsx` | Order summary card with status |
+| `ReviewCard.tsx` | Individual review with rating and helpful vote |
+| `RatingBar.tsx` | Star rating bar with count and progress |
+| `AddressCard.tsx` | Address display card with select and delete |
+| `PaymentMethodCard.tsx` | Payment method card with brand colors |
+| `StatCard.tsx` | Dashboard stat card with trend indicator |
+| `InfoCard.tsx` | Info card with icon and optional action |
+| `CouponCard.tsx` | Coupon card with copy-to-clipboard |
+| `OrderTimelineStep.tsx` | Single step in order tracking timeline |
+| `StatusTimeline.tsx` | Full animated status timeline |
+| `NotificationItem.tsx` | Notification row with swipe and read state |
+| `FeaturedBanner.tsx` | Featured product banner with CTA |
+| `PromoBanner.tsx` | Promotional banner with gradient |
+| `SectionHeader.tsx` | Section title with optional action link |
+| `TabBar.tsx` | Animated tab bar with sliding indicator |
+| `StoreHeader.tsx` | Store header with avatar and follow button |
+| `ImageCarousel.tsx` | Horizontal image carousel with dot indicators |
+| `ColorSelector.tsx` | Color option selector with spring animation |
+| `SizeSelector.tsx` | Size option selector with spring animation |
+| `QuantitySelector.tsx` | Increment/decrement quantity controls |
+| `PriceSlider.tsx` | Dual-thumb price range slider |
+| `PriceComparison.tsx` | Current vs original price with savings |
+| `CategoryChip.tsx` | Category filter chip with active state |
+| `CountdownTimer.tsx` | Countdown timer with urgent-state styling |
+| `CartSummary.tsx` | Cart total breakdown with shipping progress |
+| `ShippingBadge.tsx` | Free/shipping badge with pulse animation |
+| `DeliveryStatusBanner.tsx` | Delivery status with progress bar |
+| `DeliveryMap.tsx` | Delivery map placeholder with ETA |
+| `HorizontalDivider.tsx` | Animated horizontal divider with optional label |
+| `RecentlyViewed.tsx` | Recently viewed products horizontal list |
+| `SearchHistory.tsx` | Recent search terms with AsyncStorage |
+| `AppVersionFooter.tsx` | App version and branding footer |
+| `SocialShare.tsx` | Social share buttons for sharing and referral |
+
+### Utility Components
+
+| File | Description |
+|------|-------------|
+| `CTAButton.tsx` | Universal call-to-action button |
+| `ErrorBoundary.tsx` | Error boundary with retry UI |
+| `EmptyState.tsx` | Empty state placeholder |
+| `LoadingOverlay.tsx` | Full-screen loading overlay |
+| `PullToRefresh.tsx` | Pull-to-refresh wrapper |
+| `Toast.tsx` | Toast notification component |
+| `FlashDealsPanel.tsx` | Flash deal cards with countdown |
+| `ClearancePanel.tsx` | Clearance sale cards |
+| `CoinsBalance.tsx` | Coin balance display |
+| `GamificationPanel.tsx` | Streaks, badges, and rewards panel |
+| `SpinToWin.tsx` | Prize wheel game |
+| `ShippingIndicator.tsx` | Free shipping progress indicator |
+| `RecommendationsPanel.tsx` | AI-powered product recommendations |
+| `PushNotificationsManager.tsx` | Push notification settings manager |
+| `RippleEffect.tsx` | Touch ripple effect wrapper |
+
 ## License
 
 Private — Dez Collection © 2026
