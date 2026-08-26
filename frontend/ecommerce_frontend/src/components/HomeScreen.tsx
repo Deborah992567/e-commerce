@@ -8,7 +8,8 @@ import FeaturedProducts from './FeaturedProducts';
 import GamificationPanel from './GamificationPanel';
 import SpinToWin from './SpinToWin';
 import CTAButton from './CTAButton';
-import { HomeIcon, ShopIcon, CartIcon, FireIcon, TagIcon, TruckIcon } from './Icons';
+import ShippingIndicator from './ShippingIndicator';
+import { FireIcon, TagIcon, TruckIcon } from './Icons';
 
 interface HomeScreenProps {
   onShopNow?: () => void;
@@ -99,6 +100,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onShopNow, onViewCart }) => {
               <Text style={styles.infoText}>Best Prices</Text>
             </View>
           </View>
+        </Section>
+
+        <Section delay={900} style={styles.sectionPad}>
+          <ShippingIndicator subtotal={25000} threshold={50000} />
         </Section>
 
         <Divider delay={1000} />
