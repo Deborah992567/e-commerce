@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import { Product } from '../types';
 import { StarIcon, TruckIcon, TagIcon, FireIcon } from './Icons';
+import { SkeletonProductCard } from './SkeletonLoader';
 
 interface TemuAliExpressProductGridProps {
   onAddToCart: (product: Product) => void;
@@ -82,6 +83,23 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) 
 };
 
 const TemuAliExpressProductGrid: React.FC<TemuAliExpressProductGridProps> = ({ onAddToCart, onProductPress }) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.row}>
+          {[1,2,3,4].map(i => <SkeletonProductCard key={i} />)}
+        </View>
+      </View>
+    );
+  }
+
   const renderProduct = ({ item }: { item: Product }) => (
     <ProductCard product={item} onAddToCart={onAddToCart} onProductPress={onProductPress} />
   );
