@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
 import { Product } from '../types';
 import { ChevronLeftIcon, StarIcon, CheckIcon, MinusIcon, PlusIcon, PackageIcon } from './Icons';
+import AnimatedStar from './AnimatedStar';
 
 interface ProductDetailScreenProps {
   product: Product;
@@ -81,7 +82,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
 
           <TouchableOpacity onPress={() => onViewReviews?.(product)} style={styles.ratingRow}>
             <View style={styles.starsRow}>
-              {[1,2,3,4,5].map(i => <StarIcon key={i} size={16} color="#FFD700" filled={i <= Math.floor(details.rating)} />)}
+              {[1,2,3,4,5].map(i => <AnimatedStar key={i} size={16} filled={i <= Math.floor(details.rating)} delay={i * 100} />)}
             </View>
             <Text style={styles.ratingValue}>{details.rating}</Text>
             <Text style={styles.reviews}>({details.reviews} reviews)</Text>
