@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { HomeIcon, ShopIcon, CartIcon, DealsIcon, UserIcon } from './Icons';
+import NotificationDot from './NotificationDot';
 
 interface TabBarProps {
   activeTab: string;
@@ -71,9 +72,7 @@ const TabItem: React.FC<TabItemProps> = ({ id, label, icon: Icon, isActive, onPr
           <Icon size={24} color={isActive ? '#FF5722' : '#808080'} />
         </Animated.View>
         {badge !== undefined && badge > 0 && (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{badge > 99 ? '99+' : badge}</Text>
-          </View>
+          <NotificationDot count={badge} color="#FF5722" size={20} />
         )}
       </View>
       <Animated.Text style={[styles.tabLabel, { color: labelColor }]}>
