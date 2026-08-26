@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TemuAliExpressProductGrid from './TemuAliExpressProductGrid';
 import AnimatedCard from './AnimatedCard';
+import FloatingAction from './FloatingAction';
 import { Product } from '../types';
 import { SearchIcon, HeartIcon, BellIcon, TruckIcon, SortIcon, FilterIcon, FireIcon, StarIcon, TagIcon } from './Icons';
 
@@ -15,6 +16,11 @@ interface ShopPageProps {
 const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPress }) => {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const scrollToTop = () => {
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  };
 
   const categories = ['All', 'Fashion', 'Electronics', 'Home', 'Beauty', 'Sports', 'Food', 'Toys'];
 
@@ -40,6 +46,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
       </View>
 
       <ScrollView
+        ref={scrollViewRef}
         style={styles.content}
         contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
         showsVerticalScrollIndicator={false}
@@ -102,6 +109,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
           />
         </AnimatedCard>
       </ScrollView>
+      <FloatingAction onPress={scrollToTop} color="#FF5722" size={48} icon={<TagIcon size={20} color="#FFF" />} />
     </View>
   );
 };
