@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated, Easing } from 'react-native';
 import CTAButton from './CTAButton';
 import { useAuth } from '../contexts/AuthContext';
+import { MailIcon, ShieldIcon, UserIcon, HelpIcon } from './Icons';
 
 interface LoginScreenProps {
   onBack?: () => void;
@@ -18,10 +19,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   const fullTitle = 'Welcome Back';
   const { login } = useAuth();
 
-  const helperText = 'Mock login:\n- admin@ecommerce.com / admin123 (admin)\n- user1@ecommerce.com / user123 (customer)\n- user2@ecommerce.com / user123 (customer)';
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+
+  const helperText = 'Mock login:\n- admin@ecommerce.com / admin123 (admin)\n- user1@ecommerce.com / user123 (customer)';
 
   useEffect(() => {
-    // Typewriter animation
     let index = 0;
     const typewriterInterval = setInterval(() => {
       if (index < fullTitle.length) {
@@ -30,24 +33,26 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
       } else {
         clearInterval(typewriterInterval);
       }
-    }, 100); // 100ms per character
+    }, 100);
 
     return () => clearInterval(typewriterInterval);
   }, []);
 
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, { toValue: 1, duration: 800, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 800, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, [fadeAnim, slideAnim]);
+
   const handleLogin = async () => {
     const success = await login(email, password);
     if (success) {
-      // Check if admin login by email (since state update is async)
       if (email === 'admin@ecommerce.com') {
         if (onGoToDashboard) onGoToDashboard();
       } else {
-        // For regular users, navigate directly to product list
-        if (onGoToProductList) {
-          onGoToProductList();
-        } else if (onBack) {
-          onBack();
-        }
+        if (onGoToProductList) onGoToProductList();
+        else if (onBack) onBack();
       }
     } else {
       Alert.alert('Login Failed', 'Invalid credentials');
@@ -55,46 +60,65 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   };
 
   const handleGoogleSignIn = () => {
-    // Replace with real Google sign-in logic
     Alert.alert('Google Sign-In', 'Google sign-in pressed!');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{displayedTitle}</Text>
-      <Text style={styles.helper}>{helperText}</Text>
-      <Text style={styles.subtitle}>Sign in to your account</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#A0A0A0"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#A0A0A0"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <CTAButton title="Login" onPress={handleLogin} color="#7B1FA2" size="lg" />
-      <Text style={styles.or}>or</Text>
-      <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleSignIn}>
-        <Text style={styles.googleBtnText}>Sign in with Google</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.signupBtn} onPress={onGoToSignup}>
-        <Text style={styles.signupBtnText}>Sign up</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.forgotBtn} onPress={onGoToForgot}>
-        <Text style={styles.forgotBtnText}>Forgot password?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onBack}>
-        <Text style={styles.forgot}>{onBack ? '← Back' : ''}</Text>
-      </TouchableOpacity>
+      <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+        <View style={styles.iconRow}>
+          <ShieldIcon size={32} color="#FF5722" />
+        </View>
+        <Text style={styles.title}>{displayedTitle}</Text>
+        <Text style={styles.helper}>{helperText}</Text>
+        <Text style={styles.subtitle}>Sign in to your account</Text>
+
+        <View style={styles.inputWrap}>
+          <MailIcon size={18} color="#A0A0A0" />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#A0A0A0"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </View>
+
+        <View style={styles.inputWrap}>
+          <ShieldIcon size={18} color="#A0A0A0" />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#A0A0A0"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+        </View>
+
+        <CTAButton title="Login" onPress={handleLogin} color="#FF5722" size="lg" />
+        <Text style={styles.or}>or</Text>
+
+        <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleSignIn}>
+          <UserIcon size={18} color="#23232B" />
+          <Text style={styles.googleBtnText}>Sign in with Google</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.signupBtn} onPress={onGoToSignup}>
+          <Text style={styles.signupBtnText}>Create Account</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.forgotBtn} onPress={onGoToForgot}>
+          <HelpIcon size={14} color="#FF5722" />
+          <Text style={styles.forgotBtnText}>Forgot password?</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+          <Text style={styles.forgot}>{onBack ? '← Back' : ''}</Text>
+        </TouchableOpacity>
+      </Animated.View>
     </View>
   );
 };
@@ -104,13 +128,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#18181F',
+    backgroundColor: '#0D0D12',
     padding: 24,
+  },
+  content: {
+    width: '100%',
+    maxWidth: 360,
+    alignItems: 'center',
+  },
+  iconRow: {
+    marginBottom: 16,
+    backgroundColor: '#23232B',
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#FF572240',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#7B1FA2',
+    color: '#FF5722',
     marginBottom: 8,
   },
   subtitle: {
@@ -118,16 +155,24 @@ const styles = StyleSheet.create({
     color: '#A0A0A0',
     marginBottom: 24,
   },
-  input: {
-    width: '100%',
-    maxWidth: 340,
+  inputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#23232B',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#2D2D38',
+    width: '100%',
+  },
+  input: {
+    flex: 1,
     color: 'white',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
     fontSize: 16,
-    marginBottom: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
   },
   or: {
     color: '#A0A0A0',
@@ -135,10 +180,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   googleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 12,
     paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingVertical: 14,
     marginBottom: 16,
   },
   googleBtnText: {
@@ -148,55 +196,45 @@ const styles = StyleSheet.create({
   },
   signupBtn: {
     backgroundColor: '#23232B',
-    borderRadius: 8,
+    borderRadius: 12,
     paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingVertical: 14,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#FF572240',
   },
   signupBtnText: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontWeight: 'bold',
     fontSize: 16,
   },
   forgotBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: 'transparent',
     marginBottom: 8,
+    marginTop: 4,
   },
   forgotBtnText: {
-    color: '#E8C97A',
+    color: '#FF5722',
     fontSize: 15,
     fontWeight: 'bold',
-    textAlign: 'center',
+  },
+  backBtn: {
+    marginTop: 12,
   },
   forgot: {
-    color: '#E8C97A',
-    marginTop: 12,
+    color: '#A0A0A0',
     fontSize: 14,
     textAlign: 'center',
   },
   helper: {
     textAlign: 'center',
-    color: '#B3B3C2',
+    color: '#6A6A7A',
     marginBottom: 10,
-    fontSize: 12,
+    fontSize: 11,
     lineHeight: 16,
-  },
-  adminContainer: {
-    marginTop: 16,
-    marginBottom: 8,
-    opacity: 0.7,
-  },
-  adminBtn: {
-    backgroundColor: '#333',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-    alignSelf: 'center',
-  },
-  adminBtnText: {
-    color: '#888',
-    fontSize: 12,
-    textAlign: 'center',
   },
 });
 
