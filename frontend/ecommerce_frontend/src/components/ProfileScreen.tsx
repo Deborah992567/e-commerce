@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
 import { UserIcon, PackageIcon, HeartIcon, BellIcon, UsersIcon, MailIcon, ShieldIcon, PhoneIcon, HelpIcon, ScaleIcon, LogOutIcon, CreditCardIcon, CheckIcon, TruckIcon, TagIcon, GiftIcon } from './Icons';
+import AnimatedAvatar from './AnimatedAvatar';
+import BouncyText from './BouncyText';
 
 interface ProfileScreenProps {
   onBack?: () => void;
@@ -28,7 +30,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
   return (
     <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Account</Text>
+        <BouncyText style={styles.title}>Account</BouncyText>
         <View style={{ width: 32 }} />
       </View>
 
@@ -36,9 +38,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account Information</Text>
           <View style={styles.userInfo}>
-            <View style={styles.avatar}>
-              <UserIcon size={28} color="#FF5722" />
-            </View>
+            <AnimatedAvatar size={56} borderColor="#FF5722" />
             <View style={styles.userDetails}>
               <Text style={styles.userName}>{user?.email.split('@')[0]}</Text>
               <Text style={styles.userEmail}>{user?.email}</Text>
