@@ -1,31 +1,16 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { TruckIcon, CheckIcon } from './Icons';
+import ProgressBar from './ProgressBar';
 
 interface ShippingIndicatorProps {
-  cartTotal: number;
-  minimumThreshold?: number;
+  subtotal: number;
+  threshold?: number;
 }
 
-const ShippingIndicator: React.FC<ShippingIndicatorProps> = ({ cartTotal, minimumThreshold = 50 }) => {
-  const remainingAmount = Math.max(0, minimumThreshold - cartTotal);
-  const progressPercentage = Math.min((cartTotal / minimumThreshold) * 100, 100);
-  const qualifiesForFreeShipping = cartTotal >= minimumThreshold;
-  const progressAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.timing(progressAnim, {
-      toValue: progressPercentage,
-      duration: 800,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
-  }, [progressAnim, progressPercentage]);
-
-  const animatedWidth = progressAnim.interpolate({
-    inputRange: [0, 100],
-    outputRange: ['0%', '100%'],
-  });
+const ShippingIndicator: React.FC<ShippingIndicatorProps> = ({ subtotal, threshold = 50000 }) => {
+  const remaining = Math.max(0, threshold - subtotal);
+  const qualifies = subtotal >= threshold;
 
   return (
     <View style={styles.container}>
@@ -34,27 +19,20 @@ const ShippingIndicator: React.FC<ShippingIndicatorProps> = ({ cartTotal, minimu
           <TruckIcon size={18} color="#4CAF50" />
           <Text style={styles.title}>Free Shipping</Text>
         </View>
-        {qualifiesForFreeShipping ? (
+        {qualifies ? (
           <View style={styles.qualifiedRow}>
             <CheckIcon size={14} color="#4CAF50" />
-            <Text style={styles.qualifiedText}>You qualify!</Text>
+            <Text style={styles.qualifiedText}>Qualified!</Text>
           </View>
         ) : (
-          <Text style={styles.remainingText}>Add ${remainingAmount.toFixed(2)} more</Text>
+          <Text style={styles.remainingText}>Add ₦{remaining.toLocaleString()} more</Text>
         )}
       </View>
-
-      <View style={styles.progressBar}>
-        <Animated.View style={[styles.progressFill, { width: animatedWidth }]} />
-      </View>
-
+      <ProgressBar progress={(subtotal / threshold) * 100} color={qualifies ? '#4CAF50' : '#FF5722'} />
       <View style={styles.footer}>
-        <Text style={styles.cartTotalLabel}>Cart Total</Text>
-        <Text style={styles.cartTotalAmount}>${cartTotal.toFixed(2)}</Text>
-        <Text style={styles.threshold}>of ${minimumThreshold}</Text>
+        <Text style={styles.footerText}>₦{subtotal.toLocaleString()} of ₦{threshold.toLocaleString()}</Text>
       </View>
-
-      {qualifiesForFreeShipping && (
+      {qualifies && (
         <View style={styles.badge}>
           <TruckIcon size={14} color="#4CAF50" />
           <Text style={styles.badgeText}>Free Shipping Applied</Text>
@@ -65,91 +43,17 @@ const ShippingIndicator: React.FC<ShippingIndicatorProps> = ({ cartTotal, minimu
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#23232B',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#2D2D38',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFF',
-  },
-  qualifiedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  qualifiedText: {
-    fontSize: 12,
-    color: '#4CAF50',
-    fontWeight: 'bold',
-  },
-  remainingText: {
-    fontSize: 12,
-    color: '#FF5722',
-    fontWeight: 'bold',
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#1A1A1F',
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginBottom: 12,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#FF5722',
-    borderRadius: 4,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cartTotalLabel: {
-    fontSize: 11,
-    color: '#A0A0A0',
-  },
-  cartTotalAmount: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFF',
-  },
-  threshold: {
-    fontSize: 11,
-    color: '#A0A0A0',
-  },
-  badge: {
-    marginTop: 12,
-    backgroundColor: '#4CAF5020',
-    borderRadius: 8,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#4CAF50',
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  badgeText: {
-    fontSize: 12,
-    color: '#4CAF50',
-    fontWeight: 'bold',
-  },
+  container: { backgroundColor: '#23232B', borderRadius: 12, padding: 16, borderWidth: 1, borderColor: '#2D2D38' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  title: { fontSize: 14, fontWeight: 'bold', color: '#FFF' },
+  qualifiedRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  qualifiedText: { fontSize: 12, color: '#4CAF50', fontWeight: 'bold' },
+  remainingText: { fontSize: 12, color: '#FF5722', fontWeight: 'bold' },
+  footer: { marginTop: 8 },
+  footerText: { fontSize: 12, color: '#A0A0A0', textAlign: 'center' },
+  badge: { marginTop: 12, backgroundColor: '#4CAF5020', borderRadius: 8, padding: 8, borderWidth: 1, borderColor: '#4CAF50', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 6 },
+  badgeText: { fontSize: 12, color: '#4CAF50', fontWeight: 'bold' },
 });
 
 export default ShippingIndicator;
