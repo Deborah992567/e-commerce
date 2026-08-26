@@ -7,11 +7,11 @@ import {
   FlatList,
   Image,
   Alert,
-  ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useCart } from '../contexts/CartContext';
+import { HeartIcon, ChevronLeftIcon, StarIcon, TrashIcon, TagIcon, CartIcon } from './Icons';
 
 interface WishlistScreenProps {
   onBack?: () => void;
@@ -69,7 +69,7 @@ const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) 
         text: 'Remove',
         onPress: async () => {
           await removeFromWishlist(id);
-          Alert.alert('✅ Removed', 'Item removed from wishlist');
+          Alert.alert('Removed', 'Item removed from wishlist');
         },
       },
     ]);
@@ -86,7 +86,7 @@ const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) 
       img: item.image,
     };
     addToCart(product);
-    Alert.alert('✅ Added to Cart', `${item.name} added to your cart`);
+    Alert.alert('Added to Cart', `${item.name} added to your cart`);
     if (onAddToCart) {
       onAddToCart();
     }
@@ -104,7 +104,7 @@ const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) 
             onPress={() => handleRemove(item.id)}
             style={styles.removeBtn}
           >
-            <Text style={styles.removeBtnText}>✕</Text>
+            <TrashIcon size={16} color="#FF2D55" />
           </TouchableOpacity>
         </View>
 
@@ -113,7 +113,8 @@ const WishlistScreen: React.FC<WishlistScreenProps> = ({ onBack, onAddToCart }) 
         </View>
 
         <View style={styles.ratingRow}>
-          <Text style={styles.rating}>⭐ {item.rating}</Text>
+          <StarIcon size={14} color="#FFD700" filled />
+          <Text style={styles.rating}>{item.rating}</Text>
           <Text style={styles.dateAdded}>Added {formatDate(item.addedAt)}</Text>
         </View>
 
