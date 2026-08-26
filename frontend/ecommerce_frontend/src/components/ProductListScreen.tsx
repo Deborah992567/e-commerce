@@ -306,7 +306,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({
         <View style={styles.banner}>
           <View style={styles.bannerContent}>
             <Text style={styles.bannerTitle}>🚚 Free Shipping</Text>
-            <Text style={styles.bannerSubtitle}>on orders over $50</Text>
+            <Text style={styles.bannerSubtitle}>on orders over ₦50,000</Text>
           </View>
         </View>
 

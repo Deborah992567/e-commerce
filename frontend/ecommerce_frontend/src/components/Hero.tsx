@@ -159,7 +159,7 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
           <View style={[styles.heroCardTag, { backgroundColor: '#FF5722' }]}><Text style={styles.heroCardTagText}>Limited Drop</Text></View>
           <View style={styles.heroCardLabel}>
             <Text style={styles.heroCardLabelText}>Obsidian Series</Text>
-            <Text style={styles.heroCardPrice}>$249</Text>
+            <Text style={styles.heroCardPrice}>₦249</Text>
           </View>
         </View>
         <View style={styles.heroCardMain}>
@@ -173,7 +173,7 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
           <View style={[styles.heroCardTag, { backgroundColor: '#4ECDC4' }]}><Text style={styles.heroCardTagText}>Air Drift</Text></View>
           <View style={styles.heroCardLabel}>
             <Text style={styles.heroCardLabelText}>Air Drift</Text>
-            <Text style={styles.heroCardPrice}>$129</Text>
+            <Text style={styles.heroCardPrice}>₦129</Text>
           </View>
         </View>
         <View style={styles.heroCardMain}>
@@ -187,7 +187,7 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
           <View style={[styles.heroCardTag, { backgroundColor: '#A78BFA' }]}><Text style={styles.heroCardTagText}>Urban Core</Text></View>
           <View style={styles.heroCardLabel}>
             <Text style={styles.heroCardLabelText}>Urban Core</Text>
-            <Text style={styles.heroCardPrice}>$189</Text>
+            <Text style={styles.heroCardPrice}>₦189</Text>
           </View>
         </View>
       </ScrollView>

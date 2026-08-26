@@ -47,7 +47,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
           <TruckIcon size={28} color="#FFF" />
           <View style={styles.bannerContent}>
             <Text style={styles.bannerTitle}>Free Shipping</Text>
-            <Text style={styles.bannerSubtitle}>on orders over $50</Text>
+            <Text style={styles.bannerSubtitle}>on orders over ₦50,000</Text>
           </View>
         </View>
 
