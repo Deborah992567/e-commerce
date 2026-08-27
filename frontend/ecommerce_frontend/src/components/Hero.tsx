@@ -1,14 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, Animated, Easing } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Animated, Easing, TouchableOpacity } from 'react-native';
 import CTAButton from './CTAButton';
 import FlashDealsPanel from './FlashDealsPanel';
 import { SearchIcon, FireIcon, StarIcon, TrendingUpIcon } from './Icons';
 
 interface HeroProps {
   onShop?: () => void;
+  onSearchPress?: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onShop }) => {
+const Hero: React.FC<HeroProps> = ({ onShop, onSearchPress }) => {
   const handleShop = () => {
     onShop?.();
   };
@@ -62,14 +63,10 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
         <Text style={styles.temuStyleSubtitle}>Shop. Save. Repeat.</Text>
       </View>
 
-      <View style={styles.searchContainer}>
+      <TouchableOpacity style={styles.searchContainer} onPress={onSearchPress} activeOpacity={0.7}>
         <SearchIcon size={18} color="#888" />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search products, brands, deals..."
-          placeholderTextColor="#888"
-        />
-      </View>
+        <Text style={styles.searchPlaceholder}>Search products, brands, deals...</Text>
+      </TouchableOpacity>
 
       <Animated.View style={[styles.temuUrgencyBanner, { transform: [{ scale: bannerPulse }] }]}>
         <View style={styles.urgencyRow}>
@@ -295,6 +292,11 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 36,
     color: 'white',
+    fontSize: 14,
+  },
+  searchPlaceholder: {
+    flex: 1,
+    color: '#888',
     fontSize: 14,
   },
   categoriesSection: {

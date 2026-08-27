@@ -11,9 +11,10 @@ interface ShopPageProps {
   onAddToCart: (product: Product) => void;
   cartCount: number;
   onProductPress: (product: Product) => void;
+  onSearchPress?: () => void;
 }
 
-const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPress }) => {
+const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPress, onSearchPress }) => {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const scrollViewRef = useRef<ScrollView>(null);
@@ -39,7 +40,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
       </View>
 
       <View style={styles.searchSection}>
-        <TouchableOpacity style={styles.searchBar}>
+        <TouchableOpacity style={styles.searchBar} onPress={onSearchPress} activeOpacity={0.7}>
           <SearchIcon size={16} color="#888" />
           <Text style={styles.searchPlaceholder}>Search products</Text>
         </TouchableOpacity>

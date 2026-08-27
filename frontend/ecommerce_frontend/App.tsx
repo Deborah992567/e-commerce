@@ -37,6 +37,8 @@ import ReviewsScreen from './src/components/ReviewsScreen';
 import ReferralScreen from './src/components/ReferralScreen';
 import LoginScreen from './src/components/LoginScreen';
 import ProductDetailScreen from './src/components/ProductDetailScreen';
+import SearchScreen from './src/components/SearchScreen';
+import InfoScreen, { InfoType } from './src/components/InfoScreen';
 import { FireIcon, UserIcon } from './src/components/Icons';
 
 type Tab = 'home' | 'shop' | 'cart' | 'deals' | 'account';
@@ -52,7 +54,9 @@ type Screen =
   | 'reviews'
   | 'referral'
   | 'profile'
-  | 'productDetail';
+  | 'productDetail'
+  | 'search'
+  | 'info';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -110,6 +114,7 @@ function App(): React.ReactElement {
   const [coins, setCoins] = useState(1850);
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [lastOrder, setLastOrder] = useState<any>(null);
+  const [infoType, setInfoType] = useState<InfoType>('contact');
 
   useEffect(() => {
     AsyncStorage.getItem('onboardingComplete').then((val) => {
@@ -148,13 +153,18 @@ function App(): React.ReactElement {
     setScreen(s);
   };
 
+  const handleOpenInfo = (type: InfoType) => {
+    setInfoType(type);
+    goScreen('info');
+  };
+
   const handleOrderSuccessContinue = () => goTab('home');
   const handleOrderSuccessViewOrders = () => goScreen('orderHistory');
 
   // ---- Render main tab content ----
   const renderTabHome = () => (
     <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top, paddingBottom: insets.bottom + 100 }]} showsVerticalScrollIndicator={false}>
-      <Section delay={0}><Hero onShop={handleDealsNow} /></Section>
+      <Section delay={0}><Hero onShop={handleDealsNow} onSearchPress={() => goScreen('search')} /></Section>
       <Divider delay={400} />
       <Section delay={500} style={styles.sectionPad}>
         <View style={styles.ctaSection}>
@@ -178,6 +188,9 @@ function App(): React.ReactElement {
         onGoToWishlist={() => handleOpenProfileSub('wishlist')}
         onGoToNotifications={() => handleOpenProfileSub('profile')}
         onGoToReferral={() => handleOpenProfileSub('referral')}
+        onGoToContact={() => handleOpenInfo('contact')}
+        onGoToFaq={() => handleOpenInfo('faq')}
+        onGoToTerms={() => handleOpenInfo('terms')}
       />
     );
   };
@@ -185,7 +198,7 @@ function App(): React.ReactElement {
   const renderTabContent = () => {
     switch (tab) {
       case 'home': return renderTabHome();
-      case 'shop': return <ShopPage onAddToCart={handleAddToCart} cartCount={totalItems} onProductPress={handleGoToProductDetail} />;
+      case 'shop': return <ShopPage onAddToCart={handleAddToCart} cartCount={totalItems} onProductPress={handleGoToProductDetail} onSearchPress={() => goScreen('search')} />;
       case 'cart': return <CartScreen onBack={() => goTab('shop')} onCheckout={() => goScreen('checkout')} />;
       case 'deals':
         return (
@@ -236,9 +249,13 @@ function App(): React.ReactElement {
       case 'referral':
         return <ReferralScreen onBack={() => goTab('account')} />;
       case 'profile':
-        return <ProfileScreen onGoToOrderHistory={() => handleOpenProfileSub('orderHistory')} onGoToWishlist={() => handleOpenProfileSub('wishlist')} onGoToNotifications={() => handleOpenProfileSub('profile')} onGoToReferral={() => handleOpenProfileSub('referral')} onBack={() => goTab('account')} />;
+        return <ProfileScreen onGoToOrderHistory={() => handleOpenProfileSub('orderHistory')} onGoToWishlist={() => handleOpenProfileSub('wishlist')} onGoToNotifications={() => handleOpenProfileSub('profile')} onGoToReferral={() => handleOpenProfileSub('referral')} onGoToContact={() => handleOpenInfo('contact')} onGoToFaq={() => handleOpenInfo('faq')} onGoToTerms={() => handleOpenInfo('terms')} onBack={() => goTab('account')} />;
       case 'productDetail':
         return <ProductDetailScreen product={selectedProduct} onBack={() => goTab('shop')} />;
+      case 'search':
+        return <SearchScreen onBack={() => goTab('shop')} onProductPress={handleProductPress} />;
+      case 'info':
+        return <InfoScreen type={infoType} onBack={() => goTab('account')} />;
       default:
         return null;
     }

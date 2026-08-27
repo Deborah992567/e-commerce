@@ -12,9 +12,12 @@ interface ProfileScreenProps {
   onGoToWishlist?: () => void;
   onGoToNotifications?: () => void;
   onGoToReferral?: () => void;
+  onGoToContact?: () => void;
+  onGoToFaq?: () => void;
+  onGoToTerms?: () => void;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory, onGoToWishlist, onGoToNotifications, onGoToReferral }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory, onGoToWishlist, onGoToNotifications, onGoToReferral, onGoToContact, onGoToFaq, onGoToTerms }) => {
   const { user, logout } = useAuth();
   const insets = useSafeAreaInsets();
   const [deliveryAddress, setDeliveryAddress] = useState({ street: '123 Main Street', city: 'New York', state: 'NY', zipCode: '10001', country: 'USA' });
@@ -132,11 +135,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
             <Text style={styles.sectionTitle}>Help & Support</Text>
           </View>
           {[
-            { label: 'Contact Us', icon: <PhoneIcon size={18} color="#A0A0A0" /> },
-            { label: 'FAQ', icon: <HelpIcon size={18} color="#A78BFA" /> },
-            { label: 'Terms & Conditions', icon: <ScaleIcon size={18} color="#A0A0A0" /> },
+            { label: 'Contact Us', icon: <PhoneIcon size={18} color="#A0A0A0" />, onPress: onGoToContact },
+            { label: 'FAQ', icon: <HelpIcon size={18} color="#A78BFA" />, onPress: onGoToFaq },
+            { label: 'Terms & Conditions', icon: <ScaleIcon size={18} color="#A0A0A0" />, onPress: onGoToTerms },
           ].map((item) => (
-            <TouchableOpacity key={item.label} style={styles.helpItem}>
+            <TouchableOpacity key={item.label} style={styles.helpItem} onPress={item.onPress}>
               {item.icon}
               <Text style={styles.helpItemText}>{item.label}</Text>
             </TouchableOpacity>
