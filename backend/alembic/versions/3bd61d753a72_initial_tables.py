@@ -30,7 +30,7 @@ def upgrade() -> None:
     op.create_index(op.f('ix_categories_id'), 'categories', ['id'], unique=False)
     op.create_table('discounts',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('code', sa.String(), nullable=False),
+    sa.Column('code', sa.String(length=100), nullable=False),
     sa.Column('value', sa.Float(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.Column('max_uses', sa.Integer(), nullable=True),
@@ -42,9 +42,9 @@ def upgrade() -> None:
     op.create_index(op.f('ix_discounts_id'), 'discounts', ['id'], unique=False)
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
-    sa.Column('password', sa.String(), nullable=False),
-    sa.Column('role', sa.String(), nullable=False),
+    sa.Column('email', sa.String(length=255), nullable=False),
+    sa.Column('password', sa.String(length=255), nullable=False),
+    sa.Column('role', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
@@ -53,7 +53,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('total_amount', sa.Float(), nullable=False),
-    sa.Column('status', sa.String(), nullable=True),
+    sa.Column('status', sa.String(length=50), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -61,8 +61,8 @@ def upgrade() -> None:
     op.create_index(op.f('ix_orders_id'), 'orders', ['id'], unique=False)
     op.create_table('products',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('name', sa.String(length=255), nullable=False),
+    sa.Column('description', sa.String(length=2000), nullable=True),
     sa.Column('price', sa.Float(), nullable=False),
     sa.Column('stock', sa.Integer(), nullable=False),
     sa.Column('avg_rating', sa.Float(), nullable=True),
@@ -76,7 +76,7 @@ def upgrade() -> None:
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('product_id', sa.Integer(), nullable=False),
     sa.Column('rating', sa.Float(), nullable=False),
-    sa.Column('comment', sa.String(), nullable=True),
+    sa.Column('comment', sa.String(length=2000), nullable=True),
     sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')

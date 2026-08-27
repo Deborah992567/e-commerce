@@ -6,7 +6,7 @@ class Discount(Base):
     __tablename__ = "discounts"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String, unique=True, nullable=False)
+    code = Column(String(100), unique=True, nullable=False)
     percentage = Column(Float, nullable=False)        # discount percentage
     is_active = Column(Boolean, default=True)
     max_uses = Column(Integer, default=1)
