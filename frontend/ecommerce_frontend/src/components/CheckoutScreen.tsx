@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, TextInput, Animated, Easing } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, TextInput, Animated, Easing, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
 import { ChevronLeftIcon, CheckIcon, CreditCardIcon, WalletIcon } from './Icons';
@@ -16,6 +16,11 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderNotes, setOrderNotes] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardName, setCardName] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvc, setCardCvc] = useState('');
+  const [processingMessage, setProcessingMessage] = useState('Contacting payment gateway...');
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -37,14 +42,40 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
   const tax = totalPrice * 0.08;
   const finalTotal = totalPrice + shippingCost + tax;
 
+  const validateCard = () => {
+    const digitsOnly = cardNumber.replace(/\s/g, '');
+    if (!digitsOnly) return false;
+    if (digitsOnly.length < 12) return false;
+    if (!/^\d{4}\/\d{2}$/.test(cardExpiry)) return false;
+    if (cardCvc.length < 3) return false;
+    return true;
+  };
+
   const handlePlaceOrder = async () => {
     if (!selectedPaymentMethod) { Alert.alert('Payment Required', 'Please select a payment method'); return; }
     if (!selectedAddress) { Alert.alert('Address Required', 'Please select a delivery address'); return; }
+    if (selectedPaymentMethod === '1' && !validateCard()) {
+      Alert.alert('Card Details', 'Please enter valid card details (number, MM/YY expiry, CVC)');
+      return;
+    }
     setIsProcessing(true);
-    setTimeout(() => { setIsProcessing(false); clearCart(); onOrderSuccess?.(); }, 2000);
+    setProcessingMessage('Contacting payment gateway...');
+    await new Promise<void>((r) => setTimeout(() => r(), 900));
+    setProcessingMessage('Authorizing your payment...');
+    await new Promise<void>((r) => setTimeout(() => r(), 900));
+    setProcessingMessage('Payment successful!');
+    await new Promise<void>((r) => setTimeout(() => r(), 600));
+    setIsProcessing(false);
+    clearCart();
+    onOrderSuccess?.();
   };
 
   const formatCurrency = (value: number) => `₦${value.toFixed(2)}`;
+
+  const formatCardNumber = (text: string) => {
+    const digits = text.replace(/\D/g, '').slice(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+  };
 
   return (
     <Animated.View style={[styles.container, { paddingTop: insets.top + 10, opacity: fadeAnim }]}>
@@ -114,6 +145,49 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
               {selectedPaymentMethod === method.id && <CheckIcon size={18} color="#FF5722" />}
             </TouchableOpacity>
           ))}
+
+          {selectedPaymentMethod === '1' && (
+            <View style={styles.cardForm}>
+              <Text style={styles.cardFormTitle}>Enter Card Details</Text>
+              <TextInput
+                style={styles.cardInput}
+                value={cardNumber}
+                onChangeText={(t) => setCardNumber(formatCardNumber(t))}
+                placeholder="Card Number"
+                placeholderTextColor="#A0A0A0"
+                keyboardType="number-pad"
+              />
+              <TextInput
+                style={styles.cardInput}
+                value={cardName}
+                onChangeText={setCardName}
+                placeholder="Cardholder Name"
+                placeholderTextColor="#A0A0A0"
+                autoCapitalize="words"
+              />
+              <View style={styles.cardRow}>
+                <TextInput
+                  style={[styles.cardInput, styles.cardInputHalf]}
+                  value={cardExpiry}
+                  onChangeText={(t) => setCardExpiry(t)}
+                  placeholder="MM/YY"
+                  placeholderTextColor="#A0A0A0"
+                  keyboardType="number-pad"
+                  maxLength={5}
+                />
+                <TextInput
+                  style={[styles.cardInput, styles.cardInputHalf]}
+                  value={cardCvc}
+                  onChangeText={(t) => setCardCvc(t.replace(/\D/g, '').slice(0, 3))}
+                  placeholder="CVC"
+                  placeholderTextColor="#A0A0A0"
+                  keyboardType="number-pad"
+                  secureTextEntry
+                />
+              </View>
+              <Text style={styles.cardNote}>Simulated payment — no real card is charged.</Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.section}>
@@ -133,6 +207,17 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
           <Text style={styles.placeOrderText}>{isProcessing ? 'Processing...' : 'Place Order'}</Text>
         </TouchableOpacity>
       </View>
+
+      {isProcessing && (
+        <View style={styles.processingOverlay}>
+          <View style={styles.processingBox}>
+            <ActivityIndicator size="large" color="#FF5722" />
+            <Text style={styles.processingTitle}>Processing Payment</Text>
+            <Text style={styles.processingMessage}>{processingMessage}</Text>
+            <Text style={styles.processingAmount}>{formatCurrency(finalTotal)}</Text>
+          </View>
+        </View>
+      )}
     </Animated.View>
   );
 };
@@ -179,6 +264,17 @@ const styles = StyleSheet.create({
   placeOrderBtn: { flex: 2, backgroundColor: '#FF5722', borderRadius: 12, paddingVertical: 14, alignItems: 'center', justifyContent: 'center' },
   placeOrderBtnDisabled: { backgroundColor: '#A0A0A0', opacity: 0.6 },
   placeOrderText: { color: '#FFF', fontWeight: '700', fontSize: 16 },
+  cardForm: { marginTop: 8, backgroundColor: '#18181F', borderRadius: 12, padding: 16 },
+  cardFormTitle: { color: '#FFF', fontSize: 15, fontWeight: '600', marginBottom: 12 },
+  cardInput: { backgroundColor: '#23232B', color: '#FFF', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 12, marginBottom: 10, borderWidth: 1, borderColor: '#2D2D38' },
+  cardRow: { flexDirection: 'row', gap: 10 },
+  cardInputHalf: { flex: 1 },
+  cardNote: { color: '#A0A0A0', fontSize: 12, fontStyle: 'italic', marginTop: 4 },
+  processingOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(13,13,18,0.92)', justifyContent: 'center', alignItems: 'center', zIndex: 20 },
+  processingBox: { backgroundColor: '#23232B', borderRadius: 16, padding: 32, alignItems: 'center', maxWidth: 300, width: '80%' },
+  processingTitle: { color: '#FFF', fontSize: 20, fontWeight: '700', marginTop: 16 },
+  processingMessage: { color: '#A0A0A0', fontSize: 15, marginTop: 8, textAlign: 'center' },
+  processingAmount: { color: '#FF5722', fontSize: 24, fontWeight: '700', marginTop: 16 },
 });
 
 export default CheckoutScreen;

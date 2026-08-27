@@ -1,29 +1,58 @@
 /**
  * Dez Collection — Temu-Style E-Commerce App
+ * Navigation: 5 bottom tabs + a full-screen secondary screen stack
+ * (checkout, order success, order history, order detail, wishlist, reviews, referral, profile, product detail)
  */
 import React, { useRef, useEffect, useState } from 'react';
 import { StatusBar, StyleSheet, ScrollView, View, Animated, Easing, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { useCart } from './src/contexts/CartContext';
+import { useAuth } from './src/contexts/AuthContext';
+import { useNotifications } from './src/contexts/NotificationContext';
+
 import OnboardingScreen from './src/components/OnboardingScreen';
 import Hero from './src/components/Hero';
 import AnimatedCart from './src/components/AnimatedCart';
 import FeaturedProducts from './src/components/FeaturedProducts';
-import GamificationPanel from './src/components/GamificationPanel';
-import SpinToWin from './src/components/SpinToWin';
 import BottomTabNavigator from './src/components/BottomTabNavigator';
 import CTAButton from './src/components/CTAButton';
 import FlashDealsPanel from './src/components/FlashDealsPanel';
 import ClearancePanel from './src/components/ClearancePanel';
 import CoinsBalance from './src/components/CoinsBalance';
 import ShippingIndicator from './src/components/ShippingIndicator';
-import TemuAliExpressProductGrid from './src/components/TemuAliExpressProductGrid';
+import GamificationPanel from './src/components/GamificationPanel';
+import SpinToWin from './src/components/SpinToWin';
 import ShopPage from './src/components/ShopPage';
 import CartScreen from './src/components/CartScreen';
+import CheckoutScreen from './src/components/CheckoutScreen';
+import OrderSuccessScreen from './src/components/OrderSuccessScreen';
+import OrderProcessingScreen from './src/components/OrderProcessingScreen';
+import ProfileScreen from './src/components/ProfileScreen';
+import OrderHistoryScreen from './src/components/OrderHistoryScreen';
+import OrderDetailScreen from './src/components/OrderDetailScreen';
+import WishlistScreen from './src/components/WishlistScreen';
+import ReviewsScreen from './src/components/ReviewsScreen';
+import ReferralScreen from './src/components/ReferralScreen';
+import LoginScreen from './src/components/LoginScreen';
 import ProductDetailScreen from './src/components/ProductDetailScreen';
-import { useCart } from './src/contexts/CartContext';
-import { FireIcon, MailIcon, BellIcon, ShieldIcon, PhoneIcon, HelpIcon, ScaleIcon, UserIcon, TagIcon } from './src/components/Icons';
+import { FireIcon, UserIcon } from './src/components/Icons';
+
+type Tab = 'home' | 'shop' | 'cart' | 'deals' | 'account';
+type Screen =
+  | null
+  | 'login'
+  | 'checkout'
+  | 'orderProcessing'
+  | 'orderSuccess'
+  | 'orderHistory'
+  | 'orderDetail'
+  | 'wishlist'
+  | 'reviews'
+  | 'referral'
+  | 'profile'
+  | 'productDetail';
 
 interface SectionProps {
   children: React.ReactNode;
@@ -69,22 +98,18 @@ const Divider: React.FC<{ delay?: number }> = ({ delay = 0 }) => {
   );
 };
 
-const CTASection: React.FC<{ onShopNow: () => void; onViewCart: () => void; onDeals?: () => void }> = ({ onShopNow, onViewCart, onDeals }) => (
-  <View style={styles.ctaSection}>
-    <CTAButton title="Shop Now" onPress={onShopNow} color="#FF5722" size="lg" icon="→" />
-    <CTAButton title="View Cart" onPress={onViewCart} color="#4ECDC4" variant="outline" size="lg" />
-    {onDeals && <CTAButton title="Deals" onPress={onDeals} color="#FFD700" variant="outline" size="lg" />}
-  </View>
-);
-
 function App(): React.ReactElement {
   const insets = useSafeAreaInsets();
-  const { totalItems, addToCart } = useCart();
-  const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'cart' | 'productDetail' | 'deals' | 'account'>('home');
+  const { totalItems, addToCart, clearCart, totalPrice } = useCart();
+  const { unreadCount } = useNotifications();
+  const [tab, setTab] = useState<Tab>('home');
+  const [screen, setScreen] = useState<Screen>(null);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [notificationCount] = useState(0);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [reviewsProduct, setReviewsProduct] = useState<any>(null);
   const [coins, setCoins] = useState(1850);
   const [showOnboarding, setShowOnboarding] = useState(true);
+  const [lastOrder, setLastOrder] = useState<any>(null);
 
   useEffect(() => {
     AsyncStorage.getItem('onboardingComplete').then((val) => {
@@ -97,42 +122,77 @@ function App(): React.ReactElement {
     setShowOnboarding(false);
   };
 
-  const handleShopNow = () => setActiveTab('shop');
-  const handleDealsNow = () => setActiveTab('deals');
-  const handleViewCart = () => setActiveTab('shop');
+  // ---- Navigation helpers ----
+  const goTab = (t: Tab) => { setScreen(null); setTab(t); };
+  const goScreen = (s: Screen) => setScreen(s);
+
+  const handleShopNow = () => goTab('shop');
+  const handleDealsNow = () => goTab('deals');
+  const handleViewCart = () => goTab('cart');
   const handleAddToCart = (product: any) => addToCart(product);
-  const handleGoToProductDetail = (product: any) => { setSelectedProduct(product); setActiveTab('productDetail'); };
-  const handleClaimReward = (rewardCoins: number) => setCoins((prev) => prev + rewardCoins);
+
+  const handleProductPress = (product: any) => {
+    setSelectedProduct(product);
+    goScreen('productDetail');
+  };
+
+  const handleGoToProductDetail = (product: any) => handleProductPress(product);
+
+  const handleCheckoutComplete = () => {
+    setLastOrder({ id: `EC-${Date.now().toString().slice(-6)}`, date: new Date().toISOString() });
+    clearCart();
+    goScreen('orderProcessing');
+  };
+
+  const handleOpenProfileSub = (s: Screen) => {
+    setScreen(s);
+  };
+
+  const handleOrderSuccessContinue = () => goTab('home');
+  const handleOrderSuccessViewOrders = () => goScreen('orderHistory');
+
+  // ---- Render main tab content ----
+  const renderTabHome = () => (
+    <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top, paddingBottom: insets.bottom + 100 }]} showsVerticalScrollIndicator={false}>
+      <Section delay={0}><Hero onShop={handleDealsNow} /></Section>
+      <Divider delay={400} />
+      <Section delay={500} style={styles.sectionPad}>
+        <View style={styles.ctaSection}>
+          <CTAButton title="Shop Now" onPress={handleShopNow} color="#FF5722" size="lg" icon="→" />
+          <CTAButton title="View Cart" onPress={handleViewCart} color="#4ECDC4" variant="outline" size="lg" />
+          <CTAButton title="Deals" onPress={handleDealsNow} color="#FFD700" variant="outline" size="lg" />
+        </View>
+      </Section>
+      <Divider delay={700} />
+      <Section delay={800} style={styles.sectionPad}><AnimatedCart count={totalItems} /></Section>
+      <Divider delay={1000} />
+      <Section delay={1100} style={styles.sectionPad}><FeaturedProducts onAddToCart={handleAddToCart} /></Section>
+    </ScrollView>
+  );
+
+  const renderTabAccount = () => {
+    if (screen === 'profile') return null;
+    return (
+      <ProfileScreen
+        onGoToOrderHistory={() => handleOpenProfileSub('orderHistory')}
+        onGoToWishlist={() => handleOpenProfileSub('wishlist')}
+        onGoToNotifications={() => handleOpenProfileSub('profile')}
+        onGoToReferral={() => handleOpenProfileSub('referral')}
+      />
+    );
+  };
 
   const renderTabContent = () => {
-    switch (activeTab) {
-      case 'home':
-        return (
-          <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top, paddingBottom: insets.bottom + 100 }]} showsVerticalScrollIndicator={false}>
-            <Section delay={0}><Hero onShop={handleDealsNow} /></Section>
-            <Divider delay={400} />
-            <Section delay={500} style={styles.sectionPad}><CTASection onShopNow={handleShopNow} onViewCart={handleViewCart} onDeals={handleDealsNow} /></Section>
-            <Divider delay={700} />
-            <Section delay={800} style={styles.sectionPad}><AnimatedCart count={totalItems} /></Section>
-            <Divider delay={1000} />
-            <Section delay={1100} style={styles.sectionPad}><FeaturedProducts onAddToCart={handleAddToCart} /></Section>
-          </ScrollView>
-        );
-      case 'shop':
-        return <ShopPage onAddToCart={handleAddToCart} cartCount={totalItems} onProductPress={handleGoToProductDetail} />;
-      case 'cart':
-        return <CartScreen onBack={() => setActiveTab('shop')} onCheckout={() => setActiveTab('shop')} />;
-      case 'productDetail':
-        return <ProductDetailScreen product={selectedProduct} onBack={() => setActiveTab('shop')} />;
+    switch (tab) {
+      case 'home': return renderTabHome();
+      case 'shop': return <ShopPage onAddToCart={handleAddToCart} cartCount={totalItems} onProductPress={handleGoToProductDetail} />;
+      case 'cart': return <CartScreen onBack={() => goTab('shop')} onCheckout={() => goScreen('checkout')} />;
       case 'deals':
         return (
           <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top, paddingBottom: insets.bottom + 100 }]} showsVerticalScrollIndicator={false}>
             <Section delay={0} style={styles.sectionPad}>
               <View style={styles.tabHeaderContainer}>
-                <View style={styles.tabHeaderRow}>
-                  <FireIcon size={28} color="#FF5722" />
-                  <Text style={styles.tabHeaderTitle}>Flash Deals & Rewards</Text>
-                </View>
+                <View style={styles.tabHeaderRow}><FireIcon size={28} color="#FF5722" /><Text style={styles.tabHeaderTitle}>Flash Deals & Rewards</Text></View>
                 <Text style={styles.tabHeaderSubtitle}>Spin, streaks, badges, refer & earn</Text>
               </View>
             </Section>
@@ -142,67 +202,63 @@ function App(): React.ReactElement {
             <Divider delay={500} />
             <Section delay={600} style={styles.sectionPad}><ClearancePanel onClearancePress={(id) => console.log('Clearance item:', id)} /></Section>
             <Divider delay={800} />
-            <Section delay={900} style={styles.sectionPad}><SpinToWin onPrizeWon={(prize) => console.log('Prize won:', prize)} /></Section>
+            <Section delay={900} style={styles.sectionPad}><SpinToWin onPrizeWon={(prize) => { if (typeof prize.discount === 'string' && prize.discount.includes('₦')) { setCoins((c) => c + 500); } else { setCoins((c) => c + 50); } }} /></Section>
             <Divider delay={1100} />
-            <Section delay={1200} style={styles.sectionPad}><GamificationPanel onClaimReward={handleClaimReward} /></Section>
+            <Section delay={1200} style={styles.sectionPad}><ShippingIndicator subtotal={totalPrice} /></Section>
+            <Divider delay={1300} />
+            <Section delay={1400} style={styles.sectionPad}><GamificationPanel onClaimReward={(c) => setCoins((prev) => prev + c)} /></Section>
           </ScrollView>
         );
-      case 'account':
-        return (
-          <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top, paddingBottom: insets.bottom + 100 }]} showsVerticalScrollIndicator={false}>
-            <Section delay={0} style={styles.sectionPad}>
-              <View style={styles.tabHeaderContainer}>
-                <View style={styles.tabHeaderRow}>
-                  <UserIcon size={28} color="#A78BFA" />
-                  <Text style={styles.tabHeaderTitle}>My Account</Text>
-                </View>
-                <Text style={styles.tabHeaderSubtitle}>Manage your profile, orders and settings</Text>
-              </View>
-            </Section>
-            <Divider delay={200} />
-            <Section delay={300} style={styles.sectionPad}>
-              <View style={styles.accountSection}>
-                <View style={styles.accountCard}>
-                  <View style={styles.accountCardTitleRow}>
-                    <MailIcon size={18} color="#E8C97A" />
-                    <Text style={styles.accountCardTitle}>Account Settings</Text>
-                  </View>
-                  <View style={styles.accountCardItem}><MailIcon size={16} color="#4ECDC4" /><Text style={styles.accountCardItemText}>Email & Password</Text></View>
-                  <View style={styles.accountCardItem}><BellIcon size={16} color="#FFD700" /><Text style={styles.accountCardItemText}>Notifications</Text></View>
-                  <View style={[styles.accountCardItem, { borderBottomWidth: 0 }]}><ShieldIcon size={16} color="#4ECDC4" /><Text style={styles.accountCardItemText}>Privacy & Security</Text></View>
-                </View>
-              </View>
-            </Section>
-            <Divider delay={500} />
-            <Section delay={600} style={styles.sectionPad}>
-              <View style={styles.accountSection}>
-                <View style={styles.accountCard}>
-                  <View style={styles.accountCardTitleRow}>
-                    <HelpIcon size={18} color="#A78BFA" />
-                    <Text style={styles.accountCardTitle}>Help & Support</Text>
-                  </View>
-                  <View style={styles.accountCardItem}><PhoneIcon size={16} color="#4ECDC4" /><Text style={styles.accountCardItemText}>Contact Us</Text></View>
-                  <View style={styles.accountCardItem}><HelpIcon size={16} color="#A78BFA" /><Text style={styles.accountCardItemText}>FAQ</Text></View>
-                  <View style={[styles.accountCardItem, { borderBottomWidth: 0 }]}><ScaleIcon size={16} color="#A0A0A0" /><Text style={styles.accountCardItemText}>Terms & Conditions</Text></View>
-                </View>
-              </View>
-            </Section>
-          </ScrollView>
-        );
+      case 'account': return renderTabAccount();
+      default: return null;
+    }
+  };
+
+  // ---- Render full-screen secondary screens ----
+  const renderSecondaryScreen = () => {
+    switch (screen) {
+      case 'login':
+        return <LoginScreen onBack={() => goTab('account')} />;
+      case 'checkout':
+        return <CheckoutScreen onBack={() => goTab('cart')} onOrderSuccess={handleCheckoutComplete} />;
+      case 'orderSuccess':
+        return <OrderSuccessScreen onContinueShopping={handleOrderSuccessContinue} onViewOrders={handleOrderSuccessViewOrders} />;
+      case 'orderProcessing':
+        return <OrderProcessingScreen onComplete={() => goScreen('orderSuccess')} orderId={lastOrder?.id} />;
+      case 'orderHistory':
+        return <OrderHistoryScreen onBack={() => goTab('account')} onViewDetails={(order) => { setSelectedOrder(order); goScreen('orderDetail'); }} />;
+      case 'orderDetail':
+        return <OrderDetailScreen order={selectedOrder} onBack={() => goScreen('orderHistory')} />;
+      case 'wishlist':
+        return <WishlistScreen onBack={() => goTab('account')} onAddToCart={undefined} />;
+      case 'reviews':
+        return <ReviewsScreen productId={reviewsProduct?.id ?? 1} productName={reviewsProduct?.name ?? 'Product'} onClose={() => goTab('account')} />;
+      case 'referral':
+        return <ReferralScreen onBack={() => goTab('account')} />;
+      case 'profile':
+        return <ProfileScreen onGoToOrderHistory={() => handleOpenProfileSub('orderHistory')} onGoToWishlist={() => handleOpenProfileSub('wishlist')} onGoToNotifications={() => handleOpenProfileSub('profile')} onGoToReferral={() => handleOpenProfileSub('referral')} onBack={() => goTab('account')} />;
+      case 'productDetail':
+        return <ProductDetailScreen product={selectedProduct} onBack={() => goTab('shop')} />;
       default:
         return null;
     }
   };
+
+  const secondaryScreen = renderSecondaryScreen();
 
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="#0D0D12" />
       {showOnboarding ? (
         <OnboardingScreen onComplete={handleOnboardingComplete} />
+      ) : secondaryScreen ? (
+        <>
+          {secondaryScreen}
+        </>
       ) : (
         <>
           {renderTabContent()}
-          <BottomTabNavigator activeTab={activeTab} onTabChange={(tab: string) => setActiveTab(tab as any)} cartCount={totalItems} notificationCount={notificationCount} />
+          <BottomTabNavigator activeTab={tab} onTabChange={(t: string) => goTab(t as Tab)} cartCount={totalItems} notificationCount={unreadCount} />
         </>
       )}
     </View>
@@ -222,12 +278,6 @@ const styles = StyleSheet.create({
   tabHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
   tabHeaderTitle: { fontSize: 26, fontWeight: 'bold', color: '#FFF', textAlign: 'center' },
   tabHeaderSubtitle: { fontSize: 14, color: '#A0A0A0', textAlign: 'center' },
-  accountSection: { paddingHorizontal: 20 },
-  accountCard: { backgroundColor: '#23232B', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#2D2D38' },
-  accountCardTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  accountCardTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF' },
-  accountCardItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, paddingHorizontal: 4, borderBottomWidth: 1, borderBottomColor: '#2D2D3820' },
-  accountCardItemText: { fontSize: 14, color: '#A0A0A0', fontWeight: '500' },
 });
 
 export default App;
