@@ -4,7 +4,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { StatusBar, StyleSheet, ScrollView, View, Animated, Easing, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import OnboardingScreen from './src/components/OnboardingScreen';
 import Hero from './src/components/Hero';
 import AnimatedCart from './src/components/AnimatedCart';
 import FeaturedProducts from './src/components/FeaturedProducts';
@@ -82,6 +84,18 @@ function App(): React.ReactElement {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [notificationCount] = useState(0);
   const [coins, setCoins] = useState(1850);
+  const [showOnboarding, setShowOnboarding] = useState(true);
+
+  useEffect(() => {
+    AsyncStorage.getItem('onboardingComplete').then((val) => {
+      if (val === 'true') setShowOnboarding(false);
+    });
+  }, []);
+
+  const handleOnboardingComplete = () => {
+    AsyncStorage.setItem('onboardingComplete', 'true');
+    setShowOnboarding(false);
+  };
 
   const handleShopNow = () => setActiveTab('shop');
   const handleDealsNow = () => setActiveTab('deals');
@@ -183,8 +197,14 @@ function App(): React.ReactElement {
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="#0D0D12" />
-      {renderTabContent()}
-      <BottomTabNavigator activeTab={activeTab} onTabChange={(tab: string) => setActiveTab(tab as any)} cartCount={totalItems} notificationCount={notificationCount} />
+      {showOnboarding ? (
+        <OnboardingScreen onComplete={handleOnboardingComplete} />
+      ) : (
+        <>
+          {renderTabContent()}
+          <BottomTabNavigator activeTab={activeTab} onTabChange={(tab: string) => setActiveTab(tab as any)} cartCount={totalItems} notificationCount={notificationCount} />
+        </>
+      )}
     </View>
   );
 }
