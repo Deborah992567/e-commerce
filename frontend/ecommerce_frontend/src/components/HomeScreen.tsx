@@ -9,6 +9,7 @@ import GamificationPanel from './GamificationPanel';
 import SpinToWin from './SpinToWin';
 import CTAButton from './CTAButton';
 import ShippingIndicator from './ShippingIndicator';
+import WelcomeBanner from './WelcomeBanner';
 import { FireIcon, TagIcon, TruckIcon } from './Icons';
 
 interface HomeScreenProps {
@@ -72,6 +73,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onShopNow, onViewCart }) => {
       >
         <Section delay={0}>
           <Hero onShop={onShopNow} />
+        </Section>
+
+        <Section delay={200}>
+          <WelcomeBanner />
         </Section>
 
         <Divider delay={400} />
