@@ -166,7 +166,7 @@ function App(): React.ReactElement {
       <Divider delay={700} />
       <Section delay={800} style={styles.sectionPad}><AnimatedCart count={totalItems} /></Section>
       <Divider delay={1000} />
-      <Section delay={1100} style={styles.sectionPad}><FeaturedProducts onAddToCart={handleAddToCart} /></Section>
+      <Section delay={1100} style={styles.sectionPad}><FeaturedProducts onAddToCart={handleAddToCart} onProductPress={handleProductPress} /></Section>
     </ScrollView>
   );
 

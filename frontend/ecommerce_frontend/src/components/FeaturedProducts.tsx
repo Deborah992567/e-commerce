@@ -13,20 +13,21 @@ const PRODUCTS = [
 const FILTERS = ['All', 'Recently Viewed', 'Footwear', 'Outerwear', 'Accessories', 'Apparel'];
 
 interface FeaturedProductsProps {
-  onAddToCart: (id: number) => void;
+  onAddToCart: (product: any) => void;
+  onProductPress?: (product: any) => void;
 }
 
-const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
+const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart, onProductPress }) => {
   const [active, setActive] = useState('All');
   const [added, setAdded] = useState<number[]>([]);
   const [recentlyViewed, setRecentlyViewed] = useState<number[]>([]);
 
   const filtered = active === 'All' ? PRODUCTS : active === 'Recently Viewed' ? PRODUCTS.filter((p) => recentlyViewed.includes(p.id)) : PRODUCTS.filter((p) => p.category === active);
 
-  const handleAdd = (id: number) => {
-    setAdded((prev) => [...prev, id]);
-    onAddToCart(id);
-    setTimeout(() => setAdded((prev) => prev.filter((x) => x !== id)), 1200);
+  const handleAdd = (p: typeof PRODUCTS[number]) => {
+    setAdded((prev) => [...prev, p.id]);
+    onAddToCart(p);
+    setTimeout(() => setAdded((prev) => prev.filter((x) => x !== p.id)), 1200);
   };
 
   return (
@@ -47,7 +48,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
 
       <View style={styles.fpGrid}>
         {filtered.map((p) => (
-          <TouchableOpacity style={[styles.fpCard, { borderColor: p.color + '40' }]} key={p.id} activeOpacity={0.85}>
+          <TouchableOpacity style={[styles.fpCard, { borderColor: p.color + '40' }]} key={p.id} activeOpacity={0.85} onPress={() => onProductPress?.(p)}>
             <View style={styles.fpImgWrap}>
               <Image source={{ uri: p.img }} style={styles.fpImg} />
               {p.badge && (
@@ -84,7 +85,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onAddToCart }) => {
                   <Text style={styles.fpPrice}>₦{p.price}</Text>
                   {p.oldPrice && <Text style={styles.fpOld}>₦{p.oldPrice}</Text>}
                 </View>
-                <TouchableOpacity style={[styles.fpAdd, added.includes(p.id) && styles.fpAddDone]} onPress={() => handleAdd(p.id)}>
+                <TouchableOpacity style={[styles.fpAdd, added.includes(p.id) && styles.fpAddDone]} onPress={() => handleAdd(p)}>
                   <Text style={styles.fpAddText}>{added.includes(p.id) ? '✓' : '+'}</Text>
                 </TouchableOpacity>
               </View>
