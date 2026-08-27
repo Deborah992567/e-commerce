@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated as RNAnimated } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, useAnimatedScrollHandler, interpolate, Extrapolation } from 'react-native-reanimated';
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,22 +35,22 @@ const OnboardingStepCard: React.FC<{ step: OnboardingStep; index: number; scroll
 
   return (
     <View style={[styles.stepContainer, { width }]}>
-      <Animated.View style={[styles.emojiContainer, { transform: [{ scale: emojiScale }, { rotate: emojiRotate }] }]}>
+      <RNAnimated.View style={[styles.emojiContainer, { transform: [{ scale: emojiScale }, { rotate: emojiRotate }] }]}>
         <Text style={styles.emoji}>{step.emoji}</Text>
         <View style={[styles.emojiGlow, { backgroundColor: step.color + '20', shadowColor: step.color }]} />
-      </Animated.View>
-      <Animated.View style={[styles.textContainer, { opacity, transform: [{ scale }, { translateY: titleTranslateY }] }]}>
+      </RNAnimated.View>
+      <RNAnimated.View style={[styles.textContainer, { opacity, transform: [{ scale }, { translateY: titleTranslateY }] }]}>
         <Text style={[styles.title, { color: step.color }]}>{step.title}</Text>
-      </Animated.View>
-      <Animated.View style={[styles.textContainer, { opacity: subtitleOpacity }]}>
+      </RNAnimated.View>
+      <RNAnimated.View style={[styles.textContainer, { opacity: subtitleOpacity }]}>
         <Text style={styles.subtitle}>{step.subtitle}</Text>
-      </Animated.View>
+      </RNAnimated.View>
       <View style={styles.bulletRow}>
         {STEPS.map((_, i) => {
           const bulletScale = scrollX.interpolate({ inputRange: [(i - 1) * width, i * width, (i + 1) * width], outputRange: [1, 1.4, 1], extrapolate: 'clamp' });
           const bulletOpacity = scrollX.interpolate({ inputRange: [(i - 1) * width, i * width, (i + 1) * width], outputRange: [0.3, 1, 0.3], extrapolate: 'clamp' });
           return (
-            <Animated.View
+            <RNAnimated.View
               key={i}
               style={[
                 styles.bullet,
