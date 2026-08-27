@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Product } from '../types';
 import { StarIcon, TruckIcon, TagIcon, FireIcon } from './Icons';
 import { SkeletonProductCard } from './SkeletonLoader';
@@ -100,31 +100,23 @@ const TemuAliExpressProductGrid: React.FC<TemuAliExpressProductGridProps> = ({ o
     );
   }
 
-  const renderProduct = ({ item }: { item: Product }) => (
-    <ProductCard product={item} onAddToCart={onAddToCart} onProductPress={onProductPress} />
-  );
-
   return (
     <View style={styles.container}>
-      <FlatList
-        data={SAMPLE_PRODUCTS}
-        renderItem={renderProduct}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContainer}
-      />
+      <View style={styles.listContainer}>
+        {SAMPLE_PRODUCTS.map((item) => (
+          <ProductCard key={item.id.toString()} product={item} onAddToCart={onAddToCart} onProductPress={onProductPress} />
+        ))}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  listContainer: { padding: 8 },
+  listContainer: { padding: 8, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   row: { justifyContent: 'space-between', marginBottom: 16 },
   productCard: {
-    backgroundColor: '#23232B', borderRadius: 12, width: '48%', borderWidth: 1, borderColor: '#2D2D38', overflow: 'hidden',
+    backgroundColor: '#23232B', borderRadius: 12, width: '48%', borderWidth: 1, borderColor: '#2D2D38', overflow: 'hidden', marginBottom: 12,
   },
   imageContainer: { position: 'relative', height: 140 },
   productImage: { width: '100%', height: '100%', resizeMode: 'cover' },

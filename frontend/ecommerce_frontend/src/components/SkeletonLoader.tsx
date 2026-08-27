@@ -27,7 +27,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ width = '100%', height 
     outputRange: [0.15, 0.3, 0.15],
   });
 
-  return <Animated.View style={[styles.skeleton, { width, height, borderRadius, opacity }, style}]} />;
+  return <Animated.View style={[styles.skeleton, { width, height, borderRadius, opacity }, style]} />;
 };
 
 const SkeletonProductCard: React.FC = () => (
