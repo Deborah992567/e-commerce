@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     color: '#FF5722',
     fontSize: 14,
     fontWeight: 'bold',
-    whiteSpace: 'nowrap',
   },
 });
 

@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useWishlist } from '../contexts/WishlistContext';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { BellIcon } from './Icons';
-import { NotificationDot } from './NotificationDot';
+import NotificationDot from './NotificationDot';
 import SwipeableCard from './SwipeableCard';
 import AnimatedCard from './AnimatedCard';
 
@@ -22,7 +22,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 }) => {
   return (
     <SwipeableCard
-      onSwipe={() => {
+      onSwipeLeft={() => {
         onPress();
       }}
     >

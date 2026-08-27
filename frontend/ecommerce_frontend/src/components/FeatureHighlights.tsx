@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, Easing, TouchableOpacity } from 'react-native';
-import { SparkleIcon, TagIcon, TruckIcon, GiftIcon } from './Icons';
+import { CoinsIcon, TagIcon, TruckIcon, GiftIcon } from './Icons';
 
 interface FeatureHighlightProps {
   icon: React.ReactNode;
@@ -38,7 +38,7 @@ const FeatureHighlights: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Why Shop With Us?</Text>
-      <FeatureHighlight icon={<SparkleIcon size={20} color="#FFD700" />} title="Best Prices" description="Unbeatable prices on every item" color="#FFD700" delay={0} />
+      <FeatureHighlight icon={<CoinsIcon size={20} color="#FFD700" />} title="Best Prices" description="Unbeatable prices on every item" color="#FFD700" delay={0} />
       <FeatureHighlight icon={<TruckIcon size={20} color="#4ECDC4" />} title="Free Delivery" description="Free shipping on orders over ₦5,000" color="#4ECDC4" delay={150} />
       <FeatureHighlight icon={<GiftIcon size={20} color="#FF6B9D" />} title="Daily Rewards" description="Spin, earn coins, and claim prizes" color="#FF6B9D" delay={300} />
       <FeatureHighlight icon={<TagIcon size={20} color="#7C4DFF" />} title="Exclusive Deals" description="Flash sales and clearance events" color="#7C4DFF" delay={450} />

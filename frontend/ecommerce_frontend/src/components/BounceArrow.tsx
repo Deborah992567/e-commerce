@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
 
 interface BounceArrowProps {
@@ -20,15 +20,12 @@ const BounceArrow: React.FC<BounceArrowProps> = ({ direction = 'down', color = '
   }, [translate, direction]);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const transforms: object[] = [];
     if (direction === 'right') {
-      transforms.push({ translateX: translate.value });
+      return { transform: [{ translateX: translate.value }] };
     } else if (direction === 'down') {
-      transforms.push({ translateY: translate.value });
-    } else {
-      transforms.push({ translateY: -translate.value });
+      return { transform: [{ translateY: translate.value }] };
     }
-    return { transform: transforms };
+    return { transform: [{ translateY: -translate.value }] };
   });
 
   const arrows: Record<string, string> = { down: '▼', up: '▲', right: '▶' };

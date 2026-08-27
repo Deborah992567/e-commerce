@@ -5,10 +5,13 @@ import FlashDealsPanel from './FlashDealsPanel';
 import { SearchIcon, FireIcon, StarIcon, TrendingUpIcon } from './Icons';
 
 interface HeroProps {
-  onShop: () => void;
+  onShop?: () => void;
 }
 
 const Hero: React.FC<HeroProps> = ({ onShop }) => {
+  const handleShop = () => {
+    onShop?.();
+  };
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(40)).current;
   const bannerPulse = useRef(new Animated.Value(1)).current;
@@ -78,8 +81,8 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
 
       <View style={styles.temuCTASection}>
         <CTAButton
-          label="Shop Now"
-          onClick={onShop}
+          title="Shop Now"
+          onPress={handleShop}
           variant="primary"
           color="#FF5722"
           size="lg"
@@ -100,7 +103,7 @@ const Hero: React.FC<HeroProps> = ({ onShop }) => {
         ))}
       </View>
 
-      <FlashDealsPanel onFlashDealPress={(dealId) => onShop()} />
+      <FlashDealsPanel onFlashDealPress={(dealId) => handleShop()} />
 
       <View style={styles.categoriesSection}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>

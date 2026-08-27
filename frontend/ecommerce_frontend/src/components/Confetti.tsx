@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Animated, View } from 'react-native';
 
 interface ConfettiProps {
@@ -112,9 +112,11 @@ const ConfettiPiece: React.FC<{
 
 const Confetti: React.FC<ConfettiProps> = ({ active, duration = 3000 }) => {
   const opacity = useRef(new Animated.Value(0)).current;
+  const [visible, setVisible] = useState(active);
 
   useEffect(() => {
     if (active) {
+      setVisible(true);
       Animated.timing(opacity, {
         toValue: 1,
         duration: 300,
@@ -127,6 +129,7 @@ const Confetti: React.FC<ConfettiProps> = ({ active, duration = 3000 }) => {
           duration: 500,
           useNativeDriver: false,
         }).start();
+        setTimeout(() => setVisible(false), 550);
       }, duration);
 
       return () => clearTimeout(timer);
@@ -136,10 +139,11 @@ const Confetti: React.FC<ConfettiProps> = ({ active, duration = 3000 }) => {
         duration: 300,
         useNativeDriver: false,
       }).start();
+      setVisible(false);
     }
   }, [active, duration, opacity]);
 
-  if (!active && opacity.__getValue() === 0) return null;
+  if (!visible) return null;
 
   return (
     <View style={styles.container} pointerEvents="none">
