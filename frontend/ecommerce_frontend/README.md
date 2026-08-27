@@ -4,6 +4,7 @@ A Temu-style e-commerce mobile app built with React Native, featuring a dark the
 
 ## Features
 
+- **Onboarding** — 5-step animated onboarding with parallax scroll, stored via AsyncStorage
 - **Product Catalog** — Browse products with filters, search, categories, and sort options
 - **Shopping Cart** — Add/remove items, quantity management, persistent storage via AsyncStorage
 - **Checkout Flow** — Address selection, payment methods, order confirmation
@@ -14,6 +15,7 @@ A Temu-style e-commerce mobile app built with React Native, featuring a dark the
 - **Notifications** — Push notification preferences, in-app notification management
 - **Admin Dashboard** — User stats, product management, recent orders overview
 - **Reviews System** — View and write product reviews with star ratings
+- **Fun Animations** — Confetti, particle bursts, floating hearts, rainbow borders, neon glow, wave text, and more
 
 ## Tech Stack
 
@@ -24,7 +26,8 @@ A Temu-style e-commerce mobile app built with React Native, featuring a dark the
 | React | 19.2.3 | UI library |
 | react-native-svg | 15.15.3 | Custom SVG icon library (30+ icons) |
 | react-native-safe-area-context | 5.5.2 | Safe area handling |
-| AsyncStorage | 3.0.1 | Persistent storage (cart, wishlist) |
+| react-native-reanimated | 3.17.4 | Advanced animations (spring, spring-in, wave text, rainbow borders, etc.) |
+| AsyncStorage | 3.0.1 | Persistent storage (cart, wishlist, onboarding) |
 
 ## Project Structure
 
@@ -45,6 +48,7 @@ frontend/ecommerce_frontend/
 │   │   ├── HomeScreen.tsx           # Home tab layout
 │   │   ├── DealsScreen.tsx          # Deals & rewards hub
 │   │   ├── ProfileScreen.tsx        # User profile & settings
+│   │   ├── OnboardingScreen.tsx     # 5-step animated onboarding flow
 │   │   ├── LoginScreen.tsx          # Login with typewriter animation
 │   │   ├── SignupScreen.tsx         # Registration form
 │   │   ├── ForgotPasswordScreen.tsx # Password reset flow
@@ -60,6 +64,10 @@ frontend/ecommerce_frontend/
 │   │   ├── TemuAliExpressProductGrid.tsx  # Product card grid
 │   │   ├── RecommendationsPanel.tsx # AI recommendations
 │   │   ├── PushNotificationsManager.tsx   # Notification settings
+│   │   ├── WelcomeBanner.tsx        # Time-based greeting banner
+│   │   ├── FeatureHighlights.tsx    # Why shop with us section
+│   │   ├── PromoStrip.tsx           # Sliding promo banner
+│   │   ├── TrustBadges.tsx          # Trust badges with spring bounce
 │   │   │
 │   │   │   # ── Animation Components ──
 │   │   ├── AnimatedCard.tsx         # Spring scale + fade entrance
@@ -82,6 +90,32 @@ frontend/ecommerce_frontend/
 │   │   ├── SkeletonLoader.tsx       # Skeleton placeholders
 │   │   ├── SwipeableCard.tsx        # Pan-gesture swipeable
 │   │   ├── WavyDivider.tsx          # Animated section divider
+│   │   ├── SplashScreen.tsx         # Animated splash with particles
+│   │   ├── Confetti.tsx             # Confetti celebration effect
+│   │   ├── FloatingHearts.tsx       # Instagram Live floating hearts
+│   │   ├── BounceInList.tsx         # Staggered spring entrance
+│   │   ├── PulseAnimation.tsx       # Expanding ripple rings
+│   │   ├── ShakeAnimation.tsx       # Horizontal shake for errors
+│   │   ├── FlipCard.tsx             # 3D flip card
+│   │   ├── TypewriterText.tsx       # Letter-by-letter typing
+│   │   ├── GlowPulse.tsx            # Breathing shadow animation
+│   │   ├── NeonGlow.tsx             # Neon glow effect
+│   │   ├── WaveAnimation.tsx        # Rotating liquid waves
+│   │   ├── SpinnerDots.tsx          # Circular dot loader
+│   │   ├── BouncyTag.tsx            # Pulsing scale badge
+│   │   ├── GlowBorder.tsx           # Animated glowing border
+│   │   ├── BounceArrow.tsx          # Directional bounce arrow
+│   │   ├── SlideInText.tsx          # Spring slide-in text
+│   │   ├── SpinnerBadge.tsx         # Rotating pulsing badge
+│   │   ├── BreathScale.tsx          # Breathing scale animation
+│   │   ├── ParticleBurst.tsx        # Explosion particle effect
+│   │   ├── FloatingEmoji.tsx        # Floating emoji animation
+│   │   ├── SkewHover.tsx            # Playful skew + float
+│   │   ├── RainbowBorder.tsx        # Cycling rainbow border
+│   │   ├── FlipIcon.tsx             # 3D flip icon rotation
+│   │   ├── WaveText.tsx             # Letter-by-letter wave
+│   │   ├── LightningStrike.tsx      # Flashing lightning effect
+│   │   ├── LoadingDots.tsx          # Pulsing glow dots
 │   │   │
 │   │   │   # ── Utility Components ──
 │   │   ├── CTAButton.tsx            # Universal CTA button
@@ -184,15 +218,47 @@ The app includes 30+ custom SVG icons in `Icons.tsx` built with `react-native-sv
 | `WavyDivider` | TranslateX loop | Section dividers |
 | `Toast` | Spring + fade | Notifications |
 | `LoadingOverlay` | Spin + fade | Full-screen loading |
+| `SplashScreen` | Spring + particle | Animated splash screen |
+| `Confetti` | Translate + rotate | Celebration effect |
+| `FloatingHearts` | Translate + fade | Instagram Live hearts |
+| `BounceInList` | Staggered spring | List entrance |
+| `PulseAnimation` | Scale + fade loop | Ripple rings |
+| `ShakeAnimation` | Sequence translateX | Error feedback |
+| `FlipCard` | RotateY 3D | Card flip reveal |
+| `TypewriterText` | Incremental text | Letter-by-letter typing |
+| `GlowPulse` | Shadow breathing | Subtle glow |
+| `NeonGlow` | Shadow + border pulse | Neon effect |
+| `WaveAnimation` | Rotation loop | Liquid waves |
+| `SpinnerDots` | Rotation loop | Circular loader |
+| `BouncyTag` | Scale pulse | Bouncy badge |
+| `GlowBorder` | Shadow + border pulse | Glowing border |
+| `BounceArrow` | Directional bounce | Scroll hint |
+| `SlideInText` | Slide + fade | Text entrance |
+| `SpinnerBadge` | Rotation + scale | Spinning badge |
+| `BreathScale` | Scale breathing | Breathing effect |
+| `ParticleBurst` | Translate + opacity | Explosion effect |
+| `FloatingEmoji` | Translate + opacity | Floating emojis |
+| `SkewHover` | Skew + translateY | Playful hover |
+| `RainbowBorder` | Color cycling border | Rainbow border |
+| `FlipIcon` | RotateY 3D | Icon flip |
+| `WaveText` | Per-letter translateY | Wave text |
+| `LightningStrike` | Scale + opacity flash | Deal highlight |
+| `LoadingDots` | Scale + opacity pulse | Loading indicator |
+| `ProgressDots` | Scale pulse | Step indicator |
+| `WelcomeBanner` | Fade + slide + shimmer | Welcome greeting |
+| `FeatureHighlights` | Staggered fade + slide | Feature list |
+| `PromoStrip` | Slide in | Promo banner |
+| `TrustBadges` | Spring bounce | Trust indicators |
 
 ## All Components
 
-Every file in `src/components/` (91 total):
+Every file in `src/components/` (120+ total):
 
 ### Core Screens
 
 | File | Description |
 |------|-------------|
+| `OnboardingScreen.tsx` | 5-step animated onboarding with parallax scroll |
 | `HomeScreen.tsx` | Main home tab layout with sections |
 | `ShopPage.tsx` | Full shop page with search and filters |
 | `CartScreen.tsx` | Shopping cart view |
@@ -239,6 +305,37 @@ Every file in `src/components/` (91 total):
 | `SkeletonLoader.tsx` | Skeleton placeholder loading |
 | `SwipeableCard.tsx` | Pan-gesture swipeable card |
 | `WavyDivider.tsx` | Animated wavy section divider |
+| `SplashScreen.tsx` | Animated splash screen with bouncing bag and particles |
+| `Confetti.tsx` | Confetti celebration effect |
+| `FloatingHearts.tsx` | Instagram Live floating hearts |
+| `BounceInList.tsx` | Staggered spring entrance for lists |
+| `PulseAnimation.tsx` | Expanding ripple ring animation |
+| `ShakeAnimation.tsx` | Horizontal shake for error feedback |
+| `FlipCard.tsx` | 3D flip card reveal |
+| `TypewriterText.tsx` | Letter-by-letter typing with cursor |
+| `GlowPulse.tsx` | Breathing shadow glow |
+| `NeonGlow.tsx` | Neon glow effect |
+| `WaveAnimation.tsx` | Rotating liquid wave layers |
+| `SpinnerDots.tsx` | Circular rotating dot loader |
+| `BouncyTag.tsx` | Pulsing scale badge/tag |
+| `GlowBorder.tsx` | Animated glowing border |
+| `BounceArrow.tsx` | Directional bounce arrow |
+| `SlideInText.tsx` | Spring slide-in text |
+| `SpinnerBadge.tsx` | Rotating + pulsing badge |
+| `BreathScale.tsx` | Breathing scale in/out |
+| `ParticleBurst.tsx` | Explosion particle effect |
+| `FloatingEmoji.tsx` | Floating emoji animation |
+| `SkewHover.tsx` | Playful skew + float |
+| `RainbowBorder.tsx` | Cycling rainbow color border |
+| `FlipIcon.tsx` | Continuous 3D flip rotation |
+| `WaveText.tsx` | Letter-by-letter wave animation |
+| `LightningStrike.tsx` | Flashing lightning for deals |
+| `LoadingDots.tsx` | Pulsing glow dots loader |
+| `ProgressDots.tsx` | Step indicator dots |
+| `WelcomeBanner.tsx` | Time-based greeting with shimmer |
+| `FeatureHighlights.tsx` | Why shop with us section |
+| `PromoStrip.tsx` | Sliding promo banner |
+| `TrustBadges.tsx` | Trust badges with spring bounce |
 
 ### UI Components
 
