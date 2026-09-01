@@ -5,29 +5,46 @@ from app.dependencies.database import get_db
 from app.models.product import Product
 from app.services.analytics_service import cache_product_view
 from fastapi import UploadFile, File
-from app.services.cloudinary_service import upload_image
 from app.models.product_image import ProductImage
 from app.services.upload_service import upload_product_image
+from app.models.category import Category
 
 router = APIRouter()
 
 @router.get("/")
 def list_products(
     q: str | None = Query(None),
+    category: str | None = Query(None),
     min_price: float | None = None,
     max_price: float | None = None,
+    sort: str | None = Query(None, description="price_asc, price_desc, rating, newest"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
     query = db.query(Product)
 
     if q:
         query = query.filter(Product.name.ilike(f"%{q}%"))
+    if category:
+        query = query.join(Category).filter(Category.name.ilike(category))
     if min_price:
         query = query.filter(Product.price >= min_price)
     if max_price:
         query = query.filter(Product.price <= max_price)
 
-    return query.all()
+    if sort == "price_asc":
+        query = query.order_by(Product.price.asc())
+    elif sort == "price_desc":
+        query = query.order_by(Product.price.desc())
+    elif sort == "rating":
+        query = query.order_by(Product.avg_rating.desc())
+    elif sort == "newest":
+        query = query.order_by(Product.id.desc())
+
+    total = query.count()
+    products = query.offset((page - 1) * page_size).limit(page_size).all()
+    return {"total": total, "page": page, "page_size": page_size, "items": products}
 
 @router.get("/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):
@@ -59,13 +76,8 @@ async def upload_image(
 
     image = ProductImage(
         product_id=product_id,
-        image_url=image_url
+        url=image_url
     )
     db.add(image)
     db.commit()
     return {"message": "Image uploaded", "url": image_url}
-
-    db.add(image)
-    db.commit()
-
-    return {"image_url": image_url}

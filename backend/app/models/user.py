@@ -13,5 +13,8 @@ class User(Base):
     profile = relationship("Profile", uselist=False, back_populates="user")
     orders = relationship("Order", back_populates="user")
     reviews = relationship("Review", back_populates="user")
-    is_admin = Column(Boolean, default=False)
+
+    @property
+    def is_admin(self):
+        return self.role == "admin"
 

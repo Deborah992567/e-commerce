@@ -5,9 +5,6 @@ from app.models.order import Order
 from fastapi import HTTPException
 
 
-from app.services.email_service import send_order_email
-from app.services.analytics_service import cache_order_stats
-
 def calculate_order_total(
     product_ids: list[int],
     quantities: list[int],
@@ -21,11 +18,13 @@ def calculate_order_total(
 
     for pid, qty in zip(product_ids, quantities):
         product = db.query(Product).filter(Product.id == pid).first()
+        if not product:
+            raise HTTPException(status_code=404, detail=f"Product {pid} not found")
         total += product.price * qty
 
     if discount_code:
-        discount = validate_discount(discount_code, total, db)
-        total -= (discount.percentage / 100) * total
+        discount, discount_amount = validate_discount(discount_code, total, db)
+        total -= discount_amount
 
     return round(total, 2)
 
@@ -39,14 +38,4 @@ def update_order_status(db: Session, order_id: int, status: str):
     db.commit()
     db.refresh(order)
     return order
-
-
-async def process_order(order):
-    send_order_email.delay(
-        order.user.email,
-        "Order Confirmed",
-        f"Your order #{order.id} was placed!"
-    )
-
-    cache_order_stats.delay()
 

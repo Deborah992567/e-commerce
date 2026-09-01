@@ -27,3 +27,21 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ProfileUpdate(BaseModel):
+    full_name: str | None = None
+    phone: str | None = None
+
+class ForgotPassword(BaseModel):
+    email: EmailStr
+
+class ResetPassword(BaseModel):
+    token: str
+    new_password: str = Field(..., min_length=8)
+
+class RefreshToken(BaseModel):
+    refresh_token: str
+
+class ChangePassword(BaseModel):
+    old_password: str
+    new_password: str = Field(..., min_length=8)

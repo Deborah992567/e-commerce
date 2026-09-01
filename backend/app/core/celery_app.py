@@ -22,5 +22,4 @@ def refresh_order_stats():
     from app.services.analytics_service import compute_order_stats
 
     db = next(get_db())
-    import asyncio
-    asyncio.run(compute_order_stats(db))
+    compute_order_stats(db)
