@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, TextInput, Animated, Easing, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
+import { api } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import { ChevronLeftIcon, CheckIcon, CreditCardIcon, WalletIcon } from './Icons';
 
 export interface OrderResult {
@@ -24,6 +26,7 @@ interface CheckoutScreenProps {
 const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess }) => {
   const insets = useSafeAreaInsets();
   const { cart, totalPrice, clearCart } = useCart();
+  const { user: authUser, token } = useAuth();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -75,6 +78,20 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
     await new Promise<void>((r) => setTimeout(() => r(), 900));
     setProcessingMessage('Authorizing your payment...');
     await new Promise<void>((r) => setTimeout(() => r(), 900));
+
+    let apiOrderId: string | null = null;
+    if (token) {
+      try {
+        const res = await api.post<{ order_id: number; total: number }>('/orders/', {
+          product_ids: cart.map((i) => i.id),
+          quantities: cart.map((i) => i.quantity),
+        });
+        apiOrderId = String(res.order_id);
+      } catch (e) {
+        // fall back to simulated order if backend order creation fails
+      }
+    }
+
     setProcessingMessage('Payment successful!');
     await new Promise<void>((r) => setTimeout(() => r(), 600));
     setIsProcessing(false);
@@ -86,7 +103,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
       : selectedMethod?.type === 'apple_pay' ? 'Apple Pay'
       : 'Payment';
 
-    const orderId = `EC-${Date.now().toString().slice(-6)}`;
+    const orderId = apiOrderId ? `EC-${apiOrderId.padStart(6, '0')}` : `EC-${Date.now().toString().slice(-6)}`;
     const result: OrderResult = {
       orderId,
       items: cart.map((item) => ({
@@ -100,7 +117,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
       tax,
       total: finalTotal,
       paymentMethod: paymentName,
-      customerEmail: '',
+      customerEmail: authUser?.email ?? '',
       date: new Date().toISOString(),
     };
 

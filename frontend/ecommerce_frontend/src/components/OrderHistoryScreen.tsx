@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeftIcon, CheckIcon, PackageIcon, ClockIcon, TagIcon, TruckIcon } from './Icons';
 import AnimatedCard from './AnimatedCard';
+import { api } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Order {
   id: string;
@@ -12,6 +14,7 @@ interface Order {
   status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
   itemCount: number;
   estimatedDelivery?: string;
+  rawStatus?: string;
 }
 
 interface OrderHistoryScreenProps {
@@ -19,9 +22,20 @@ interface OrderHistoryScreenProps {
   onViewDetails?: (order: Order) => void;
 }
 
+const STATUS_ORDER: Record<string, 'pending' | 'shipped' | 'delivered' | 'cancelled'> = {
+  PENDING: 'pending',
+  CONFIRMED: 'pending',
+  SHIPPED: 'shipped',
+  DELIVERED: 'delivered',
+  CANCELLED: 'cancelled',
+};
+
 const OrderHistoryScreen: React.FC<OrderHistoryScreenProps> = ({ onBack, onViewDetails }) => {
   const insets = useSafeAreaInsets();
+  const { token } = useAuth();
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'shipped' | 'delivered' | 'cancelled'>('all');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const mockOrders: Order[] = [
     { id: '1', orderNumber: 'EC-001234', date: 'Mar 22, 2026', total: 64994, status: 'delivered', itemCount: 3, estimatedDelivery: 'Delivered on Mar 25, 2026' },
@@ -30,7 +44,42 @@ const OrderHistoryScreen: React.FC<OrderHistoryScreenProps> = ({ onBack, onViewD
     { id: '4', orderNumber: 'EC-001231', date: 'Mar 10, 2026', total: 8999, status: 'delivered', itemCount: 1, estimatedDelivery: 'Delivered on Mar 14, 2026' },
   ];
 
-  const filteredOrders = filterStatus === 'all' ? mockOrders : mockOrders.filter((o) => o.status === filterStatus);
+  const loadOrders = useCallback(async () => {
+    if (!token) {
+      setOrders(mockOrders);
+      setLoading(false);
+      return;
+    }
+    try {
+      const data = await api.get<{
+        id: number;
+        total_amount: number;
+        status: string;
+        created_at: string;
+        items: unknown[];
+      }[]>('/orders/');
+      const mapped: Order[] = data.map((o) => ({
+        id: String(o.id),
+        orderNumber: `EC-${String(o.id).padStart(6, '0')}`,
+        date: o.created_at ? new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : 'Unknown',
+        total: o.total_amount,
+        status: STATUS_ORDER[o.status] ?? 'pending',
+        rawStatus: o.status,
+        itemCount: (o.items ?? []).reduce((sum: number, i: any) => sum + (i.quantity ?? 1), 0),
+      }));
+      setOrders(mapped.length ? mapped : mockOrders);
+    } catch (e) {
+      setOrders(mockOrders);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
+
+  const filteredOrders = filterStatus === 'all' ? orders : orders.filter((o) => o.status === filterStatus);
 
   const getStatusColor = (status: string) => {
     switch (status) { case 'delivered': return '#4CAF50'; case 'shipped': return '#2196F3'; case 'pending': return '#FF9800'; case 'cancelled': return '#F44336'; default: return '#A0A0A0'; }
@@ -43,6 +92,22 @@ const OrderHistoryScreen: React.FC<OrderHistoryScreenProps> = ({ onBack, onViewD
   const filters: Array<{ key: typeof filterStatus; label: string }> = [
     { key: 'all', label: 'All' }, { key: 'pending', label: 'Pending' }, { key: 'shipped', label: 'Shipped' }, { key: 'delivered', label: 'Delivered' },
   ];
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={onBack} style={styles.backBtn}><ChevronLeftIcon size={24} color="#FF5722" /></TouchableOpacity>
+          <Text style={styles.title}>Order History</Text>
+          <View style={styles.headerSpacer} />
+        </View>
+        <View style={styles.loadingState}>
+          <ActivityIndicator size="large" color="#FF5722" />
+          <Text style={styles.loadingText}>Loading your orders...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
@@ -142,6 +207,8 @@ const styles = StyleSheet.create({
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, gap: 12 },
   emptyTitle: { color: '#FFF', fontSize: 20, fontWeight: '700', textAlign: 'center' },
   emptySubtitle: { color: '#A0A0A0', fontSize: 14, textAlign: 'center' },
+  loadingState: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
+  loadingText: { color: '#A0A0A0', fontSize: 14 },
 });
 
 export default OrderHistoryScreen;
