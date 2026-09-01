@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated, Easing } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated, Easing, ActivityIndicator } from 'react-native';
 import CTAButton from './CTAButton';
+import { useAuth } from '../contexts/AuthContext';
 import { UserIcon, MailIcon, ShieldIcon, HelpIcon } from './Icons';
 
 interface SignupScreenProps {
@@ -14,8 +15,10 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin, onGoTo
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [displayedTitle, setDisplayedTitle] = useState('');
   const fullTitle = 'Create Account';
+  const { signup } = useAuth();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
 
@@ -39,18 +42,25 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin, onGoTo
     ]).start();
   }, [fadeAnim, slideAnim]);
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!name.trim()) { Alert.alert('Error', 'Please enter your full name'); return; }
     if (!email.trim()) { Alert.alert('Error', 'Please enter your email address'); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { Alert.alert('Error', 'Please enter a valid email address'); return; }
     if (!password.trim()) { Alert.alert('Error', 'Please enter a password'); return; }
-    if (password.length < 6) { Alert.alert('Error', 'Password must be at least 6 characters'); return; }
+    if (password.length < 8) { Alert.alert('Error', 'Password must be at least 8 characters'); return; }
     if (!confirmPassword.trim()) { Alert.alert('Error', 'Please confirm your password'); return; }
     if (password !== confirmPassword) { Alert.alert('Error', 'Passwords do not match!'); return; }
-    Alert.alert('Signup Successful', `Welcome, ${name}!`);
-    if (onGoToProductList) onGoToProductList();
-    else if (onBack) onBack();
+    setLoading(true);
+    const success = await signup(email, password, name);
+    setLoading(false);
+    if (success) {
+      Alert.alert('Signup Successful', `Welcome, ${name}!`);
+      if (onGoToProductList) onGoToProductList();
+      else if (onBack) onBack();
+    } else {
+      Alert.alert('Signup Failed', 'Could not create account. The email may already be registered.');
+    }
   };
 
   return (
@@ -79,7 +89,13 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin, onGoTo
           <TextInput style={styles.input} placeholder="Confirm Password" placeholderTextColor="#A0A0A0" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
         </View>
 
-        <CTAButton title="Sign Up" onPress={handleSignup} color="#FF5722" size="lg" />
+        <CTAButton title="Sign Up" onPress={handleSignup} color="#FF5722" size="lg" disabled={loading} />
+        {loading && (
+          <View style={styles.loadingRow}>
+            <ActivityIndicator color="#FF5722" />
+            <Text style={styles.loadingText}>Creating your account...</Text>
+          </View>
+        )}
         <Text style={styles.or}>or</Text>
 
         <TouchableOpacity style={styles.googleBtn} onPress={() => Alert.alert('Google Sign-In', 'Google sign-in pressed!')}>
@@ -114,6 +130,17 @@ const styles = StyleSheet.create({
   loginBtnText: { color: '#FF5722', fontSize: 15, fontWeight: 'bold', textAlign: 'center' },
   backBtn: { marginTop: 12 },
   back: { color: '#A0A0A0', fontSize: 14, textAlign: 'center' },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 8,
+  },
+  loadingText: {
+    color: '#A0A0A0',
+    fontSize: 13,
+  },
 });
 
 export default SignupScreen;

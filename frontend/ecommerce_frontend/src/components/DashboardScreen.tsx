@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Alert, TouchableOpacity, Dimensions } from 'react-native';
 import { UsersIcon, PackageIcon, TagIcon, ShieldIcon, TrophyIcon, MailIcon, TrendingUpIcon, LogOutIcon, TruckIcon, UserIcon, ChevronLeftIcon } from './Icons';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '../services/api';
 
 const { width } = Dimensions.get('window');
 
@@ -21,16 +22,18 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
   const { user, logout } = useAuth();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setStats({
-        total_users: 1250,
-        total_orders: 456,
-        total_products: 89
-      });
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    const loadStats = async () => {
+      try {
+        const data = await api.get<DashboardStats>('/admin/dashboard');
+        setStats(data);
+      } catch (e) {
+        // fall back to offline placeholder if backend is unavailable
+        setStats({ total_users: 0, total_orders: 0, total_products: 0 });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadStats();
   }, []);
 
   const handleLogout = () => {
@@ -66,7 +69,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
         <Text style={styles.subtitle}>Here's your business overview</Text>
         <View style={styles.demoNoteContainer}>
           <ShieldIcon size={14} color="#FFC107" />
-          <Text style={styles.demoNote}>Demo Mode - Using mock data</Text>
+          <Text style={styles.demoNote}>Admin Dashboard - Live data</Text>
         </View>
       </View>
       

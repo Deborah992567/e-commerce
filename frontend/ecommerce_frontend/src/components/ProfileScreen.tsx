@@ -15,9 +15,11 @@ interface ProfileScreenProps {
   onGoToContact?: () => void;
   onGoToFaq?: () => void;
   onGoToTerms?: () => void;
+  onLogin?: () => void;
+  onSignup?: () => void;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory, onGoToWishlist, onGoToNotifications, onGoToReferral, onGoToContact, onGoToFaq, onGoToTerms }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory, onGoToWishlist, onGoToNotifications, onGoToReferral, onGoToContact, onGoToFaq, onGoToTerms, onLogin, onSignup }) => {
   const { user, logout } = useAuth();
   const insets = useSafeAreaInsets();
   const [deliveryAddress, setDeliveryAddress] = useState({ street: '123 Main Street', city: 'New York', state: 'NY', zipCode: '10001', country: 'USA' });
@@ -29,6 +31,30 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
       { text: 'Logout', style: 'destructive', onPress: logout }
     ]);
   };
+
+  if (!user) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Account</Text>
+          <View style={{ width: 32 }} />
+        </View>
+        <View style={styles.guestContainer}>
+          <AnimatedAvatar size={72} borderColor="#FF5722" />
+          <Text style={styles.guestTitle}>Welcome to Dez Collection</Text>
+          <Text style={styles.guestSubtitle}>
+            Sign in to view your orders, wishlist and manage your profile.
+          </Text>
+          <TouchableOpacity style={styles.guestLoginBtn} onPress={onLogin}>
+            <Text style={styles.guestLoginText}>Log In</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.guestSignupBtn} onPress={onSignup}>
+            <Text style={styles.guestSignupText}>Create Account</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
@@ -202,6 +228,13 @@ const styles = StyleSheet.create({
   helpItemText: { color: '#FFF', fontSize: 15, fontWeight: '500' },
   logoutButton: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#18181F', borderRadius: 10, gap: 10, borderWidth: 1, borderColor: '#FF6B6B40' },
   logoutText: { color: '#FF6B6B', fontSize: 16, fontWeight: '600' },
+  guestContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 36, paddingBottom: 80 },
+  guestTitle: { color: '#FFF', fontSize: 22, fontWeight: '800', marginTop: 20, textAlign: 'center' },
+  guestSubtitle: { color: '#A0A0A0', fontSize: 15, textAlign: 'center', marginTop: 10, lineHeight: 22, marginBottom: 28 },
+  guestLoginBtn: { width: '100%', backgroundColor: '#FF5722', paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginBottom: 12 },
+  guestLoginText: { color: '#FFF', fontSize: 16, fontWeight: '700' },
+  guestSignupBtn: { width: '100%', backgroundColor: '#23232B', paddingVertical: 16, borderRadius: 12, alignItems: 'center', borderWidth: 1, borderColor: '#FF5722' },
+  guestSignupText: { color: '#FF5722', fontSize: 16, fontWeight: '700' },
 });
 
 export default ProfileScreen;

@@ -39,12 +39,19 @@ import LoginScreen from './src/components/LoginScreen';
 import ProductDetailScreen from './src/components/ProductDetailScreen';
 import SearchScreen from './src/components/SearchScreen';
 import InfoScreen, { InfoType } from './src/components/InfoScreen';
+import SignupScreen from './src/components/SignupScreen';
+import ForgotPasswordScreen from './src/components/ForgotPasswordScreen';
+import DashboardScreen from './src/components/DashboardScreen';
+import { OrderResult } from './src/components/CheckoutScreen';
 import { FireIcon, UserIcon } from './src/components/Icons';
 
 type Tab = 'home' | 'shop' | 'cart' | 'deals' | 'account';
 type Screen =
   | null
   | 'login'
+  | 'signup'
+  | 'forgot'
+  | 'dashboard'
   | 'checkout'
   | 'orderProcessing'
   | 'orderSuccess'
@@ -106,6 +113,7 @@ function App(): React.ReactElement {
   const insets = useSafeAreaInsets();
   const { totalItems, addToCart, clearCart, totalPrice } = useCart();
   const { unreadCount } = useNotifications();
+  const { isAdmin, user: authUser } = useAuth();
   const [tab, setTab] = useState<Tab>('home');
   const [screen, setScreen] = useState<Screen>(null);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -143,8 +151,8 @@ function App(): React.ReactElement {
 
   const handleGoToProductDetail = (product: any) => handleProductPress(product);
 
-  const handleCheckoutComplete = () => {
-    setLastOrder({ id: `EC-${Date.now().toString().slice(-6)}`, date: new Date().toISOString() });
+  const handleCheckoutComplete = (order: OrderResult) => {
+    setLastOrder(order);
     clearCart();
     goScreen('orderProcessing');
   };
@@ -182,6 +190,21 @@ function App(): React.ReactElement {
 
   const renderTabAccount = () => {
     if (screen === 'profile') return null;
+    if (!authUser) {
+      return (
+        <ProfileScreen
+          onGoToOrderHistory={() => handleOpenProfileSub('orderHistory')}
+          onGoToWishlist={() => handleOpenProfileSub('wishlist')}
+          onGoToNotifications={() => handleOpenProfileSub('profile')}
+          onGoToReferral={() => handleOpenProfileSub('referral')}
+          onGoToContact={() => handleOpenInfo('contact')}
+          onGoToFaq={() => handleOpenInfo('faq')}
+          onGoToTerms={() => handleOpenInfo('terms')}
+          onLogin={() => goScreen('login')}
+          onSignup={() => goScreen('signup')}
+        />
+      );
+    }
     return (
       <ProfileScreen
         onGoToOrderHistory={() => handleOpenProfileSub('orderHistory')}
@@ -231,13 +254,33 @@ function App(): React.ReactElement {
   const renderSecondaryScreen = () => {
     switch (screen) {
       case 'login':
-        return <LoginScreen onBack={() => goTab('account')} />;
+        return (
+          <LoginScreen
+            onBack={() => goTab('account')}
+            onGoToSignup={() => goScreen('signup')}
+            onGoToForgot={() => goScreen('forgot')}
+            onGoToDashboard={() => goScreen('dashboard')}
+            onGoToProductList={() => goTab('shop')}
+          />
+        );
+      case 'signup':
+        return (
+          <SignupScreen
+            onBack={() => goScreen('login')}
+            onGoToLogin={() => goScreen('login')}
+            onGoToProductList={() => goTab('shop')}
+          />
+        );
+      case 'forgot':
+        return <ForgotPasswordScreen onBack={() => goScreen('login')} />;
+      case 'dashboard':
+        return <DashboardScreen onBack={() => goTab('account')} />;
       case 'checkout':
         return <CheckoutScreen onBack={() => goTab('cart')} onOrderSuccess={handleCheckoutComplete} />;
       case 'orderSuccess':
-        return <OrderSuccessScreen onContinueShopping={handleOrderSuccessContinue} onViewOrders={handleOrderSuccessViewOrders} />;
+        return <OrderSuccessScreen order={lastOrder} onContinueShopping={handleOrderSuccessContinue} onViewOrders={handleOrderSuccessViewOrders} />;
       case 'orderProcessing':
-        return <OrderProcessingScreen onComplete={() => goScreen('orderSuccess')} orderId={lastOrder?.id} />;
+        return <OrderProcessingScreen order={lastOrder} onComplete={() => goScreen('orderSuccess')} />;
       case 'orderHistory':
         return <OrderHistoryScreen onBack={() => goTab('account')} onViewDetails={(order) => { setSelectedOrder(order); goScreen('orderDetail'); }} />;
       case 'orderDetail':

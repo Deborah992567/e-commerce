@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated, Easing } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated, Easing, ActivityIndicator } from 'react-native';
 import CTAButton from './CTAButton';
 import { useAuth } from '../contexts/AuthContext';
 import { MailIcon, ShieldIcon, UserIcon, HelpIcon } from './Icons';
@@ -16,13 +16,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayedTitle, setDisplayedTitle] = useState('');
+  const [loading, setLoading] = useState(false);
   const fullTitle = 'Welcome Back';
-  const { login } = useAuth();
+  const { login, isAdmin } = useAuth();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
 
-  const helperText = 'Mock login:\n- admin@ecommerce.com / admin123 (admin)\n- user1@ecommerce.com / user123 (customer)';
+  const helperText = 'Sign in to continue to your Dez Collection account';
 
   useEffect(() => {
     let index = 0;
@@ -46,10 +47,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
   }, [fadeAnim, slideAnim]);
 
   const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Login Failed', 'Please enter your email and password');
+      return;
+    }
+    setLoading(true);
     const success = await login(email, password);
+    setLoading(false);
     if (success) {
-      if (email === 'admin@ecommerce.com') {
+      if (isAdmin) {
         if (onGoToDashboard) onGoToDashboard();
+        else if (onBack) onBack();
       } else {
         if (onGoToProductList) onGoToProductList();
         else if (onBack) onBack();
@@ -98,7 +106,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onGoToSignup, onGoToF
           />
         </View>
 
-        <CTAButton title="Login" onPress={handleLogin} color="#FF5722" size="lg" />
+        <CTAButton title="Login" onPress={handleLogin} color="#FF5722" size="lg" disabled={loading} />
+        {loading && (
+          <View style={styles.loadingRow}>
+            <ActivityIndicator color="#FF5722" />
+            <Text style={styles.loadingText}>Signing you in...</Text>
+          </View>
+        )}
         <Text style={styles.or}>or</Text>
 
         <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleSignIn}>
@@ -235,6 +249,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 11,
     lineHeight: 16,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 8,
+  },
+  loadingText: {
+    color: '#A0A0A0',
+    fontSize: 13,
   },
 });
 

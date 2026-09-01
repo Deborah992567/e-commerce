@@ -8,6 +8,7 @@ interface CTAButtonProps {
   icon?: string;
   color?: string;
   size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
 }
 
 const CTAButton: React.FC<CTAButtonProps> = ({
@@ -17,6 +18,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
   icon,
   color,
   size = 'md',
+  disabled = false,
 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -50,12 +52,14 @@ const CTAButton: React.FC<CTAButtonProps> = ({
             backgroundColor: bgColor,
             borderWidth: isPrimary ? 0 : 2,
             borderColor,
+            opacity: disabled ? 0.5 : 1,
           },
         ]}
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={0.8}
+        disabled={disabled}
       >
         <Text style={[styles.text, { color: isPrimary ? '#FFF' : color || '#FF5722', fontSize }]}>
           {title}

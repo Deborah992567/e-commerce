@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated, Easing } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Animated, Easing, ActivityIndicator } from 'react-native';
 import CTAButton from './CTAButton';
+import { api } from '../services/api';
 import { MailIcon, ShieldIcon } from './Icons';
 
 interface ForgotPasswordScreenProps {
@@ -11,6 +12,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({ onBack }) =
   const [email, setEmail] = useState('');
   const [displayedTitle, setDisplayedTitle] = useState('');
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   const fullTitle = 'Reset Password';
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -35,9 +37,17 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({ onBack }) =
     ]).start();
   }, [fadeAnim, slideAnim]);
 
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     if (!email.trim()) { Alert.alert('Error', 'Please enter your email'); return; }
-    setSent(true);
+    setLoading(true);
+    try {
+      await api.post('/auth/forgot-password', { email });
+      setSent(true);
+    } catch (e) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,7 +71,13 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({ onBack }) =
               <MailIcon size={18} color="#A0A0A0" />
               <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#A0A0A0" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
             </View>
-            <CTAButton title="Send Reset Link" onPress={handleResetPassword} color="#FF5722" size="lg" />
+            <CTAButton title="Send Reset Link" onPress={handleResetPassword} color="#FF5722" size="lg" disabled={loading} />
+            {loading && (
+              <View style={styles.loadingRow}>
+                <ActivityIndicator color="#FF5722" />
+                <Text style={styles.loadingText}>Sending...</Text>
+              </View>
+            )}
           </>
         )}
 
@@ -86,6 +102,17 @@ const styles = StyleSheet.create({
   sentBox: { alignItems: 'center', backgroundColor: '#23232B', borderRadius: 16, padding: 24, borderWidth: 1, borderColor: '#4ECDC440', width: '100%', marginBottom: 24 },
   sentTitle: { fontSize: 18, fontWeight: 'bold', color: '#4ECDC4', marginTop: 12 },
   sentText: { fontSize: 14, color: '#A0A0A0', textAlign: 'center', marginTop: 8 },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 12,
+  },
+  loadingText: {
+    color: '#A0A0A0',
+    fontSize: 13,
+  },
 });
 
 export default ForgotPasswordScreen;
