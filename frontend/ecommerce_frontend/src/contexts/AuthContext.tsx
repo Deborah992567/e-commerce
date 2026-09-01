@@ -1,27 +1,24 @@
-import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
-// Temporarily using in-memory storage instead of AsyncStorage
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-
-/**
- * MOCK ADMIN CREDENTIALS:
- * Email: admin@ecommerce.com
- * Password: admin123
- * 
- * Any other email/password combination will work as a regular customer login.
- */
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { api, setTokens, ApiUser } from '../services/api';
 
 interface User {
   id: number;
   email: string;
-  role: 'customer' | 'admin';
+  role: string;
+  full_name?: string | null;
+  phone?: string | null;
 }
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
   isAdmin: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  signup: (email: string, password: string, fullName?: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
+  updateProfile: (data: { full_name?: string; phone?: string }) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,108 +31,133 @@ export const useAuth = () => {
   return context;
 };
 
-interface AuthProviderProps {
-  children: ReactNode;
+const AUTH_KEY = 'dez_auth';
+
+interface StoredAuth {
+  access_token: string;
+  refresh_token: string;
+  user: User;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  
-  // Simple in-memory storage for demo (replace with AsyncStorage later)
-  const memoryStorage = useRef<{[key: string]: string}>({});
-  
-  const storage = {
-    getItem: (key: string) => Promise.resolve(memoryStorage.current[key] || null),
-    setItem: (key: string, value: string) => {
-      memoryStorage.current[key] = value;
-      return Promise.resolve();
-    },
-    removeItem: (key: string) => {
-      delete memoryStorage.current[key];
-      return Promise.resolve();
-    }
+
+  const applyAuth = (auth: StoredAuth) => {
+    setTokens(auth.access_token, auth.refresh_token);
+    setToken(auth.access_token);
+    setUser(auth.user);
   };
 
-  // Check for stored token on app start
   useEffect(() => {
-    const loadStoredAuth = async () => {
+    const loadStored = async () => {
       try {
-        const storedToken = await storage.getItem('auth_token');
-        const storedUser = await storage.getItem('user_data');
-        
-        if (storedToken && storedUser) {
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser));
+        const raw = await AsyncStorage.getItem(AUTH_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as StoredAuth;
+          applyAuth(parsed);
         }
-      } catch (error) {
-        console.error('Error loading stored auth:', error);
+      } catch (e) {
+        console.error('Error loading stored auth:', e);
       }
     };
-    
-    loadStoredAuth();
+    loadStored();
   }, []);
+
+  const persist = async (auth: StoredAuth) => {
+    await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(auth));
+    applyAuth(auth);
+  };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Replace with real API call
-      // const response = await fetch('http://localhost:8000/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password })
-      // });
-      // const data = await response.json();
-      
-      const MOCK_USERS = [
-        { id: 1, email: 'admin@ecommerce.com', password: 'admin123', role: 'admin' as const },
-        { id: 2, email: 'user1@ecommerce.com', password: 'user123', role: 'customer' as const },
-        { id: 3, email: 'user2@ecommerce.com', password: 'user123', role: 'customer' as const },
-      ];
+      const data = await api.post<{
+        access_token: string;
+        refresh_token: string;
+        user: ApiUser;
+      }>('/auth/login', { email, password });
 
-      const matchedUser = MOCK_USERS.find((u) => u.email === email && u.password === password);
-
-      if (!matchedUser) {
-        return false;
-      }
-      
-      const mockUser: User = {
-        id: matchedUser.id,
-        email: matchedUser.email,
-        role: matchedUser.role,
+      const user = {
+        id: data.user.id,
+        email: data.user.email,
+        role: data.user.role,
+        full_name: data.user.full_name,
+        phone: data.user.phone,
       };
-      const mockToken = `mock_${matchedUser.role}_token_${Date.now()}`;
 
-      setUser(mockUser);
-      setToken(mockToken);
-
-      await storage.setItem('auth_token', mockToken);
-      await storage.setItem('user_data', JSON.stringify(mockUser));
-
+      await persist({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        user,
+      });
       return true;
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch (e) {
+      console.error('Login error:', e);
+      return false;
+    }
+  };
+
+  const signup = async (
+    email: string,
+    password: string,
+    fullName?: string
+  ): Promise<boolean> => {
+    try {
+      await api.post('/auth/register', { email, password, full_name: fullName });
+      return await login(email, password);
+    } catch (e) {
+      console.error('Signup error:', e);
       return false;
     }
   };
 
   const logout = async () => {
-    setUser(null);
+    setTokens(null, null);
     setToken(null);
-    await storage.removeItem('auth_token');
-    await storage.removeItem('user_data');
+    setUser(null);
+    await AsyncStorage.removeItem(AUTH_KEY);
+  };
+
+  const refreshUser = async (): Promise<void> => {
+    try {
+      const me = await api.get<ApiUser>('/auth/me');
+      setUser((prev) => ({
+        ...(prev ?? {}),
+        id: me.id,
+        email: me.email,
+        role: me.role,
+        full_name: me.full_name,
+        phone: me.phone,
+      }));
+    } catch (e) {
+      console.error('Refresh user error:', e);
+    }
+  };
+
+  const updateProfile = async (data: {
+    full_name?: string;
+    phone?: string;
+  }): Promise<boolean> => {
+    try {
+      await api.put('/profile/', data);
+      await refreshUser();
+      return true;
+    } catch (e) {
+      console.error('Update profile error:', e);
+      return false;
+    }
   };
 
   const value: AuthContextType = {
     user,
     token,
+    isAdmin: user?.role === 'admin',
     login,
+    signup,
     logout,
-    isAdmin: user?.role === 'admin'
+    refreshUser,
+    updateProfile,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
