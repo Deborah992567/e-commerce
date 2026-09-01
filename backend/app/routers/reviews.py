@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.dependencies.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.review import Review
+from app.models.product import Product
+from app.models.user import User
 from app.schemas.review import ReviewCreate
 from app.services.review_service import get_product_rating
 
@@ -15,6 +17,10 @@ def create_review(
     user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    product = db.query(Product).filter(Product.id == data.product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
     review = Review(
         user_id=user.id,
         product_id=data.product_id,
@@ -23,9 +29,36 @@ def create_review(
     )
     db.add(review)
     db.commit()
-    return {"message": "Review added"}
+
+    # Recompute average rating for product
+    avg = get_product_rating(data.product_id, db)
+    product.avg_rating = avg
+    db.commit()
+
+    return {"message": "Review added", "review_id": review.id}
 
 @router.get("/product/{product_id}")
 def product_reviews(product_id: int, db: Session = Depends(get_db)):
-    rating = get_product_rating(product_id, db)
-    return {"average_rating": rating}
+    avg = get_product_rating(product_id, db)
+    rows = (
+        db.query(Review, User)
+        .join(User, Review.user_id == User.id)
+        .filter(Review.product_id == product_id)
+        .order_by(Review.id.desc())
+        .all()
+    )
+    items = []
+    for review, user in rows:
+        items.append({
+            "id": review.id,
+            "product_id": review.product_id,
+            "user_id": review.user_id,
+            "author": user.email,
+            "rating": review.rating,
+            "comment": review.comment,
+            "title": None,
+            "date": None,
+            "helpful": 0,
+            "verified": True,
+        })
+    return {"average_rating": avg, "reviews": items}

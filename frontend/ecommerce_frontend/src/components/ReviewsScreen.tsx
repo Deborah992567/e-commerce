@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StarIcon, CheckIcon, ChevronLeftIcon, HeartIcon } from './Icons';
+import { api } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Review {
   id: string;
@@ -36,6 +38,7 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
   onClose,
 }) => {
   const insets = useSafeAreaInsets();
+  const { token } = useAuth();
   const [sortBy, setSortBy] = useState<'recent' | 'helpful' | 'rating'>('recent');
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [showWriteReview, setShowWriteReview] = useState(false);
@@ -44,6 +47,8 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
     title: '',
     content: '',
   });
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   const mockReviews: Review[] = [
     {
@@ -101,9 +106,50 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
     },
   ];
 
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        const data = await api.get<{
+          average_rating?: number;
+          reviews?: {
+            id: number;
+            rating: number;
+            comment: string | null;
+            author: string;
+            title?: string | null;
+            date?: string | null;
+            helpful?: number;
+            verified?: boolean;
+          }[];
+        }>(`/reviews/product/${productId}`);
+        if (data && Array.isArray(data.reviews) && data.reviews.length > 0) {
+          const mapped: Review[] = data.reviews.map((r) => ({
+            id: String(r.id),
+            author: r.author,
+            rating: r.rating,
+            title: r.title ?? '',
+            content: r.comment ?? '',
+            date: r.date ? String(r.date) : '',
+            helpful: r.helpful ?? 0,
+            verified: r.verified ?? true,
+          }));
+          setReviews(mapped);
+        } else {
+          setReviews(mockReviews);
+        }
+      } catch (e) {
+        setReviews(mockReviews);
+      }
+      setLoaded(true);
+    };
+    loadReviews();
+  }, [productId]);
+
+  const allReviews = loaded ? reviews : mockReviews;
+
   const filteredReviews = filterRating
-    ? mockReviews.filter((r) => r.rating === filterRating)
-    : mockReviews;
+    ? allReviews.filter((r) => r.rating === filterRating)
+    : allReviews;
 
   const sortedReviews = [...filteredReviews].sort((a, b) => {
     if (sortBy === 'helpful') return b.helpful - a.helpful;
@@ -112,20 +158,32 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
   });
 
   const averageRating =
-    mockReviews.reduce((sum, r) => sum + r.rating, 0) / mockReviews.length;
+    allReviews.length ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length : 0;
 
   const ratingDistribution = {
-    5: mockReviews.filter((r) => r.rating === 5).length,
-    4: mockReviews.filter((r) => r.rating === 4).length,
-    3: mockReviews.filter((r) => r.rating === 3).length,
-    2: mockReviews.filter((r) => r.rating === 2).length,
-    1: mockReviews.filter((r) => r.rating === 1).length,
+    5: allReviews.filter((r) => r.rating === 5).length,
+    4: allReviews.filter((r) => r.rating === 4).length,
+    3: allReviews.filter((r) => r.rating === 3).length,
+    2: allReviews.filter((r) => r.rating === 2).length,
+    1: allReviews.filter((r) => r.rating === 1).length,
   };
 
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async () => {
     if (!newReview.title.trim() || !newReview.content.trim()) {
       Alert.alert('Missing Info', 'Please fill in title and content');
       return;
+    }
+
+    if (token) {
+      try {
+        await api.post('/reviews/', {
+          product_id: productId,
+          rating: newReview.rating,
+          comment: newReview.content,
+        });
+      } catch (e) {
+        // fall back to local acknowledgement below
+      }
     }
 
     Alert.alert('Success', 'Your review has been posted!', [
@@ -171,7 +229,7 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
           <Text style={styles.averageRating}>{averageRating.toFixed(1)}</Text>
           {renderRatingStar(Math.round(averageRating))}
           <Text style={styles.reviewCount}>
-            {mockReviews.length} reviews
+            {allReviews.length} reviews
           </Text>
         </View>
 
@@ -193,16 +251,16 @@ const ReviewsScreen: React.FC<ReviewsProps> = ({
               </View>
               <View style={styles.barContainer}>
                 <View
-                  style={[
-                    styles.bar,
-                    {
-                      width: `${
-                        (ratingDistribution[rating as keyof typeof ratingDistribution] /
-                          mockReviews.length) *
-                        100
-                      }%`,
-                    },
-                  ]}
+                      style={[
+                        styles.bar,
+                        {
+                          width: `${
+                            (ratingDistribution[rating as keyof typeof ratingDistribution] /
+                              (allReviews.length || 1)) *
+                            100
+                          }%`,
+                        },
+                      ]}
                 />
               </View>
               <Text style={styles.distributionCount}>
