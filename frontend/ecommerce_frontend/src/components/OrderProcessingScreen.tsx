@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PackageIcon, TruckIcon, CheckIcon } from './Icons';
+import { OrderResult } from './CheckoutScreen';
 
 interface OrderProcessingScreenProps {
   onComplete: () => void;
-  orderId?: string;
+  order?: OrderResult | null;
 }
 
 const STAGES = [
@@ -14,8 +15,9 @@ const STAGES = [
   { key: 'done', label: 'Order confirmed', icon: 'check', color: '#4CAF50' },
 ];
 
-const OrderProcessingScreen: React.FC<OrderProcessingScreenProps> = ({ onComplete, orderId }) => {
+const OrderProcessingScreen: React.FC<OrderProcessingScreenProps> = ({ onComplete, order }) => {
   const insets = useSafeAreaInsets();
+  const orderId = order?.orderId;
   const [stageIndex, setStageIndex] = useState(0);
   const progress = useRef(new Animated.Value(0)).current;
   const packAnim = useRef(new Animated.Value(0)).current;

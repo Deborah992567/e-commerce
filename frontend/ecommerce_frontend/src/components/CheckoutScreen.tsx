@@ -4,9 +4,21 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
 import { ChevronLeftIcon, CheckIcon, CreditCardIcon, WalletIcon } from './Icons';
 
+export interface OrderResult {
+  orderId: string;
+  items: { name: string; quantity: number; unitPrice: number; size?: string | null }[];
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  total: number;
+  paymentMethod: string;
+  customerEmail: string;
+  date: string;
+}
+
 interface CheckoutScreenProps {
   onBack?: () => void;
-  onOrderSuccess?: () => void;
+  onOrderSuccess?: (order: OrderResult) => void;
 }
 
 const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess }) => {
@@ -66,8 +78,34 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
     setProcessingMessage('Payment successful!');
     await new Promise<void>((r) => setTimeout(() => r(), 600));
     setIsProcessing(false);
+
+    const selectedMethod = paymentMethods.find((m) => m.id === selectedPaymentMethod);
+    const paymentName =
+      selectedMethod?.type === 'credit_card' ? `Credit Card •••• ${selectedMethod.last4}`
+      : selectedMethod?.type === 'paypal' ? 'PayPal'
+      : selectedMethod?.type === 'apple_pay' ? 'Apple Pay'
+      : 'Payment';
+
+    const orderId = `EC-${Date.now().toString().slice(-6)}`;
+    const result: OrderResult = {
+      orderId,
+      items: cart.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        unitPrice: item.price,
+        size: item.size,
+      })),
+      subtotal: totalPrice,
+      shipping: shippingCost,
+      tax,
+      total: finalTotal,
+      paymentMethod: paymentName,
+      customerEmail: '',
+      date: new Date().toISOString(),
+    };
+
     clearCart();
-    onOrderSuccess?.();
+    onOrderSuccess?.(result);
   };
 
   const formatCurrency = (value: number) => `₦${value.toFixed(2)}`;
