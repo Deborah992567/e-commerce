@@ -1,24 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Product } from '../types';
 import { StarIcon, TruckIcon, TagIcon, FireIcon } from './Icons';
 import { SkeletonProductCard } from './SkeletonLoader';
+import { useProducts } from '../contexts/ProductContext';
 
 interface TemuAliExpressProductGridProps {
   onAddToCart: (product: Product) => void;
   onProductPress: (product: Product) => void;
 }
-
-const SAMPLE_PRODUCTS: Product[] = [
-  { id: 1, name: 'Wireless Bluetooth Headphones Noise Cancelling Over-Ear', price: 29.99, oldPrice: 59.99, badge: 'Hot Sale', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=80', rating: 4.5, reviews: 2847, store: 'AudioTech Official Store', freeShipping: true, plusEligible: true, discount: 50, sold: 15420 },
-  { id: 2, name: 'Smart Watch Fitness Tracker Heart Rate Monitor GPS', price: 45.99, oldPrice: 89.99, img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&q=80', rating: 4.3, reviews: 1923, store: 'WearableTech Hub', freeShipping: true, plusEligible: false, discount: 49, sold: 8750 },
-  { id: 3, name: 'Portable Charger 20000mAh Fast Charging Power Bank', price: 19.99, oldPrice: 39.99, img: 'https://images.unsplash.com/photo-1609594040184-52b9b3f8f3ba?w=300&q=80', rating: 4.7, reviews: 4521, store: 'PowerSolutions Ltd', freeShipping: true, plusEligible: true, discount: 50, sold: 23100 },
-  { id: 4, name: 'LED Strip Lights RGB Smart Home Lighting Kit', price: 15.99, oldPrice: 29.99, img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=80', rating: 4.4, reviews: 1234, store: 'SmartHome Essentials', freeShipping: false, plusEligible: false, discount: 47, sold: 6780 },
-  { id: 5, name: 'Stainless Steel Insulated Water Bottle 500ml', price: 12.99, oldPrice: 24.99, img: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=300&q=80', rating: 4.6, reviews: 3456, store: 'KitchenWare Pro', freeShipping: true, plusEligible: true, discount: 48, sold: 18900 },
-  { id: 6, name: 'Gaming Mouse RGB Backlit 16000 DPI Wireless', price: 34.99, oldPrice: 69.99, img: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=300&q=80', rating: 4.8, reviews: 5678, store: 'GamingGear Plus', freeShipping: true, plusEligible: true, discount: 50, sold: 31200, badge: 'Choice' },
-  { id: 7, name: 'Mini Projector HD 1080P Home Theater Portable', price: 89.99, oldPrice: 149.99, img: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&q=80', rating: 4.2, reviews: 892, store: 'Home Entertainment Co', freeShipping: true, plusEligible: false, discount: 40, sold: 5430 },
-  { id: 8, name: 'Electric Toothbrush Sonic Clean Replacement Heads', price: 24.99, oldPrice: 49.99, img: 'https://images.unsplash.com/photo-1559599101-f09722fb4948?w=300&q=80', rating: 4.5, reviews: 2134, store: 'OralCare Plus', freeShipping: true, plusEligible: true, discount: 50, sold: 12890 },
-];
 
 const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) => void; onProductPress: (product: Product) => void }> = ({ product, onAddToCart, onProductPress }) => {
   const renderStars = (rating: number) => {
@@ -57,7 +47,7 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) 
         <Text style={styles.productTitle} numberOfLines={2}>{product.name}</Text>
         <View style={styles.ratingContainer}>
           <View style={styles.starsRow}>{renderStars(product.rating || 0)}</View>
-          <Text style={styles.ratingText}>({product.reviews})</Text>
+          {typeof product.reviews === 'number' && <Text style={styles.ratingText}>({product.reviews})</Text>}
         </View>
         <View style={styles.priceContainer}>
           <Text style={styles.currentPrice}>₦{product.price}</Text>
@@ -72,7 +62,7 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) 
           )}
         </View>
         <View style={styles.bottomContainer}>
-          <Text style={styles.soldText}>{product.sold} sold</Text>
+          {typeof product.sold === 'number' ? <Text style={styles.soldText}>{product.sold} sold</Text> : <View />}
           <TouchableOpacity style={styles.addToCartButton} onPress={() => onAddToCart(product)}>
             <Text style={styles.addToCartText}>Add</Text>
           </TouchableOpacity>
@@ -83,12 +73,7 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) 
 };
 
 const TemuAliExpressProductGrid: React.FC<TemuAliExpressProductGridProps> = ({ onAddToCart, onProductPress }) => {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1200);
-    return () => clearTimeout(timer);
-  }, []);
+  const { products, loading } = useProducts();
 
   if (loading) {
     return (
@@ -103,7 +88,7 @@ const TemuAliExpressProductGrid: React.FC<TemuAliExpressProductGridProps> = ({ o
   return (
     <View style={styles.container}>
       <View style={styles.listContainer}>
-        {SAMPLE_PRODUCTS.map((item) => (
+        {products.slice(0, 40).map((item) => (
           <ProductCard key={item.id.toString()} product={item} onAddToCart={onAddToCart} onProductPress={onProductPress} />
         ))}
       </View>

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, Image, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PRODUCT_CATALOG, searchProducts } from '../data/products';
+import { useProducts } from '../contexts/ProductContext';
 import { Product } from '../types';
 import { SearchIcon, ChevronLeftIcon, StarIcon, XIcon } from './Icons';
 
@@ -12,14 +12,15 @@ interface SearchScreenProps {
 
 const SearchScreen: React.FC<SearchScreenProps> = ({ onBack, onProductPress }) => {
   const insets = useSafeAreaInsets();
+  const { products, search } = useProducts();
   const [query, setQuery] = useState('');
 
   const suggestions = ['headphones', 'perfume', 'watch', 'sneakers', 'earbuds', 'handbag'];
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    return searchProducts(query) ?? [];
-  }, [query]);
+    return search(query);
+  }, [query, search]);
 
   const handleSelectSuggestion = (s: string) => {
     setQuery(s);
@@ -90,7 +91,7 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ onBack, onProductPress }) =
           <View style={styles.allProducts}>
             <Text style={styles.allProductsTitle}>All Products</Text>
             <FlatList
-              data={PRODUCT_CATALOG}
+              data={products}
               keyExtractor={(item) => String(item.id)}
               renderItem={renderItem}
               showsVerticalScrollIndicator={false}
