@@ -36,6 +36,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvc, setCardCvc] = useState('');
   const [processingMessage, setProcessingMessage] = useState('Contacting payment gateway...');
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -55,7 +57,23 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
 
   const shippingCost = totalPrice > 50 ? 0 : 9.99;
   const tax = totalPrice * 0.08;
-  const finalTotal = totalPrice + shippingCost + tax;
+  const discountedPrice = totalPrice - appliedDiscount;
+  const finalTotal = discountedPrice + shippingCost + tax;
+
+  const applyCoupon = () => {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) { Alert.alert('Coupon', 'Enter a coupon code'); return; }
+    if (code === 'WELCOME10') {
+      setAppliedDiscount(totalPrice * 0.1);
+      Alert.alert('Coupon Applied', '10% discount applied');
+    } else if (code === 'SAVE50') {
+      setAppliedDiscount(50);
+      Alert.alert('Coupon Applied', '₦50 discount applied');
+    } else {
+      setAppliedDiscount(0);
+      Alert.alert('Invalid Coupon', 'This coupon code is not valid');
+    }
+  };
 
   const validateCard = () => {
     const digitsOnly = cardNumber.replace(/\s/g, '');
@@ -82,10 +100,14 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
     let apiOrderId: string | null = null;
     if (token) {
       try {
-        const res = await api.post<{ order_id: number; total: number }>('/orders/', {
+        const body: Record<string, unknown> = {
           product_ids: cart.map((i) => i.id),
           quantities: cart.map((i) => i.quantity),
-        });
+        };
+        if (appliedDiscount > 0 && couponCode.trim()) {
+          body.discount_code = couponCode.trim();
+        }
+        const res = await api.post<{ order_id: number; total: number }>('/orders/', body);
         apiOrderId = String(res.order_id);
       } catch (e) {
         // fall back to simulated order if backend order creation fails
@@ -120,7 +142,6 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
       customerEmail: authUser?.email ?? '',
       date: new Date().toISOString(),
     };
-
     clearCart();
     onOrderSuccess?.(result);
   };
@@ -155,8 +176,24 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
               <Text style={styles.itemTotal}>{formatCurrency(item.price * item.quantity)}</Text>
             </View>
           ))}
+          <View style={styles.couponRow}>
+            <TextInput
+              style={styles.couponInput}
+              placeholder="Coupon code (e.g. WELCOME10)"
+              placeholderTextColor="#777"
+              value={couponCode}
+              onChangeText={setCouponCode}
+              autoCapitalize="characters"
+            />
+            <TouchableOpacity onPress={applyCoupon} style={styles.couponBtn}>
+              <Text style={styles.couponBtnText}>Apply</Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.divider} />
           <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Subtotal</Text><Text style={styles.summaryValue}>{formatCurrency(totalPrice)}</Text></View>
+          {appliedDiscount > 0 && (
+            <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Discount</Text><Text style={[styles.summaryValue, { color: '#4CAF50' }]}>-{formatCurrency(appliedDiscount)}</Text></View>
+          )}
           <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Shipping</Text><Text style={[styles.summaryValue, shippingCost === 0 && { color: '#4CAF50' }]}>{shippingCost === 0 ? 'Free' : formatCurrency(shippingCost)}</Text></View>
           <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Tax</Text><Text style={styles.summaryValue}>{formatCurrency(tax)}</Text></View>
           <View style={[styles.summaryRow, styles.totalRow]}><Text style={styles.totalLabel}>Total</Text><Text style={styles.totalValue}>{formatCurrency(finalTotal)}</Text></View>
@@ -293,6 +330,10 @@ const styles = StyleSheet.create({
   itemSize: { color: '#FF5722', fontSize: 14, fontWeight: '600' },
   itemTotal: { color: '#FFF', fontSize: 16, fontWeight: '600' },
   divider: { height: 1, backgroundColor: '#1F1F2A', marginVertical: 12 },
+  couponRow: { flexDirection: 'row', gap: 8, marginBottom: 4 },
+  couponInput: { flex: 1, backgroundColor: '#1A1A22', borderRadius: 8, borderWidth: 1, borderColor: '#2D2D38', paddingHorizontal: 12, height: 44, color: '#FFF' },
+  couponBtn: { backgroundColor: '#FF5722', borderRadius: 8, paddingHorizontal: 16, justifyContent: 'center' },
+  couponBtnText: { color: '#FFF', fontSize: 14, fontWeight: '700' },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8 },
   summaryLabel: { color: '#A0A0A0', fontSize: 14 },
   summaryValue: { color: '#FFF', fontSize: 14, fontWeight: '600' },
