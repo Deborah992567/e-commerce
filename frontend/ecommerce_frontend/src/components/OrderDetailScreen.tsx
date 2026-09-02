@@ -10,6 +10,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeftIcon, CheckIcon, PackageIcon, ClockIcon, TruckIcon, TagIcon, MailIcon } from './Icons';
 import ProgressBar from './ProgressBar';
+import { api } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 interface OrderItem {
   id: number;
@@ -39,7 +41,28 @@ interface OrderDetailScreenProps {
 
 const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) => {
   const insets = useSafeAreaInsets();
+  const { token } = useAuth();
   const [expandedTracking, setExpandedTracking] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
+
+  const handleCancelOrder = () => {
+    if (!token) { Alert.alert('Sign in required', 'Please sign in to cancel an order'); return; }
+    Alert.alert('Cancel Order', 'Are you sure you want to cancel this order?', [
+      { text: 'No', style: 'cancel' },
+      { text: 'Yes, cancel', style: 'destructive', onPress: async () => {
+        setCancelling(true);
+        try {
+          const res = await api.post<{ message: string }>(`/orders/${order.id}/cancel`);
+          Alert.alert('Order Cancelled', res?.message ?? 'Your order has been cancelled.');
+          if (onBack) onBack();
+        } catch (e) {
+          Alert.alert('Cancellation Failed', 'Unable to cancel this order.');
+        } finally {
+          setCancelling(false);
+        }
+      }},
+    ]);
+  };
 
   const mockOrderItems: OrderItem[] = [
     {
@@ -273,6 +296,11 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
           <TouchableOpacity onPress={handlePrintInvoice} style={styles.actionBtn}>
             <Text style={styles.actionBtnText}>📄 Print Invoice</Text>
           </TouchableOpacity>
+          {order.status === 'pending' && (
+            <TouchableOpacity onPress={handleCancelOrder} disabled={cancelling} style={[styles.actionBtn, styles.cancelBtn]}>
+              <Text style={[styles.actionBtnText, styles.cancelBtnText]}>{cancelling ? 'Cancelling...' : '✕ Cancel Order'}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.spacer} />
@@ -525,6 +553,13 @@ const styles = StyleSheet.create({
     color: '#E8C97A',
     fontSize: 14,
     fontWeight: '600',
+  },
+  cancelBtn: {
+    borderColor: '#F44336',
+    backgroundColor: '#1A1010',
+  },
+  cancelBtnText: {
+    color: '#F44336',
   },
   spacer: {
     height: 20,
