@@ -60,9 +60,22 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onOrderSuccess 
   const discountedPrice = totalPrice - appliedDiscount;
   const finalTotal = discountedPrice + shippingCost + tax;
 
-  const applyCoupon = () => {
+  const applyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
     if (!code) { Alert.alert('Coupon', 'Enter a coupon code'); return; }
+    try {
+      const res = await api.post<{ valid: boolean; discount_amount: number }>('/discounts/validate', {
+        code,
+        total_amount: totalPrice,
+      });
+      if (res && res.valid) {
+        setAppliedDiscount(res.discount_amount);
+        Alert.alert('Coupon Applied', 'Discount applied successfully');
+        return;
+      }
+    } catch (e) {
+      // offline or invalid — fall back to local demo codes below
+    }
     if (code === 'WELCOME10') {
       setAppliedDiscount(totalPrice * 0.1);
       Alert.alert('Coupon Applied', '10% discount applied');
