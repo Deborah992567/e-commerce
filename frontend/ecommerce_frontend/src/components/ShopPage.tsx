@@ -5,6 +5,7 @@ import TemuAliExpressProductGrid from './TemuAliExpressProductGrid';
 import AnimatedCard from './AnimatedCard';
 import FloatingAction from './FloatingAction';
 import { Product } from '../types';
+import { useProducts } from '../contexts/ProductContext';
 import { SearchIcon, HeartIcon, BellIcon, TruckIcon, SortIcon, FilterIcon, FireIcon, StarIcon, TagIcon } from './Icons';
 
 interface ShopPageProps {
@@ -23,7 +24,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   };
 
-  const categories = ['All', 'Fashion', 'Electronics', 'Home', 'Beauty', 'Sports', 'Food', 'Toys'];
+  const { categories } = useProducts();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>

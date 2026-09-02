@@ -35,6 +35,7 @@ function mapApiToProduct(a: ApiPagedProducts['items'][number]): Product {
 
 interface ProductContextType {
   products: Product[];
+  categories: string[];
   loading: boolean;
   online: boolean;
   refresh: () => Promise<void>;
@@ -49,8 +50,11 @@ export const useProducts = () => {
   return ctx;
 };
 
+const FALLBACK_CATEGORIES = ['All', 'Fashion', 'Electronics', 'Home', 'Beauty', 'Sports', 'Food', 'Toys'];
+
 export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>(PRODUCT_CATALOG);
+  const [categories, setCategories] = useState<string[]>(FALLBACK_CATEGORIES);
   const [loading, setLoading] = useState(false);
   const [online, setOnline] = useState(false);
 
@@ -61,6 +65,14 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
       if (data && Array.isArray(data.items) && data.items.length > 0) {
         setProducts(data.items.map(mapApiToProduct));
         setOnline(true);
+      }
+      try {
+        const cats = await api.get<{ id: number; name: string }[]>('/products/categories');
+        if (Array.isArray(cats) && cats.length > 0) {
+          setCategories(['All', ...cats.map((c) => c.name)]);
+        }
+      } catch (e) {
+        // keep fallback categories
       }
     } catch (e) {
       // backend offline — keep the mock catalog as fallback
@@ -89,7 +101,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
   );
 
   return (
-    <ProductContext.Provider value={{ products, loading, online, refresh, search }}>
+    <ProductContext.Provider value={{ products, categories, loading, online, refresh, search }}>
       {children}
     </ProductContext.Provider>
   );
