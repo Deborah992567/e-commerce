@@ -127,6 +127,9 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
               <View style={styles.inStockRow}>
                 <CheckIcon size={14} color="#4CAF50" />
                 <Text style={styles.inStock}>In Stock</Text>
+                {typeof product.stock === 'number' && product.stock <= 5 && product.stock > 0 && (
+                  <Text style={styles.lowStock}>• Only {product.stock} left</Text>
+                )}
               </View>
             ) : (
               <Text style={styles.outOfStock}>Out of Stock</Text>
@@ -228,6 +231,7 @@ const styles = StyleSheet.create({
   stockRow: { marginBottom: 16 },
   inStockRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   inStock: { color: '#4CAF50', fontSize: 14, fontWeight: '600' },
+  lowStock: { color: '#FF9800', fontSize: 14, fontWeight: '600' },
   outOfStock: { color: '#FF6B6B', fontSize: 14, fontWeight: '600' },
   descriptionSection: { marginBottom: 24, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#1F1F2A' },
   sectionTitle: { color: '#FFF', fontSize: 18, fontWeight: '700', marginBottom: 12 },

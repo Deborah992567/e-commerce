@@ -14,4 +14,5 @@ export interface Product {
   plusEligible?: boolean;
   discount?: number;
   sold?: number;
+  stock?: number;
 }

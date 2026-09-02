@@ -32,6 +32,7 @@ function mapApiToProduct(a: ApiPagedProducts['items'][number]): Product {
     img: a.image ?? a.images?.[0]?.url ?? '',
     category: a.category ?? undefined,
     reviews: undefined,
+    stock: a.stock,
   };
 }
 
