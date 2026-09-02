@@ -13,9 +13,18 @@ from app.dependencies.auth import get_current_user, oauth2_scheme
 
 router = APIRouter()
 
+def validate_password_strength(password: str):
+    if len(password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+    if not any(c.isupper() for c in password):
+        raise HTTPException(status_code=400, detail="Password must contain an uppercase letter")
+    if not any(c.isdigit() for c in password):
+        raise HTTPException(status_code=400, detail="Password must contain a number")
+
 @router.post("/register")
 def register(data: UserCreate, db: Session = Depends(get_db)):
     try:
+        validate_password_strength(data.password)
         hashed = pwd_context.hash(data.password)
         user = User(email=data.email, password=hashed)
         db.add(user)
@@ -112,6 +121,7 @@ def reset_password(data: ResetPassword, db: Session = Depends(get_db)):
     if not user:
         raise credentials_exception
 
+    validate_password_strength(data.new_password)
     user.password = pwd_context.hash(data.new_password)
     db.commit()
     return {"message": "Password has been reset successfully"}
@@ -124,6 +134,7 @@ def change_password(
 ):
     if not pwd_context.verify(data.old_password, user.password):
         raise HTTPException(status_code=400, detail="Current password is incorrect")
+    validate_password_strength(data.new_password)
     user.password = pwd_context.hash(data.new_password)
     db.commit()
     return {"message": "Password changed successfully"}
