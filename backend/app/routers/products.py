@@ -11,6 +11,21 @@ from app.models.category import Category
 
 router = APIRouter()
 
+def serialize_product(product: Product):
+    image_url = product.images[0].url if product.images else None
+    return {
+        "id": product.id,
+        "name": product.name,
+        "description": product.description,
+        "price": product.price,
+        "stock": product.stock,
+        "avg_rating": product.avg_rating,
+        "category": product.category.name if product.category else None,
+        "category_id": product.category_id,
+        "image": image_url,
+        "images": [{"id": img.id, "url": img.url} for img in product.images],
+    }
+
 @router.get("/")
 def list_products(
     q: str | None = Query(None),
@@ -44,7 +59,7 @@ def list_products(
 
     total = query.count()
     products = query.offset((page - 1) * page_size).limit(page_size).all()
-    return {"total": total, "page": page, "page_size": page_size, "items": products}
+    return {"total": total, "page": page, "page_size": page_size, "items": [serialize_product(p) for p in products]}
 
 @router.get("/categories")
 def list_categories(db: Session = Depends(get_db)):
@@ -60,7 +75,7 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    return product
+    return serialize_product(product)
 
 
 @router.post("/{product_id}/upload-image")

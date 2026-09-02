@@ -15,6 +15,8 @@ interface ApiPagedProducts {
     stock: number;
     avg_rating: number;
     category_id: number;
+    category?: string | null;
+    image?: string | null;
     images: { id: number; url: string }[];
   }[];
 }
@@ -27,8 +29,8 @@ function mapApiToProduct(a: ApiPagedProducts['items'][number]): Product {
     price: a.price,
     oldPrice: null,
     rating: a.avg_rating,
-    img: a.images?.[0]?.url ?? '',
-    category: undefined,
+    img: a.image ?? a.images?.[0]?.url ?? '',
+    category: a.category ?? undefined,
     reviews: undefined,
   };
 }
