@@ -21,6 +21,14 @@ def create_review(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
+    existing = (
+        db.query(Review)
+        .filter(Review.product_id == data.product_id, Review.user_id == user.id)
+        .first()
+    )
+    if existing:
+        raise HTTPException(status_code=400, detail="You have already reviewed this product")
+
     review = Review(
         user_id=user.id,
         product_id=data.product_id,
@@ -36,6 +44,29 @@ def create_review(
     db.commit()
 
     return {"message": "Review added", "review_id": review.id}
+
+@router.get("/user/me")
+def my_reviews(
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    rows = (
+        db.query(Review, Product)
+        .join(Product, Review.product_id == Product.id)
+        .filter(Review.user_id == user.id)
+        .order_by(Review.id.desc())
+        .all()
+    )
+    items = []
+    for review, product in rows:
+        items.append({
+            "id": review.id,
+            "product_id": review.product_id,
+            "product_name": product.name,
+            "rating": review.rating,
+            "comment": review.comment,
+        })
+    return {"reviews": items}
 
 @router.get("/product/{product_id}")
 def product_reviews(product_id: int, db: Session = Depends(get_db)):
