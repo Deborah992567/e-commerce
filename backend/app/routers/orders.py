@@ -99,10 +99,17 @@ def list_orders(
     )
     result = []
     for o in orders:
-        items = [
-            {"product_id": i.product_id, "quantity": i.quantity, "unit_price": i.unit_price}
-            for i in o.items
-        ]
+        items = []
+        for i in o.items:
+            product = i.product
+            image_url = product.images[0].url if product and product.images else None
+            items.append({
+                "product_id": i.product_id,
+                "quantity": i.quantity,
+                "unit_price": i.unit_price,
+                "name": product.name if product else None,
+                "image": image_url,
+            })
         result.append({
             "id": o.id,
             "total_amount": o.total_amount,
