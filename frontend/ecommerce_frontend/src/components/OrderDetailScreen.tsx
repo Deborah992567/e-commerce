@@ -75,14 +75,20 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
         }))
       : mockOrderItems;
 
-  // Mock delivery tracking
-  const trackingSteps = [
-    { label: 'Order Placed', date: 'Mar 22, 2026', completed: true },
-    { label: 'Processing', date: 'Mar 23, 2026', completed: true },
-    { label: 'Shipped', date: 'Mar 24, 2026', completed: true },
-    { label: 'Out for Delivery', date: 'Mar 27, 2026', completed: false },
-    { label: 'Delivered', date: 'Est. Mar 28, 2026', completed: false },
-  ];
+  // Delivery tracking derived from order status
+  const statusSteps: Record<string, boolean> = {
+    'Order Placed': true,
+    'Processing': order.status !== 'pending',
+    'Shipped': order.status === 'shipped' || order.status === 'delivered',
+    'Out for Delivery': order.status === 'delivered',
+    'Delivered': order.status === 'delivered',
+  };
+  const trackingSteps = Object.entries(statusSteps).map(([label, completed], i) => ({
+    label,
+    date: completed ? (label === 'Delivered' ? order.date : 'Confirmed') : 'Pending',
+    completed,
+    step: i,
+  }));
 
   const handleContactSupport = () => {
     Alert.alert(
