@@ -2,10 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.dependencies.database import get_db
 from app.models.discount import Discount
-from app.schemas.discount import DiscountCreate, DiscountUpdate
+from app.schemas.discount import DiscountCreate, DiscountUpdate, DiscountValidate
 from app.dependencies.auth import admin_required
+from app.services.discount_service import validate_discount
 
 router = APIRouter()
+
+@router.post("/validate")
+def validate(data: DiscountValidate, db: Session = Depends(get_db)):
+    discount, amount = validate_discount(data.code, data.total_amount, db)
+    return {"valid": True, "code": discount.code, "percentage": discount.percentage, "discount_amount": amount}
 
 @router.get("/")
 def list_discounts(db: Session = Depends(get_db)):

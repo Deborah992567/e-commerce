@@ -14,6 +14,10 @@ class DiscountUpdate(BaseModel):
     max_uses: int | None = None
     expires_at: datetime | None = None
 
+class DiscountValidate(BaseModel):
+    code: str
+    total_amount: float
+
 class DiscountOut(BaseModel):
     id: int
     code: str
