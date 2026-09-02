@@ -86,6 +86,26 @@ def create_order(
 
     return {"order_id": order.id, "total": total, "status": order.status.value}
 
+@router.post("/{order_id}/cancel")
+def cancel_order(
+    order_id: int,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    order = _get_owned_order(db, user, order_id)
+    if order.status not in [OrderStatus.PENDING, OrderStatus.CONFIRMED]:
+        raise HTTPException(status_code=400, detail="Only pending or confirmed orders can be cancelled")
+
+    order.status = OrderStatus.CANCELLED
+
+    for item in order.items:
+        product = item.product
+        if product:
+            product.stock = (product.stock or 0) + item.quantity
+
+    db.commit()
+    return {"message": "Order cancelled", "order_id": order.id, "status": order.status.value}
+
 @router.get("/track/{order_id}")
 def track_order(
     order_id: int,
