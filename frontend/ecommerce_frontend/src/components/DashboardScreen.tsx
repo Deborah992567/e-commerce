@@ -10,6 +10,10 @@ interface DashboardStats {
   total_users: number;
   total_orders: number;
   total_products: number;
+  total_revenue?: number;
+  avg_order_value?: number;
+  pending_orders?: number;
+  low_stock_products?: number;
 }
 
 interface DashboardScreenProps {
@@ -28,7 +32,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
         setStats(data);
       } catch (e) {
         // fall back to offline placeholder if backend is unavailable
-        setStats({ total_users: 0, total_orders: 0, total_products: 0 });
+        setStats({ total_users: 0, total_orders: 0, total_products: 0, total_revenue: 0, avg_order_value: 0, pending_orders: 0, low_stock_products: 0 });
       } finally {
         setLoading(false);
       }
@@ -104,10 +108,21 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onBack }) => {
 
       <View style={styles.revenueCard}>
         <Text style={styles.revenueTitle}>Revenue Overview</Text>
-        <Text style={styles.revenueAmount}>₦45,678.90</Text>
-        <Text style={styles.revenueSubtext}>+15% from last month</Text>
+        <Text style={styles.revenueAmount}>₦{(stats?.total_revenue || 0).toLocaleString()}</Text>
+        <Text style={styles.revenueSubtext}>Avg order value: ₦{(stats?.avg_order_value || 0).toLocaleString()}</Text>
         <View style={styles.revenueBar}>
           <View style={styles.revenueProgress} />
+        </View>
+      </View>
+
+      <View style={styles.pendingRow}>
+        <View style={styles.pendingCard}>
+          <Text style={styles.pendingNumber}>{stats?.pending_orders || 0}</Text>
+          <Text style={styles.pendingLabel}>Pending Orders</Text>
+        </View>
+        <View style={styles.pendingCard}>
+          <Text style={styles.pendingNumber}>{stats?.low_stock_products || 0}</Text>
+          <Text style={styles.pendingLabel}>Low Stock Products</Text>
         </View>
       </View>
 
@@ -313,6 +328,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF5722',
     borderRadius: 3,
   },
+  pendingRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginTop: 14 },
+  pendingCard: { flex: 1, backgroundColor: '#1A1A22', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#2D2D38' },
+  pendingNumber: { color: '#FFF', fontSize: 24, fontWeight: '800' },
+  pendingLabel: { color: '#A0A0A0', fontSize: 13, marginTop: 4 },
   actionsContainer: {
     paddingHorizontal: 16,
     marginBottom: 32,
