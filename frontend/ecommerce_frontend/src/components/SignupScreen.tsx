@@ -49,6 +49,8 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack, onGoToLogin, onGoTo
     if (!emailRegex.test(email)) { Alert.alert('Error', 'Please enter a valid email address'); return; }
     if (!password.trim()) { Alert.alert('Error', 'Please enter a password'); return; }
     if (password.length < 8) { Alert.alert('Error', 'Password must be at least 8 characters'); return; }
+    if (!/[A-Z]/.test(password)) { Alert.alert('Error', 'Password must contain an uppercase letter'); return; }
+    if (!/[0-9]/.test(password)) { Alert.alert('Error', 'Password must contain a number'); return; }
     if (!confirmPassword.trim()) { Alert.alert('Error', 'Please confirm your password'); return; }
     if (password !== confirmPassword) { Alert.alert('Error', 'Passwords do not match!'); return; }
     setLoading(true);
