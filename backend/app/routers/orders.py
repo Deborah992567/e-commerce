@@ -8,6 +8,7 @@ from app.services.order_service import calculate_order_total
 from app.models.order import Order, OrderStatus
 from app.models.order_item import OrderItem
 from app.models.payment import Payment
+from app.models.discount import Discount
 from app.Tasks.email_tasks import send_order_receipt
 from app.models.product import Product
 from datetime import datetime
@@ -65,6 +66,16 @@ def create_order(
     ))
 
     db.commit()
+
+    if data.discount_code:
+        discount = (
+            db.query(Discount)
+            .filter(Discount.code == data.discount_code, Discount.is_active == True)
+            .first()
+        )
+        if discount:
+            discount.uses = discount.uses + 1
+            db.commit()
 
     # Send order confirmation email (async)
     try:
