@@ -86,6 +86,34 @@ def track_order(
         raise HTTPException(404, "Order not found")
     return {"status": order.status.value, "total": order.total_amount, "created_at": order.created_at}
 
+@router.get("/{order_id}")
+def get_order_detail(
+    order_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    order = db.query(Order).filter(Order.id == order_id, Order.user_id == user.id).first()
+    if not order:
+        raise HTTPException(404, "Order not found")
+    items = []
+    for i in order.items:
+        product = i.product
+        image_url = product.images[0].url if product and product.images else None
+        items.append({
+            "product_id": i.product_id,
+            "quantity": i.quantity,
+            "unit_price": i.unit_price,
+            "name": product.name if product else None,
+            "image": image_url,
+        })
+    return {
+        "id": order.id,
+        "total_amount": order.total_amount,
+        "status": order.status.value,
+        "created_at": order.created_at,
+        "items": items,
+    }
+
 @router.get("/")
 def list_orders(
     user=Depends(get_current_user),
