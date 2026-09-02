@@ -81,20 +81,10 @@ def track_order(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    order = db.query(Order).filter(Order.id == order_id, Order.user_id == user.id).first()
-    if not order:
-        raise HTTPException(404, "Order not found")
+    order = _get_owned_order(db, user, order_id)
     return {"status": order.status.value, "total": order.total_amount, "created_at": order.created_at}
 
-@router.get("/{order_id}")
-def get_order_detail(
-    order_id: int,
-    db: Session = Depends(get_db),
-    user=Depends(get_current_user)
-):
-    order = db.query(Order).filter(Order.id == order_id, Order.user_id == user.id).first()
-    if not order:
-        raise HTTPException(404, "Order not found")
+def serialize_order_items(order: Order):
     items = []
     for i in order.items:
         product = i.product
@@ -106,13 +96,31 @@ def get_order_detail(
             "name": product.name if product else None,
             "image": image_url,
         })
+    return items
+
+def serialize_order(order: Order):
     return {
         "id": order.id,
         "total_amount": order.total_amount,
         "status": order.status.value,
         "created_at": order.created_at,
-        "items": items,
+        "items": serialize_order_items(order),
     }
+
+def _get_owned_order(db: Session, user, order_id: int):
+    order = db.query(Order).filter(Order.id == order_id, Order.user_id == user.id).first()
+    if not order:
+        raise HTTPException(404, "Order not found")
+    return order
+
+@router.get("/{order_id}")
+def get_order_detail(
+    order_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    order = _get_owned_order(db, user, order_id)
+    return serialize_order(order)
 
 @router.get("/")
 def list_orders(
@@ -125,24 +133,5 @@ def list_orders(
         .order_by(Order.created_at.desc())
         .all()
     )
-    result = []
-    for o in orders:
-        items = []
-        for i in o.items:
-            product = i.product
-            image_url = product.images[0].url if product and product.images else None
-            items.append({
-                "product_id": i.product_id,
-                "quantity": i.quantity,
-                "unit_price": i.unit_price,
-                "name": product.name if product else None,
-                "image": image_url,
-            })
-        result.append({
-            "id": o.id,
-            "total_amount": o.total_amount,
-            "status": o.status.value,
-            "created_at": o.created_at,
-            "items": items,
-        })
+    result = [serialize_order(o) for o in orders]
     return result
