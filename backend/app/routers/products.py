@@ -82,6 +82,25 @@ def featured_products(
     )
     return {"items": [serialize_product(p) for p in products]}
 
+@router.get("/{product_id}/related")
+def related_products(
+    product_id: int,
+    limit: int = Query(6, ge=1, le=20),
+    db: Session = Depends(get_db)
+):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    query = db.query(Product).filter(Product.id != product_id)
+    if product.category_id:
+        query = query.filter(Product.category_id == product.category_id)
+        related = query.order_by(Product.avg_rating.desc()).limit(limit).all()
+        if not related:
+            related = db.query(Product).filter(Product.id != product_id).order_by(Product.avg_rating.desc()).limit(limit).all()
+    else:
+        related = query.order_by(Product.avg_rating.desc()).limit(limit).all()
+    return {"items": [serialize_product(p) for p in related]}
+
 @router.get("/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):
     cache_product_view(product_id)
