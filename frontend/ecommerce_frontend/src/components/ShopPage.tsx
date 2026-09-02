@@ -108,6 +108,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, cartCount, onProductPr
           <TemuAliExpressProductGrid
             onAddToCart={onAddToCart}
             onProductPress={onProductPress}
+            category={selectedCategory}
           />
         </AnimatedCard>
       </ScrollView>

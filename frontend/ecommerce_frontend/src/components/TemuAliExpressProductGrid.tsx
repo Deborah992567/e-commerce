@@ -8,6 +8,7 @@ import { useProducts } from '../contexts/ProductContext';
 interface TemuAliExpressProductGridProps {
   onAddToCart: (product: Product) => void;
   onProductPress: (product: Product) => void;
+  category?: string;
 }
 
 const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) => void; onProductPress: (product: Product) => void }> = ({ product, onAddToCart, onProductPress }) => {
@@ -72,7 +73,7 @@ const ProductCard: React.FC<{ product: Product; onAddToCart: (product: Product) 
   );
 };
 
-const TemuAliExpressProductGrid: React.FC<TemuAliExpressProductGridProps> = ({ onAddToCart, onProductPress }) => {
+const TemuAliExpressProductGrid: React.FC<TemuAliExpressProductGridProps> = ({ onAddToCart, onProductPress, category }) => {
   const { products, loading } = useProducts();
 
   if (loading) {
@@ -85,10 +86,15 @@ const TemuAliExpressProductGrid: React.FC<TemuAliExpressProductGridProps> = ({ o
     );
   }
 
+  const visibleProducts =
+    category && category !== 'All'
+      ? products.filter((p) => (p.category ?? '').toLowerCase() === category.toLowerCase())
+      : products;
+
   return (
     <View style={styles.container}>
       <View style={styles.listContainer}>
-        {products.slice(0, 40).map((item) => (
+        {visibleProducts.slice(0, 40).map((item) => (
           <ProductCard key={item.id.toString()} product={item} onAddToCart={onAddToCart} onProductPress={onProductPress} />
         ))}
       </View>
