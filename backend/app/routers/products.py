@@ -46,6 +46,14 @@ def list_products(
     products = query.offset((page - 1) * page_size).limit(page_size).all()
     return {"total": total, "page": page, "page_size": page_size, "items": products}
 
+@router.get("/categories")
+def list_categories(db: Session = Depends(get_db)):
+    categories = db.query(Category).order_by(Category.name.asc()).all()
+    return [
+        {"id": c.id, "name": c.name}
+        for c in categories
+    ]
+
 @router.get("/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):
     cache_product_view(product_id)
