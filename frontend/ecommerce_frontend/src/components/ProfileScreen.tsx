@@ -21,11 +21,14 @@ interface ProfileScreenProps {
 }
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistory, onGoToWishlist, onGoToNotifications, onGoToReferral, onGoToContact, onGoToFaq, onGoToTerms, onLogin, onSignup }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const insets = useSafeAreaInsets();
   const [deliveryAddress, setDeliveryAddress] = useState({ street: '123 Main Street', city: 'New York', state: 'NY', zipCode: '10001', country: 'USA' });
   const [notifications, setNotifications] = useState({ orderUpdates: true, promotions: false, newArrivals: true, securityAlerts: true });
   const [totalOrders, setTotalOrders] = useState<number | null>(null);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [editName, setEditName] = useState(user?.full_name ?? '');
+  const [editPhone, setEditPhone] = useState(user?.phone ?? '');
 
   useEffect(() => {
     if (!user) return;
@@ -40,6 +43,16 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
       active = false;
     };
   }, [user]);
+
+  const handleSaveProfile = async () => {
+    const ok = await updateProfile({ full_name: editName, phone: editPhone });
+    if (ok) {
+      Alert.alert('Profile Updated', 'Your profile has been saved.');
+      setEditingProfile(false);
+    } else {
+      Alert.alert('Update Failed', 'Could not update your profile. Please try again.');
+    }
+  };
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -90,6 +103,18 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
               <Text style={styles.userRole}>{user?.role === 'admin' ? 'Administrator' : 'Customer'}</Text>
             </View>
           </View>
+          <TouchableOpacity onPress={() => setEditingProfile(!editingProfile)} style={styles.editProfileBtn}>
+            <Text style={styles.editProfileBtnText}>{editingProfile ? 'Cancel' : 'Edit Profile'}</Text>
+          </TouchableOpacity>
+          {editingProfile && (
+            <View style={styles.editProfileForm}>
+              <TextInput style={styles.input} value={editName} onChangeText={setEditName} placeholder="Full name" placeholderTextColor="#888" />
+              <TextInput style={styles.input} value={editPhone} onChangeText={setEditPhone} placeholder="Phone number" placeholderTextColor="#888" keyboardType="phone-pad" />
+              <TouchableOpacity onPress={handleSaveProfile} style={styles.saveProfileBtn}>
+                <Text style={styles.saveProfileBtnText}>Save Profile</Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <TouchableOpacity onPress={onGoToOrderHistory} style={styles.orderHistoryBtn}>
             <View style={styles.orderHistoryRow}>
               <View style={styles.orderHistoryLeft}>
@@ -228,6 +253,11 @@ const styles = StyleSheet.create({
   orderCountBadge: { backgroundColor: '#0D0D12', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 3 },
   orderCountText: { color: '#FF5722', fontSize: 13, fontWeight: '700' },
   orderHistoryBtnText: { color: '#FFF', fontSize: 14, fontWeight: '600' },
+  editProfileBtn: { marginTop: 12, borderWidth: 1, borderColor: '#FF5722', paddingVertical: 10, borderRadius: 10, alignItems: 'center' },
+  editProfileBtnText: { color: '#FF5722', fontSize: 14, fontWeight: '700' },
+  editProfileForm: { marginTop: 12, gap: 10 },
+  saveProfileBtn: { backgroundColor: '#FF5722', paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
+  saveProfileBtnText: { color: '#FFF', fontSize: 14, fontWeight: '700' },
   quickActionsRow: { flexDirection: 'row', marginTop: 12, gap: 12 },
   quickActionBtn: { flex: 1, backgroundColor: '#18181F', paddingVertical: 12, borderRadius: 10, alignItems: 'center', borderWidth: 1, borderColor: '#2D2D38', flexDirection: 'row', justifyContent: 'center', gap: 6 },
   quickActionBtnText: { color: '#FFF', fontSize: 13, fontWeight: '600' },
