@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '../services/api';
 import { UserIcon, PackageIcon, HeartIcon, BellIcon, UsersIcon, MailIcon, ShieldIcon, PhoneIcon, HelpIcon, ScaleIcon, LogOutIcon, CreditCardIcon, CheckIcon, TruckIcon, TagIcon, GiftIcon } from './Icons';
 import AnimatedAvatar from './AnimatedAvatar';
 import BouncyText from './BouncyText';
@@ -24,6 +25,21 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
   const insets = useSafeAreaInsets();
   const [deliveryAddress, setDeliveryAddress] = useState({ street: '123 Main Street', city: 'New York', state: 'NY', zipCode: '10001', country: 'USA' });
   const [notifications, setNotifications] = useState({ orderUpdates: true, promotions: false, newArrivals: true, securityAlerts: true });
+  const [totalOrders, setTotalOrders] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    api
+      .get<{ TOTAL?: number }>('/orders/summary')
+      .then((data) => {
+        if (active && data && typeof data.TOTAL === 'number') setTotalOrders(data.TOTAL);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -76,8 +92,15 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack, onGoToOrderHistor
           </View>
           <TouchableOpacity onPress={onGoToOrderHistory} style={styles.orderHistoryBtn}>
             <View style={styles.orderHistoryRow}>
-              <PackageIcon size={18} color="#0D0D12" />
-              <Text style={styles.orderHistoryBtnText}>View Order History</Text>
+              <View style={styles.orderHistoryLeft}>
+                <PackageIcon size={18} color="#0D0D12" />
+                <Text style={styles.orderHistoryBtnText}>View Order History</Text>
+              </View>
+              {totalOrders !== null && (
+                <View style={styles.orderCountBadge}>
+                  <Text style={styles.orderCountText}>{totalOrders}</Text>
+                </View>
+              )}
             </View>
           </TouchableOpacity>
           <View style={styles.quickActionsRow}>
@@ -199,8 +222,11 @@ const styles = StyleSheet.create({
   userName: { color: '#FFF', fontSize: 18, fontWeight: '600', marginBottom: 4 },
   userEmail: { color: '#A0A0A0', fontSize: 14, marginBottom: 2 },
   userRole: { color: '#FF5722', fontSize: 12, fontWeight: '500' },
-  orderHistoryBtn: { marginTop: 12, backgroundColor: '#FF5722', paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
-  orderHistoryRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  orderHistoryBtn: { marginTop: 12, backgroundColor: '#FF5722', paddingVertical: 12, borderRadius: 10, paddingHorizontal: 14 },
+  orderHistoryRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  orderHistoryLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  orderCountBadge: { backgroundColor: '#0D0D12', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 3 },
+  orderCountText: { color: '#FF5722', fontSize: 13, fontWeight: '700' },
   orderHistoryBtnText: { color: '#FFF', fontSize: 14, fontWeight: '600' },
   quickActionsRow: { flexDirection: 'row', marginTop: 12, gap: 12 },
   quickActionBtn: { flex: 1, backgroundColor: '#18181F', paddingVertical: 12, borderRadius: 10, alignItems: 'center', borderWidth: 1, borderColor: '#2D2D38', flexDirection: 'row', justifyContent: 'center', gap: 6 },
