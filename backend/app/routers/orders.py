@@ -5,7 +5,7 @@ from app.dependencies.database import get_db
 from app.dependencies.auth import get_current_user
 from app.schemas.order import OrderCreate
 from app.services.order_service import calculate_order_total
-from app.models.order import Order
+from app.models.order import Order, OrderStatus
 from app.models.order_item import OrderItem
 from app.models.payment import Payment
 from app.Tasks.email_tasks import send_order_receipt
@@ -112,6 +112,18 @@ def _get_owned_order(db: Session, user, order_id: int):
     if not order:
         raise HTTPException(404, "Order not found")
     return order
+
+@router.get("/summary")
+def order_summary(
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    statuses = [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.CANCELLED]
+    counts = {}
+    for s in statuses:
+        counts[s.value] = db.query(Order).filter(Order.user_id == user.id, Order.status == s).count()
+    counts["TOTAL"] = db.query(Order).filter(Order.user_id == user.id).count()
+    return counts
 
 @router.get("/{order_id}")
 def get_order_detail(
