@@ -1,7 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Alert, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCart } from '../contexts/CartContext';
+import { useProducts } from '../contexts/ProductContext';
+import { api } from '../services/api';
 import { Product } from '../types';
 import { ChevronLeftIcon, StarIcon, CheckIcon, MinusIcon, PlusIcon, PackageIcon } from './Icons';
 import AnimatedStar from './AnimatedStar';
@@ -21,15 +23,42 @@ const PRODUCT_DETAILS: { [key: number]: any } = {
 const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBack, onViewReviews }) => {
   const insets = useSafeAreaInsets();
   const { addToCart } = useCart();
+  const { products } = useProducts();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [related, setRelated] = useState<Product[]>([]);
 
   const details = PRODUCT_DETAILS[product.id] || {
     images: [product.img], description: 'High-quality product', fullDescription: 'Premium product designed for quality and comfort.',
     rating: 4.5, reviews: 100, inStock: true, sizes: [], specs: [{ label: 'Quality', value: 'Premium' }], relatedProducts: [],
   };
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      let list: Product[] = [];
+      try {
+        const res = await api.get<{ items: Product[] }>(`/products/${product.id}/related`);
+        if (active && res && Array.isArray(res.items) && res.items.length > 0) list = res.items;
+      } catch (e) {
+        // backend offline — fall back to local filtering below
+      }
+      if (list.length === 0) {
+        list = products
+          .filter((p) => p.id !== product.id && (p.category ?? '').toLowerCase() === (product.category ?? '').toLowerCase())
+          .slice(0, 6);
+        if (list.length === 0) {
+          list = products.filter((p) => p.id !== product.id).slice(0, 6);
+        }
+      }
+      if (active) setRelated(list);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [product.id]);
 
   const handleAddToCart = () => {
     if (details.sizes && details.sizes.length > 0 && !selectedSize) {
@@ -133,6 +162,21 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, onBa
           ))}
         </View>
 
+        {related.length > 0 && (
+          <View style={styles.relatedSection}>
+            <Text style={styles.sectionTitle}>You may also like</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.relatedRow}>
+              {related.map((r) => (
+                <TouchableOpacity key={r.id} style={styles.relatedCard}>
+                  <Image source={{ uri: r.img }} style={styles.relatedImage} />
+                  <Text style={styles.relatedName} numberOfLines={1}>{r.name}</Text>
+                  <Text style={styles.relatedPrice}>{formatCurrency(r.price)}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
         <View style={styles.spacer} />
       </ScrollView>
 
@@ -198,6 +242,12 @@ const styles = StyleSheet.create({
   specRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#18181F' },
   specLabel: { color: '#A0A0A0', fontSize: 14 },
   specValue: { color: '#FFF', fontSize: 14, fontWeight: '600' },
+  relatedSection: { marginBottom: 24 },
+  relatedRow: { gap: 12, paddingBottom: 4 },
+  relatedCard: { width: 140 },
+  relatedImage: { width: 140, height: 140, backgroundColor: '#1F1F2A', borderRadius: 12, marginBottom: 8 },
+  relatedName: { color: '#FFF', fontSize: 13, fontWeight: '600' },
+  relatedPrice: { color: '#FF5722', fontSize: 14, fontWeight: '700', marginTop: 4 },
   spacer: { height: 100 },
   bottomBar: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#0D0D12', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#1F1F2A', gap: 12 },
   quantityControl: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#18181F', borderRadius: 8, paddingHorizontal: 8 },
