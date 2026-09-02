@@ -28,6 +28,8 @@ interface Order {
   status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
   itemCount: number;
   estimatedDelivery?: string;
+  rawStatus?: string;
+  items?: { product_id: number; quantity: number; unit_price: number; name?: string | null; image?: string | null }[];
 }
 
 interface OrderDetailScreenProps {
@@ -39,8 +41,7 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
   const insets = useSafeAreaInsets();
   const [expandedTracking, setExpandedTracking] = useState(true);
 
-  // Mock order items
-  const orderItems: OrderItem[] = [
+  const mockOrderItems: OrderItem[] = [
     {
       id: 1,
       name: 'Premium Leather Jacket',
@@ -62,6 +63,17 @@ const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ order, onBack }) 
       quantity: 1,
     },
   ];
+
+  const orderItems: OrderItem[] =
+    order.items && order.items.length > 0
+      ? order.items.map((i, idx) => ({
+          id: i.product_id,
+          name: i.name ?? `Item ${idx + 1}`,
+          price: i.unit_price,
+          quantity: i.quantity,
+          image: i.image ?? undefined,
+        }))
+      : mockOrderItems;
 
   // Mock delivery tracking
   const trackingSteps = [

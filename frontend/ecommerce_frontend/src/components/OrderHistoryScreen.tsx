@@ -15,6 +15,7 @@ interface Order {
   itemCount: number;
   estimatedDelivery?: string;
   rawStatus?: string;
+  items?: { product_id: number; quantity: number; unit_price: number; name?: string | null; image?: string | null }[];
 }
 
 interface OrderHistoryScreenProps {
@@ -56,7 +57,7 @@ const OrderHistoryScreen: React.FC<OrderHistoryScreenProps> = ({ onBack, onViewD
         total_amount: number;
         status: string;
         created_at: string;
-        items: unknown[];
+        items: { product_id: number; quantity: number; unit_price: number; name?: string | null; image?: string | null }[];
       }[]>('/orders/');
       const mapped: Order[] = data.map((o) => ({
         id: String(o.id),
@@ -66,6 +67,7 @@ const OrderHistoryScreen: React.FC<OrderHistoryScreenProps> = ({ onBack, onViewD
         status: STATUS_ORDER[o.status] ?? 'pending',
         rawStatus: o.status,
         itemCount: (o.items ?? []).reduce((sum: number, i: any) => sum + (i.quantity ?? 1), 0),
+        items: o.items ?? [],
       }));
       setOrders(mapped.length ? mapped : mockOrders);
     } catch (e) {
