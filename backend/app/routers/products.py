@@ -69,6 +69,19 @@ def list_categories(db: Session = Depends(get_db)):
         for c in categories
     ]
 
+@router.get("/featured")
+def featured_products(
+    limit: int = Query(8, ge=1, le=50),
+    db: Session = Depends(get_db)
+):
+    products = (
+        db.query(Product)
+        .order_by(Product.avg_rating.desc(), Product.id.desc())
+        .limit(limit)
+        .all()
+    )
+    return {"items": [serialize_product(p) for p in products]}
+
 @router.get("/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):
     cache_product_view(product_id)
